@@ -22,7 +22,7 @@
         <form action="/translate" method="post" enctype="multipart/form-data" class="space-y-6">
             <div>
                 <label id="label-src" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 ml-1">Original Language</label>
-                <select name="src_lang" class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none appearance-none transition-all">
+                <select name="src_lang" class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none appearance-none transition-all text-sm">
                     <option value="ko">Korean</option>
                     <option value="en" selected>English</option>
                     <option value="es">Spanish</option>
@@ -40,7 +40,7 @@
 
             <div>
                 <label id="label-dest" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 ml-1">Target Language</label>
-                <select name="dest_lang" class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none appearance-none transition-all">
+                <select name="dest_lang" class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none appearance-none transition-all text-sm">
                     <option value="ko" selected>Korean</option>
                     <option value="en">English</option>
                     <option value="es">Spanish</option>
@@ -68,49 +68,69 @@
                 </label>
             </div>
 
-            <div class="drop-zone border-2 border-dashed border-slate-200 p-10 text-center rounded-2xl relative group">
+            <div class="drop-zone border-2 border-dashed border-slate-200 p-8 text-center rounded-2xl relative group">
                 <input type="file" name="file" accept=".srt" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" required>
                 <div class="pointer-events-none">
-                    <div class="bg-indigo-50 w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-indigo-50 w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                         </svg>
                     </div>
-                    <p id="file-text" class="text-sm font-semibold text-slate-600">Click or drag .srt file here</p>
+                    <p id="file-text" class="text-xs font-semibold text-slate-600">Click or drag .srt file here</p>
                 </div>
             </div>
 
             <button type="submit" id="submit-btn" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 transform active:scale-[0.98] transition-all">
                 Start Translation
             </button>
+
+            <div id="loading-area" class="hidden mt-6 text-center">
+                <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent mb-2"></div>
+                <p class="text-xs font-medium text-slate-600 animate-pulse" id="loading-text">Translating your subtitles... Please wait.</p>
+            </div>
         </form>
     </div>
 
     <script>
+        // 언어별 텍스트 데이터
         const i18n = {
-            'ko': { title: 'SRT 자막 번역기', sub: '전 세계 언어로 자막을 번역하세요.', src: '원본 언어', dest: '번역할 언어', file: '.srt 파일을 드래그하거나 클릭하세요', btn: '번역 시작 (바탕화면 저장)' },
-            'en': { title: 'SRT Translator', sub: 'Translate subtitles globally in seconds.', src: 'Original Language', dest: 'Target Language', file: 'Click or drag .srt file here', btn: 'Start Translation' },
-            'es': { title: 'Traductor de Subtítulos', sub: 'Traduce tus subtítulos en segundos.', src: 'Idioma original', dest: 'Idioma de destino', file: 'Haz clic o arrastra el archivo .srt', btn: 'Empezar traducción' },
-            'ja': { title: 'SRT字幕翻訳機', sub: '字幕를 세계의 언어로 번역합니다.', src: '元の言語', dest: '翻訳先の言語', file: 'ファイルをドラッグ 또는 클릭', btn: '翻訳を開始' },
-            'zh-cn': { title: 'SRT字幕翻译器', sub: '几秒钟内全球翻译您的字幕。', src: '源语言', dest: '目标语言', file: '点击或拖拽 .srt 文件', btn: '开始翻译' },
-            'vi': { title: 'Trình dịch phụ đề SRT', sub: 'Dịch phụ đề toàn cầu trong vài giây.', src: 'Ngôn ngữ gốc', dest: 'Ngôn ngữ mục tiêu', file: 'Nhấp hoặc kéo tệp .srt vào đây', btn: 'Bắt đầu dịch' },
-            'de': { title: 'SRT Übersetzer', sub: 'Untertitel weltweit übersetzen.', src: 'Originalsprache', dest: 'Zielsprache', file: '.srt Datei hierher ziehen', btn: 'Übersetzung starten' },
-            'fr': { title: 'Traducteur SRT', sub: 'Traduisez vos sous-titres.', src: 'Langue originale', dest: 'Langue cible', file: 'Cliquez ou glissez le fichier .srt', btn: 'Démarrer' },
-            'it': { title: 'Traduttore SRT', sub: 'Traduci i sottotitoli.', src: 'Lingua originale', dest: 'Lingua target', file: 'Trascina il file .srt qui', btn: 'Inizia' },
-            'pt': { title: 'Tradutor SRT', sub: 'Traduza legendas globalmente.', src: 'Idioma original', dest: 'Idioma alvo', file: 'Arraste o arquivo .srt', btn: 'Iniciar' },
-            'ru': { title: 'Переводчик SRT', sub: 'Быстрый перевод суб팁тров.', src: 'Исходный язык', dest: 'Целевой язык', file: 'Перетащите файл .srt', btn: 'Начать' },
-            'th': { title: 'เครื่องมือแปล SRT', sub: 'แปลซับไตเติ้ลทั่วโลก', src: 'ภาษาต้นฉบับ', dest: 'ภาษาเป้าหมาย', file: 'ลากไฟล์ .srt มาที่นี่', btn: 'เริ่มการแปล' }
+            'ko': { title: 'SRT 자막 번역기', sub: '전 세계 언어로 자막을 번역하세요.', src: '원본 언어', dest: '번역할 언어', file: '.srt 파일을 드래그하거나 클릭하세요', btn: '번역 시작 (바탕화면 저장)', load: '자막을 번역하고 있습니다... 잠시만 기다려 주세요.' },
+            'en': { title: 'SRT Translator', sub: 'Translate subtitles globally in seconds.', src: 'Original Language', dest: 'Target Language', file: 'Click or drag .srt file here', btn: 'Start Translation', load: 'Translating your subtitles... Please wait.' },
+            'es': { title: 'Traductor de Subtítulos', sub: 'Traduce tus subtítulos en segundos.', src: 'Idioma original', dest: 'Idioma de destino', file: 'Haz clic o arrastra el archivo .srt', btn: 'Empezar traducción', load: 'Traduciendo subtítulos... Por favor, espera.' },
+            'ja': { title: 'SRT字幕翻訳機', sub: '字幕を世界中の言語に翻訳します。', src: '元の言語', dest: '翻訳先の言語', file: 'ファイルをドラ그 또는 클릭', btn: '翻訳を開始', load: '字幕を翻訳 중입니다... お待ちください。' },
+            'zh-cn': { title: 'SRT字幕翻译器', sub: '几秒钟内全球翻译您的字幕。', src: '源语言', dest: '目标语言', file: '点击或拖拽 .srt 文件', btn: '开始翻译', load: '正在翻译字幕... 请稍候。' },
+            'vi': { title: 'Trình dịch phụ đề SRT', sub: 'Dịch phụ đề toàn cầu trong vài giây.', src: 'Ngôn ngữ gốc', dest: 'Ngôn ngữ mục tiêu', file: 'Nhấp hoặc kéo tệp .srt vào đây', btn: 'Bắt đầu dịch', load: 'Đang dịch phụ đề... Vui lòng chờ.' },
+            'de': { title: 'SRT Übersetzer', sub: 'Untertitel weltweit übersetzen.', src: 'Originalsprache', dest: 'Zielsprache', file: '.srt Datei hierher ziehen', btn: 'Übersetzung starten', load: 'Untertitel werden übersetzt... Bitte warten.' },
+            'fr': { title: 'Traducteur SRT', sub: 'Traduisez vos sous-titres.', src: 'Langue originale', dest: 'Langue cible', file: 'Cliquez ou glissez le fichier .srt', btn: 'Démarrer', load: 'Traduction en cours... Veuillez patienter.' },
+            'it': { title: 'Traduttore SRT', sub: 'Traduci i sottotitoli.', src: 'Lingua originale', dest: 'Lingua target', file: 'Trascina il file .srt qui', btn: 'Inizia', load: 'Traduzione in corso... Attendere prego.' },
+            'pt': { title: 'Tradutor SRT', sub: 'Traduza legendas globalmente.', src: 'Idioma original', dest: 'Idioma alvo', file: 'Arraste o arquivo .srt', btn: 'Iniciar', load: 'Traduzindo legendas... Por favor, aguarde.' },
+            'ru': { title: 'Переводчик SRT', sub: 'Быстрый перевод субтитров.', src: 'Исходный язык', dest: 'Целевой язык', file: 'Перетащите файл .srt', btn: 'Начать', load: 'Перевод субтитров... Пожалуйста, подождите.' },
+            'th': { title: 'เครื่องมือแปล SRT', sub: 'แปลซับไตเติ้ลทั่วโลก', src: 'ภาษาต้นฉบับ', dest: 'ภาษาเป้าหมาย', file: 'ลากไฟล์ .srt มาที่นี่', btn: 'เริ่มการแปล', load: 'กำลังแปลซับไตเติ้ล... กรุณารอสักครู่' }
         };
 
         const userLang = "{{ user_lang }}";
         const content = i18n[userLang] || i18n['en'];
 
+        // 초기 화면 텍스트 설정
         document.getElementById('main-title').innerText = content.title;
         document.getElementById('sub-title').innerText = content.sub;
         document.getElementById('label-src').innerText = content.src;
         document.getElementById('label-dest').innerText = content.dest;
         document.getElementById('file-text').innerText = content.file;
         document.getElementById('submit-btn').innerText = content.btn;
+
+        // 폼 제출 핸들러 (로딩 애니메이션)
+        const form = document.querySelector('form');
+        const loadingArea = document.getElementById('loading-area');
+        const submitBtn = document.getElementById('submit-btn');
+        const loadingText = document.getElementById('loading-text');
+
+        form.onsubmit = function() {
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            loadingArea.classList.remove('hidden');
+            loadingText.innerText = content.load;
+        };
     </script>
 </body>
 </html>
