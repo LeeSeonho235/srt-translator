@@ -9,109 +9,109 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
         body { font-family: 'Inter', sans-serif; }
         .drop-zone { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .drop-zone:hover { border-color: #6366f1; background-color: #f8fafc; }
+        .drop-zone.active { border-color: #6366f1; background-color: #f8fafc; scale: 1.02; }
     </style>
 </head>
 <body class="bg-slate-50 flex items-center justify-center min-h-screen p-4">
     <div class="bg-white p-8 md:p-10 rounded-3xl shadow-xl w-full max-w-md border border-slate-100">
         <header class="text-center mb-10">
-            <h1 id="main-title" class="text-3xl font-extrabold text-slate-900 tracking-tight text-center">SRT Translator</h1>
-            <p id="sub-title" class="text-slate-500 mt-2 text-sm text-center">Global subtitle conversion made easy.</p>
+            <h1 id="main-title" class="text-3xl font-extrabold text-slate-900 tracking-tight">SRT Translator</h1>
+            <p id="sub-title" class="text-slate-500 mt-2 text-sm">Global subtitle conversion made easy.</p>
         </header>
 
         <form action="/translate" method="post" enctype="multipart/form-data" class="space-y-6">
             <div>
                 <label id="label-src" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 ml-1">Original Language</label>
-                <select name="src_lang" class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none appearance-none transition-all text-sm">
-                    <option value="ko">Korean</option>
-                    <option value="en" selected>English</option>
-                    <option value="es">Spanish</option>
-                    <option value="ja">Japanese</option>
-                    <option value="zh-cn">Chinese</option>
-                    <option value="vi">Vietnamese</option>
-                    <option value="th">Thai</option>
-                    <option value="de">German</option>
-                    <option value="fr">French</option>
-                    <option value="it">Italian</option>
-                    <option value="pt">Portuguese</option>
-                    <option value="ru">Russian</option>
-                </select>
+                <div class="relative">
+                    <select name="src_lang" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none appearance-none cursor-pointer text-slate-700 font-medium transition-all">
+                        <option value="ko">한국어 (Korean)</option>
+                        <option value="en" selected>English</option>
+                        <option value="es">Español (Spanish)</option>
+                        <option value="ja">日本語 (Japanese)</option>
+                        <option value="zh-cn">简体中文 (Chinese)</option>
+                        <option value="vi">Tiếng Việt (Vietnamese)</option>
+                        <option value="th">ไทย (Thai)</option>
+                        <option value="de">Deutsch (German)</option>
+                        <option value="fr">Français (French)</option>
+                        <option value="it">Italiano (Italian)</option>
+                        <option value="pt">Português (Portuguese)</option>
+                        <option value="ru">Русский (Russian)</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-slate-400">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </div>
+                </div>
             </div>
 
             <div>
                 <label id="label-dest" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 ml-1">Target Language</label>
-                <select name="dest_lang" class="w-full bg-slate-50 border border-slate-200 p-3.5 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none appearance-none transition-all text-sm">
-                    <option value="ko" selected>Korean</option>
-                    <option value="en">English</option>
-                    <option value="es">Spanish</option>
-                    <option value="ja">Japanese</option>
-                    <option value="zh-cn">Chinese</option>
-                    <option value="vi">Vietnamese</option>
-                    <option value="th">Thai</option>
-                    <option value="de">German</option>
-                    <option value="fr">French</option>
-                    <option value="it">Italian</option>
-                    <option value="pt">Portuguese</option>
-                    <option value="ru">Russian</option>
-                </select>
-            </div>
-
-            <div class="flex items-center justify-center space-x-6 py-4 bg-slate-50 rounded-xl mb-4">
-                <span class="text-xs font-bold text-slate-700 uppercase tracking-wider">Format:</span>
-                <label class="flex items-center cursor-pointer">
-                    <input type="radio" name="newline_type" value="crlf" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
-                    <span class="ml-2 text-sm text-slate-600 font-medium">Windows (CRLF)</span>
-                </label>
-                <label class="flex items-center cursor-pointer">
-                    <input type="radio" name="newline_type" value="lf" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
-                    <span class="ml-2 text-sm text-slate-600 font-medium">Mac/Linux (LF)</span>
-                </label>
-            </div>
-
-            <div class="drop-zone border-2 border-dashed border-slate-200 p-8 text-center rounded-2xl relative group">
-                <input type="file" name="file" accept=".srt" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" required>
-                <div class="pointer-events-none">
-                    <div class="bg-indigo-50 w-10 h-10 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
-                        <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
-                        </svg>
+                <div class="relative">
+                    <select name="dest_lang" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none appearance-none cursor-pointer text-slate-700 font-medium transition-all">
+                        <option value="ko" selected>한국어 (Korean)</option>
+                        <option value="en">English</option>
+                        <option value="es">Español (Spanish)</option>
+                        <option value="ja">日本語 (Japanese)</option>
+                        <option value="zh-cn">简体中文 (Chinese)</option>
+                        <option value="vi">Tiếng Việt (Vietnamese)</option>
+                        <option value="th">ไทย (Thai)</option>
+                        <option value="de">Deutsch (German)</option>
+                        <option value="fr">Français (French)</option>
+                        <option value="it">Italiano (Italian)</option>
+                        <option value="pt">Português (Portuguese)</option>
+                        <option value="ru">Русский (Russian)</option>
+                    </select>
+                    <div class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-slate-400">
+                        <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
-                    <p id="file-text" class="text-xs font-semibold text-slate-600">Click or drag .srt file here</p>
                 </div>
             </div>
 
-            <button type="submit" id="submit-btn" class="w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl hover:bg-indigo-700 shadow-lg shadow-indigo-200 transform active:scale-[0.98] transition-all">
+            <div class="flex items-center justify-center space-x-6 py-4 bg-slate-50 rounded-2xl">
+                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Format:</span>
+                <label class="flex items-center cursor-pointer group">
+                    <input type="radio" name="newline_type" value="crlf" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                    <span class="ml-2 text-sm text-slate-600 font-semibold group-hover:text-indigo-600">Windows</span>
+                </label>
+                <label class="flex items-center cursor-pointer group">
+                    <input type="radio" name="newline_type" value="lf" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
+                    <span class="ml-2 text-sm text-slate-600 font-semibold group-hover:text-indigo-600">Mac/Linux</span>
+                </label>
+            </div>
+
+            <div id="drop-area" class="drop-zone border-2 border-dashed border-slate-200 p-8 text-center rounded-3xl relative group cursor-pointer">
+                <input type="file" id="file-input" name="file" accept=".srt" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" required>
+                <div class="pointer-events-none">
+                    <div class="bg-indigo-50 w-12 h-12 rounded-2xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform">
+                        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                        </svg>
+                    </div>
+                    <p id="file-text" class="text-sm font-bold text-slate-600">Click or drag .srt file here</p>
+                    <p id="file-name" class="text-xs text-indigo-500 mt-2 font-medium hidden"></p>
+                </div>
+            </div>
+
+            <button type="submit" id="submit-btn" class="w-full bg-indigo-600 text-white font-extrabold py-4 rounded-2xl hover:bg-indigo-700 shadow-xl shadow-indigo-100 transform active:scale-[0.97] transition-all tracking-wide">
                 Start Translation
             </button>
 
             <div id="loading-area" class="hidden mt-6 text-center">
                 <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent mb-2"></div>
-                <p class="text-xs font-medium text-slate-600 animate-pulse" id="loading-text">Translating your subtitles... Please wait.</p>
+                <p class="text-xs font-bold text-slate-500 animate-pulse" id="loading-text">Translating...</p>
             </div>
         </form>
     </div>
 
     <script>
-        // 언어별 텍스트 데이터
         const i18n = {
-            'ko': { title: 'SRT 자막 번역기', sub: '전 세계 언어로 자막을 번역하세요.', src: '원본 언어', dest: '번역할 언어', file: '.srt 파일을 드래그하거나 클릭하세요', btn: '번역 시작 (바탕화면 저장)', load: '자막을 번역하고 있습니다... 잠시만 기다려 주세요.' },
-            'en': { title: 'SRT Translator', sub: 'Translate subtitles globally in seconds.', src: 'Original Language', dest: 'Target Language', file: 'Click or drag .srt file here', btn: 'Start Translation', load: 'Translating your subtitles... Please wait.' },
-            'es': { title: 'Traductor de Subtítulos', sub: 'Traduce tus subtítulos en segundos.', src: 'Idioma original', dest: 'Idioma de destino', file: 'Haz clic o arrastra el archivo .srt', btn: 'Empezar traducción', load: 'Traduciendo subtítulos... Por favor, espera.' },
-            'ja': { title: 'SRT字幕翻訳機', sub: '字幕を世界中の言語に翻訳します。', src: '元の言語', dest: '翻訳先の言語', file: 'ファイルをドラ그 또는 클릭', btn: '翻訳を開始', load: '字幕を翻訳 중입니다... お待ちください。' },
-            'zh-cn': { title: 'SRT字幕翻译器', sub: '几秒钟内全球翻译您的字幕。', src: '源语言', dest: '目标语言', file: '点击或拖拽 .srt 文件', btn: '开始翻译', load: '正在翻译字幕... 请稍候。' },
-            'vi': { title: 'Trình dịch phụ đề SRT', sub: 'Dịch phụ đề toàn cầu trong vài giây.', src: 'Ngôn ngữ gốc', dest: 'Ngôn ngữ mục tiêu', file: 'Nhấp hoặc kéo tệp .srt vào đây', btn: 'Bắt đầu dịch', load: 'Đang dịch phụ đề... Vui lòng chờ.' },
-            'de': { title: 'SRT Übersetzer', sub: 'Untertitel weltweit übersetzen.', src: 'Originalsprache', dest: 'Zielsprache', file: '.srt Datei hierher ziehen', btn: 'Übersetzung starten', load: 'Untertitel werden übersetzt... Bitte warten.' },
-            'fr': { title: 'Traducteur SRT', sub: 'Traduisez vos sous-titres.', src: 'Langue originale', dest: 'Langue cible', file: 'Cliquez ou glissez le fichier .srt', btn: 'Démarrer', load: 'Traduction en cours... Veuillez patienter.' },
-            'it': { title: 'Traduttore SRT', sub: 'Traduci i sottotitoli.', src: 'Lingua originale', dest: 'Lingua target', file: 'Trascina il file .srt qui', btn: 'Inizia', load: 'Traduzione in corso... Attendere prego.' },
-            'pt': { title: 'Tradutor SRT', sub: 'Traduza legendas globalmente.', src: 'Idioma original', dest: 'Idioma alvo', file: 'Arraste o arquivo .srt', btn: 'Iniciar', load: 'Traduzindo legendas... Por favor, aguarde.' },
-            'ru': { title: 'Переводчик SRT', sub: 'Быстрый перевод субтитров.', src: 'Исходный язык', dest: 'Целевой язык', file: 'Перетащите файл .srt', btn: 'Начать', load: 'Перевод субтитров... Пожалуйста, подождите.' },
-            'th': { title: 'เครื่องมือแปล SRT', sub: 'แปลซับไตเติ้ลทั่วโลก', src: 'ภาษาต้นฉบับ', dest: 'ภาษาเป้าหมาย', file: 'ลากไฟล์ .srt มาที่นี่', btn: 'เริ่มการแปล', load: 'กำลังแปลซับไตเติ้ล... กรุณารอสักครู่' }
+            'ko': { title: 'SRT 자막 번역기', sub: '전 세계 언어로 자막을 번역하세요.', src: '원본 언어', dest: '번역할 언어', file: '.srt 파일을 드래그하거나 클릭하세요', btn: '번역 시작 (바탕화면 저장)', load: '번역 중입니다... 잠시만 기다려 주세요.' },
+            'en': { title: 'SRT Translator', sub: 'Translate subtitles globally in seconds.', src: 'Original Language', dest: 'Target Language', file: 'Click or drag .srt file here', btn: 'Start Translation', load: 'Translating... Please wait.' },
+            'es': { title: 'Traductor de Subtítulos', sub: 'Traduce tus subtítulos en segundos.', src: 'Idioma original', dest: 'Idioma de destino', file: 'Haz clic o arrastra el archivo .srt', btn: 'Empezar traducción', load: 'Traduciendo... Por favor espera.' }
         };
 
         const userLang = "{{ user_lang }}";
         const content = i18n[userLang] || i18n['en'];
 
-        // 초기 화면 텍스트 설정
         document.getElementById('main-title').innerText = content.title;
         document.getElementById('sub-title').innerText = content.sub;
         document.getElementById('label-src').innerText = content.src;
@@ -119,17 +119,35 @@
         document.getElementById('file-text').innerText = content.file;
         document.getElementById('submit-btn').innerText = content.btn;
 
-        // 폼 제출 핸들러 (로딩 애니메이션)
-        const form = document.querySelector('form');
-        const loadingArea = document.getElementById('loading-area');
-        const submitBtn = document.getElementById('submit-btn');
-        const loadingText = document.getElementById('loading-text');
+        // 파일 선택 시 이름 표시 로직
+        const fileInput = document.getElementById('file-input');
+        const fileText = document.getElementById('file-text');
+        const fileNameDisplay = document.getElementById('file-name');
+        const dropArea = document.getElementById('drop-area');
 
+        fileInput.addEventListener('change', function() {
+            if (fileInput.files.length > 0) {
+                fileText.classList.add('hidden');
+                fileNameDisplay.classList.remove('hidden');
+                fileNameDisplay.innerText = "Selected: " + fileInput.files[0].name;
+            }
+        });
+
+        // 드래그 앤 드롭 시각 효과
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.classList.add('active'), false);
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropArea.addEventListener(eventName, () => dropArea.classList.remove('active'), false);
+        });
+
+        // 폼 제출 로직
+        const form = document.querySelector('form');
         form.onsubmit = function() {
-            submitBtn.disabled = true;
-            submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
-            loadingArea.classList.remove('hidden');
-            loadingText.innerText = content.load;
+            document.getElementById('submit-btn').disabled = true;
+            document.getElementById('submit-btn').classList.add('opacity-50');
+            document.getElementById('loading-area').classList.remove('hidden');
+            document.getElementById('loading-text').innerText = content.load;
         };
     </script>
 </body>
