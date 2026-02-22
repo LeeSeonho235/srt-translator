@@ -10,7 +10,7 @@ app = Flask(__name__)
 load_dotenv()
 
 # 발급받은 키를 .env에 넣었거나 아래 따옴표 안에 직접 넣으세요
-DEEPL_AUTH_KEY = os.getenv("DEEPL_API_KEY") or "여기에_직접_키를_넣으세요"
+DEEPL_AUTH_KEY = os.getenv("DEEPL_API_KEY") or "fbac7963-c99c-484e-b867-e1d34dfd0495:fx"
 
 # 바탕화면 경로
 DESKTOP_PATH = os.path.join(os.path.expanduser("~"), "Desktop")
