@@ -10,6 +10,7 @@
         body { font-family: 'Inter', sans-serif; }
         .drop-zone { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         .drop-zone.active { border-color: #6366f1; background-color: #f8fafc; scale: 1.02; }
+        .modal { transition: opacity 0.3s ease-in-out; }
     </style>
 </head>
 <body class="bg-slate-50 flex items-center justify-center min-h-screen p-4">
@@ -19,7 +20,7 @@
             <p id="sub-title" class="text-slate-500 mt-2 text-sm">Global subtitle conversion made easy.</p>
         </header>
 
-        <form action="/translate" method="post" enctype="multipart/form-data" class="space-y-6">
+        <form id="trans-form" action="/translate" method="post" enctype="multipart/form-data" class="space-y-6">
             <div>
                 <label id="label-src" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 ml-1">Original Language</label>
                 <div class="relative">
@@ -29,13 +30,6 @@
                         <option value="es">Español (Spanish)</option>
                         <option value="ja">日本語 (Japanese)</option>
                         <option value="zh-cn">简体中文 (Chinese)</option>
-                        <option value="vi">Tiếng Việt (Vietnamese)</option>
-                        <option value="th">ไทย (Thai)</option>
-                        <option value="de">Deutsch (German)</option>
-                        <option value="fr">Français (French)</option>
-                        <option value="it">Italiano (Italian)</option>
-                        <option value="pt">Português (Portuguese)</option>
-                        <option value="ru">Русский (Russian)</option>
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-slate-400">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -52,30 +46,11 @@
                         <option value="es">Español (Spanish)</option>
                         <option value="ja">日本語 (Japanese)</option>
                         <option value="zh-cn">简体中文 (Chinese)</option>
-                        <option value="vi">Tiếng Việt (Vietnamese)</option>
-                        <option value="th">ไทย (Thai)</option>
-                        <option value="de">Deutsch (German)</option>
-                        <option value="fr">Français (French)</option>
-                        <option value="it">Italiano (Italian)</option>
-                        <option value="pt">Português (Portuguese)</option>
-                        <option value="ru">Русский (Russian)</option>
                     </select>
                     <div class="pointer-events-none absolute inset-y-0 right-4 flex items-center text-slate-400">
                         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </div>
                 </div>
-            </div>
-
-            <div class="flex items-center justify-center space-x-6 py-4 bg-slate-50 rounded-2xl">
-                <span class="text-xs font-bold text-slate-500 uppercase tracking-wider">Format:</span>
-                <label class="flex items-center cursor-pointer group">
-                    <input type="radio" name="newline_type" value="crlf" checked class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
-                    <span class="ml-2 text-sm text-slate-600 font-semibold group-hover:text-indigo-600">Windows(CRLF)</span>
-                </label>
-                <label class="flex items-center cursor-pointer group">
-                    <input type="radio" name="newline_type" value="lf" class="w-4 h-4 text-indigo-600 focus:ring-indigo-500">
-                    <span class="ml-2 text-sm text-slate-600 font-semibold group-hover:text-indigo-600">Mac/Linux(LF)</span>
-                </label>
             </div>
 
             <div id="drop-area" class="drop-zone border-2 border-dashed border-slate-200 p-8 text-center rounded-3xl relative group cursor-pointer">
@@ -91,7 +66,7 @@
                 </div>
             </div>
 
-            <button type="submit" id="submit-btn" class="w-full bg-indigo-600 text-white font-extrabold py-4 rounded-2xl hover:bg-indigo-700 shadow-xl shadow-indigo-100 transform active:scale-[0.97] transition-all tracking-wide">
+            <button type="submit" id="submit-btn" class="w-full bg-indigo-600 text-white font-extrabold py-4 rounded-2xl hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all">
                 Start Translation
             </button>
 
@@ -102,52 +77,109 @@
         </form>
     </div>
 
+    <div id="result-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-6 text-center transform scale-95 transition-all">
+            <div class="mb-4 text-indigo-600">
+                <svg class="w-16 h-16 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <h2 id="modal-title" class="text-xl font-extrabold text-slate-900 mb-2">Translation Complete!</h2>
+            <p id="modal-desc" class="text-slate-500 text-sm leading-relaxed mb-6">
+                Please double-check the translation for accuracy.
+            </p>
+            
+            <div class="bg-slate-100 rounded-xl p-4 mb-6 border border-slate-200 border-dashed">
+                <p class="text-[10px] text-slate-400 uppercase font-bold mb-1">Advertisement</p>
+                <div class="h-24 bg-slate-200 rounded flex items-center justify-center text-slate-400 italic text-xs">
+                    Ad Space (knamegenerator.com)
+                </div>
+            </div>
+
+            <button onclick="closeModal()" class="w-full bg-slate-900 text-white font-bold py-3 rounded-xl hover:bg-slate-800 transition-colors">
+                OK
+            </button>
+        </div>
+    </div>
+
     <script>
         const i18n = {
-            'ko': { title: 'SRT 자막 번역기', sub: '전 세계 언어로 자막을 번역하세요.', src: '원본 언어', dest: '번역할 언어', file: '.srt 파일을 드래그하거나 클릭하세요', btn: '번역 시작 (바탕화면 저장)', load: '번역 중입니다... 잠시만 기다려 주세요.' },
-            'en': { title: 'SRT Translator', sub: 'Translate subtitles globally in seconds.', src: 'Original Language', dest: 'Target Language', file: 'Click or drag .srt file here', btn: 'Start Translation', load: 'Translating... Please wait.' },
-            'es': { title: 'Traductor de Subtítulos', sub: 'Traduce tus subtítulos en segundos.', src: 'Idioma original', dest: 'Idioma de destino', file: 'Haz clic o arrastra el archivo .srt', btn: 'Empezar traducción', load: 'Traduciendo... Por favor espera.' }
+            'ko': { title: 'SRT 자막 번역기', sub: '전 세계 언어로 자막을 번역하세요.', src: '원본 언어', dest: '번역할 언어', file: '.srt 파일을 드래그하세요', btn: '번역 시작 (바탕화면 저장)', load: '번역 중입니다... 잠시만 기다려 주세요.', mTitle: '번역 완료!', mDesc: '번역된 자막을 꼭 다시 한번 확인해주세요.', mBtn: '확인' },
+            'en': { title: 'SRT Translator', sub: 'Translate subtitles globally.', src: 'Original Language', dest: 'Target Language', file: 'Click or drag .srt file here', btn: 'Start Translation', load: 'Translating... Please wait.', mTitle: 'Done!', mDesc: 'Please double-check the translation for accuracy.', mBtn: 'OK' },
+            'es': { title: 'Traductor de Subtítulos', sub: 'Traduce tus subtítulos.', src: 'Idioma original', dest: 'Idioma de destino', file: 'Haz clic o arrastra el .srt', btn: 'Empezar traducción', load: 'Traduciendo... espera.', mTitle: '¡Completo!', mDesc: 'Por favor, revise la traducción para mayor precisión.', mBtn: 'Entendido' }
         };
 
         const userLang = "{{ user_lang }}";
         const content = i18n[userLang] || i18n['en'];
 
+        // 초기 언어 설정
         document.getElementById('main-title').innerText = content.title;
         document.getElementById('sub-title').innerText = content.sub;
         document.getElementById('label-src').innerText = content.src;
         document.getElementById('label-dest').innerText = content.dest;
         document.getElementById('file-text').innerText = content.file;
         document.getElementById('submit-btn').innerText = content.btn;
+        document.getElementById('modal-title').innerText = content.mTitle;
+        document.getElementById('modal-desc').innerText = content.mDesc;
 
-        // 파일 선택 시 이름 표시 로직
-        const fileInput = document.getElementById('file-input');
-        const fileText = document.getElementById('file-text');
-        const fileNameDisplay = document.getElementById('file-name');
-        const dropArea = document.getElementById('drop-area');
+        const form = document.getElementById('trans-form');
+        const modal = document.getElementById('result-modal');
 
-        fileInput.addEventListener('change', function() {
-            if (fileInput.files.length > 0) {
-                fileText.classList.add('hidden');
-                fileNameDisplay.classList.remove('hidden');
-                fileNameDisplay.innerText = "Selected: " + fileInput.files[0].name;
+        form.onsubmit = async function(e) {
+            e.preventDefault(); // 기본 폼 제출 막기 (파일 다운로드를 JS로 처리하기 위함)
+            
+            const submitBtn = document.getElementById('submit-btn');
+            const loadingArea = document.getElementById('loading-area');
+            
+            // 1. 로딩 시작
+            submitBtn.disabled = true;
+            submitBtn.classList.add('opacity-50');
+            loadingArea.classList.remove('hidden');
+
+            const formData = new FormData(form);
+            
+            try {
+                // 2. 서버에 번역 요청
+                const response = await fetch('/translate', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    // 3. 파일 다운로드 트리거
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `translated_${formData.get('dest_lang')}.srt`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                    
+                    // 4. 로딩 종료 및 모달(광고) 띄우기
+                    loadingArea.classList.add('hidden');
+                    submitBtn.disabled = false;
+                    submitBtn.classList.remove('opacity-50');
+                    modal.classList.remove('hidden');
+                } else {
+                    alert("Error during translation.");
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Server connection failed.");
             }
-        });
+        };
 
-        // 드래그 앤 드롭 시각 효과
-        ['dragenter', 'dragover'].forEach(eventName => {
-            dropArea.addEventListener(eventName, () => dropArea.classList.add('active'), false);
-        });
-        ['dragleave', 'drop'].forEach(eventName => {
-            dropArea.addEventListener(eventName, () => dropArea.classList.remove('active'), false);
-        });
+        function closeModal() {
+            modal.classList.add('hidden');
+            location.reload(); // 깔끔하게 페이지 새로고침하여 다음 번역 준비
+        }
 
-        // 폼 제출 로직
-        const form = document.querySelector('form');
-        form.onsubmit = function() {
-            document.getElementById('submit-btn').disabled = true;
-            document.getElementById('submit-btn').classList.add('opacity-50');
-            document.getElementById('loading-area').classList.remove('hidden');
-            document.getElementById('loading-text').innerText = content.load;
+        // 파일 선택 이름 표시
+        document.getElementById('file-input').onchange = function() {
+            if (this.files.length > 0) {
+                document.getElementById('file-text').classList.add('hidden');
+                document.getElementById('file-name').classList.remove('hidden');
+                document.getElementById('file-name').innerText = "📄 " + this.files[0].name;
+            }
         };
     </script>
 </body>
