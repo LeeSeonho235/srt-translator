@@ -15,30 +15,30 @@
     </style>
 </head>
 <body class="bg-slate-50 flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white p-8 md:p-10 rounded-3xl shadow-xl w-full max-w-md border border-slate-100 relative">
+    <div class="bg-white pt-12 pb-10 px-8 md:px-10 rounded-3xl shadow-xl w-full max-w-md border border-slate-100 relative">
         <!-- Web language selector -->
-        <div class="absolute top-6 right-6 text-right">
-            <p class="text-[10px] font-semibold tracking-[0.18em] uppercase text-slate-400 mb-1">Web language</p>
+        <div class="absolute top-4 right-6 text-right">
+            <p class="text-[10px] font-semibold tracking-[0.18em] uppercase text-slate-400 mb-1">WEB LANGUAGE</p>
             <div class="relative inline-block text-left">
-                <button id="lang-toggle" type="button" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                    <span id="lang-current-label">English</span>
+                <button id="lang-toggle" type="button" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-[11px] font-semibold text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <span id="lang-current-label" class="whitespace-nowrap">🇺🇸 English</span>
                     <svg class="h-3 w-3 text-slate-400" viewBox="0 0 20 20" fill="none" stroke="currentColor">
                         <path d="M5 7l5 6 5-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                     </svg>
                 </button>
-                <div id="lang-menu" class="hidden absolute right-0 mt-2 w-40 origin-top-right rounded-xl bg-white py-1 shadow-lg ring-1 ring-black/5 z-20">
-                    <button data-lang="en" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">English</button>
-                    <button data-lang="ko" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">한국어 (Korean)</button>
-                    <button data-lang="es" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">Español (Spanish)</button>
-                    <button data-lang="ja" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">日本語 (Japanese)</button>
-                    <button data-lang="zh-cn" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">简体中文 (Chinese)</button>
-                    <button data-lang="vi" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">Tiếng Việt (Vietnamese)</button>
-                    <button data-lang="th" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">ไทย (Thai)</button>
-                    <button data-lang="de" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">Deutsch (German)</button>
-                    <button data-lang="fr" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">Français (French)</button>
-                    <button data-lang="it" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">Italiano (Italian)</button>
-                    <button data-lang="pt" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">Português (Portuguese)</button>
-                    <button data-lang="ru" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">Русский (Russian)</button>
+                <div id="lang-menu" class="hidden absolute right-0 mt-2 w-48 origin-top-right rounded-xl bg-white py-1 shadow-lg ring-1 ring-black/5 z-20">
+                    <button data-lang="en" class="flex w-full items-center gap-2 px-3 py-1.5 text-[11px] text-slate-700 hover:bg-slate-50 whitespace-nowrap"><span>🇺🇸</span><span>English</span></button>
+                    <button data-lang="ko" class="flex w-full items-center gap-2 px-3 py-1.5 text-[11px] text-slate-700 hover:bg-slate-50 whitespace-nowrap"><span>🇰🇷</span><span>한국어 (Korean)</span></button>
+                    <button data-lang="es" class="flex w-full items-center gap-2 px-3 py-1.5 text-[11px] text-slate-700 hover:bg-slate-50 whitespace-nowrap"><span>🇪🇸</span><span>Español (Spanish)</span></button>
+                    <button data-lang="ja" class="flex w-full items-center gap-2 px-3 py-1.5 text-[11px] text-slate-700 hover:bg-slate-50 whitespace-nowrap"><span>🇯🇵</span><span>日本語 (Japanese)</span></button>
+                    <button data-lang="zh-cn" class="flex w-full items-center gap-2 px-3 py-1.5 text-[11px] text-slate-700 hover:bg-slate-50 whitespace-nowrap"><span>🇨🇳</span><span>简体中文 (Chinese)</span></button>
+                    <button data-lang="vi" class="flex w-full items-center gap-2 px-3 py-1.5 text-[11px] text-slate-700 hover:bg-slate-50 whitespace-nowrap"><span>🇻🇳</span><span>Tiếng Việt (Vietnamese)</span></button>
+                    <button data-lang="th" class="flex w-full items-center gap-2 px-3 py-1.5 text-[11px] text-slate-700 hover:bg-slate-50 whitespace-nowrap"><span>🇹🇭</span><span>ไทย (Thai)</span></button>
+                    <button data-lang="de" class="flex w-full items-center gap-2 px-3 py-1.5 text-[11px] text-slate-700 hover:bg-slate-50 whitespace-nowrap"><span>🇩🇪</span><span>Deutsch (German)</span></button>
+                    <button data-lang="fr" class="flex w-full items-center gap-2 px-3 py-1.5 text-[11px] text-slate-700 hover:bg-slate-50 whitespace-nowrap"><span>🇫🇷</span><span>Français (French)</span></button>
+                    <button data-lang="it" class="flex w-full items-center gap-2 px-3 py-1.5 text-[11px] text-slate-700 hover:bg-slate-50 whitespace-nowrap"><span>🇮🇹</span><span>Italiano (Italian)</span></button>
+                    <button data-lang="pt" class="flex w-full items-center gap-2 px-3 py-1.5 text-[11px] text-slate-700 hover:bg-slate-50 whitespace-nowrap"><span>🇵🇹</span><span>Português (Portuguese)</span></button>
+                    <button data-lang="ru" class="flex w-full items-center gap-2 px-3 py-1.5 text-[11px] text-slate-700 hover:bg-slate-50 whitespace-nowrap"><span>🇷🇺</span><span>Русский (Russian)</span></button>
                 </div>
             </div>
         </div>
@@ -159,18 +159,18 @@
         };
 
         const languageLabels = {
-            'en': 'English',
-            'ko': '한국어 (Korean)',
-            'es': 'Español (Spanish)',
-            'ja': '日本語 (Japanese)',
-            'zh-cn': '简体中文 (Chinese)',
-            'vi': 'Tiếng Việt (Vietnamese)',
-            'th': 'ไทย (Thai)',
-            'de': 'Deutsch (German)',
-            'fr': 'Français (French)',
-            'it': 'Italiano (Italian)',
-            'pt': 'Português (Portuguese)',
-            'ru': 'Русский (Russian)'
+            'en': '🇺🇸 English',
+            'ko': '🇰🇷 한국어 (Korean)',
+            'es': '🇪🇸 Español (Spanish)',
+            'ja': '🇯🇵 日本語 (Japanese)',
+            'zh-cn': '🇨🇳 简体中文 (Chinese)',
+            'vi': '🇻🇳 Tiếng Việt (Vietnamese)',
+            'th': '🇹🇭 ไทย (Thai)',
+            'de': '🇩🇪 Deutsch (German)',
+            'fr': '🇫🇷 Français (French)',
+            'it': '🇮🇹 Italiano (Italian)',
+            'pt': '🇵🇹 Português (Portuguese)',
+            'ru': '🇷🇺 Русский (Russian)'
         };
 
         const defaultLang = 'en';
