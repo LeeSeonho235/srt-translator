@@ -15,7 +15,34 @@
     </style>
 </head>
 <body class="bg-slate-50 flex items-center justify-center min-h-screen p-4">
-    <div class="bg-white p-8 md:p-10 rounded-3xl shadow-xl w-full max-w-md border border-slate-100">
+    <div class="bg-white p-8 md:p-10 rounded-3xl shadow-xl w-full max-w-md border border-slate-100 relative">
+        <!-- Web language selector -->
+        <div class="absolute top-6 right-6 text-right">
+            <p class="text-[10px] font-semibold tracking-[0.18em] uppercase text-slate-400 mb-1">Web language</p>
+            <div class="relative inline-block text-left">
+                <button id="lang-toggle" type="button" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 shadow-sm hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    <span id="lang-current-label">English</span>
+                    <svg class="h-3 w-3 text-slate-400" viewBox="0 0 20 20" fill="none" stroke="currentColor">
+                        <path d="M5 7l5 6 5-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                    </svg>
+                </button>
+                <div id="lang-menu" class="hidden absolute right-0 mt-2 w-40 origin-top-right rounded-xl bg-white py-1 shadow-lg ring-1 ring-black/5 z-20">
+                    <button data-lang="en" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">English</button>
+                    <button data-lang="ko" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">한국어 (Korean)</button>
+                    <button data-lang="es" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">Español (Spanish)</button>
+                    <button data-lang="ja" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">日本語 (Japanese)</button>
+                    <button data-lang="zh-cn" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">简体中文 (Chinese)</button>
+                    <button data-lang="vi" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">Tiếng Việt (Vietnamese)</button>
+                    <button data-lang="th" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">ไทย (Thai)</button>
+                    <button data-lang="de" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">Deutsch (German)</button>
+                    <button data-lang="fr" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">Français (French)</button>
+                    <button data-lang="it" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">Italiano (Italian)</button>
+                    <button data-lang="pt" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">Português (Portuguese)</button>
+                    <button data-lang="ru" class="flex w-full items-center px-3 py-1.5 text-xs text-slate-700 hover:bg-slate-50">Русский (Russian)</button>
+                </div>
+            </div>
+        </div>
+
         <header class="text-center mb-10">
             <h1 id="main-title" class="text-3xl font-extrabold text-slate-900 tracking-tight">SRT Translator</h1>
             <p id="sub-title" class="text-slate-500 mt-2 text-sm">Global subtitle conversion made easy.</p>
@@ -117,22 +144,80 @@
 
     <script>
         const i18n = {
-            'ko': { title: 'SRT 자막 번역기', sub: '전 세계 언어로 자막을 번역하세요.', src: '원본 언어', dest: '번역할 언어', file: '.srt 파일을 드래그하세요', btn: '번역 시작', load: '번역 중...', mTitle: '번역 완료!', mDesc: '번역된 자막을 꼭 다시 한번 확인해주세요.', mBtn: '확인' },
-            'en': { title: 'SRT Translator', sub: 'Translate subtitles globally.', src: 'Original Language', dest: 'Target Language', file: 'Click or drag .srt file here', btn: 'Start Translation', load: 'Translating...', mTitle: 'Done!', mDesc: 'Please double-check the translation accuracy.', mBtn: 'OK' },
-            'es': { title: 'Traductor de Subtítulos', sub: 'Traduce tus subtítulos.', src: 'Idioma original', dest: 'Idioma de destino', file: 'Haz clic o arrastra el .srt', btn: 'Empezar traducción', load: 'Traduciendo...', mTitle: '¡Completo!', mDesc: 'Por favor, revise la traducción.', mBtn: 'Entendido' }
+            'en': { title: 'SRT Translator', sub: 'Global subtitle conversion made easy.', src: 'Original Language', dest: 'Target Language', file: 'Click or drag .srt file here', btn: 'Start Translation', load: 'Translating...', mTitle: 'Translation Complete!', mDesc: 'Please double-check the translation accuracy.', mBtn: 'OK' },
+            'ko': { title: 'SRT 자막 번역기', sub: '전 세계 언어로 자막을 번역하세요.', src: '원본 언어', dest: '번역할 언어', file: '.srt 파일을 클릭 또는 드래그하세요', btn: '번역 시작', load: '번역 중...', mTitle: '번역 완료!', mDesc: '번역된 자막을 꼭 다시 한번 확인해주세요.', mBtn: '확인' },
+            'es': { title: 'Traductor de Subtítulos SRT', sub: 'Convierte tus subtítulos al instante.', src: 'Idioma original', dest: 'Idioma de destino', file: 'Haz clic o arrastra el archivo .srt aquí', btn: 'Empezar traducción', load: 'Traduciendo...', mTitle: '¡Traducción completa!', mDesc: 'Por favor, revisa la precisión de la traducción.', mBtn: 'Entendido' },
+            'ja': { title: 'SRT 字幕翻訳', sub: '世界中の字幕をかんたん翻訳。', src: '元の言語', dest: '翻訳後の言語', file: '.srt ファイルをクリックまたはドラッグ', btn: '翻訳を開始', load: '翻訳中...', mTitle: '翻訳が完了しました', mDesc: '翻訳内容をもう一度ご確認ください。', mBtn: 'OK' },
+            'zh-cn': { title: 'SRT 字幕翻译器', sub: '轻松翻译全球字幕。', src: '原始语言', dest: '目标语言', file: '点击或拖拽 .srt 文件到这里', btn: '开始翻译', load: '正在翻译…', mTitle: '翻译完成！', mDesc: '请再次确认字幕翻译是否准确。', mBtn: '好的' },
+            'vi': { title: 'Trình Dịch Phụ Đề SRT', sub: 'Dịch phụ đề sang mọi ngôn ngữ.', src: 'Ngôn ngữ gốc', dest: 'Ngôn ngữ đích', file: 'Nhấp hoặc kéo tệp .srt vào đây', btn: 'Bắt đầu dịch', load: 'Đang dịch...', mTitle: 'Hoàn tất dịch!', mDesc: 'Vui lòng kiểm tra lại bản dịch.', mBtn: 'OK' },
+            'th': { title: 'ตัวแปลซับไตเติล SRT', sub: 'แปลซับไตเติลได้ทั่วโลกอย่างง่ายดาย', src: 'ภาษาต้นฉบับ', dest: 'ภาษาที่ต้องการแปล', file: 'คลิกหรือวางไฟล์ .srt ที่นี่', btn: 'เริ่มแปล', load: 'กำลังแปล...', mTitle: 'แปลเสร็จแล้ว!', mDesc: 'กรุณาตรวจสอบความถูกต้องของคำแปลอีกครั้ง', mBtn: 'ตกลง' },
+            'de': { title: 'SRT-Untertitel-Übersetzer', sub: 'Übersetze Untertitel in jede Sprache.', src: 'Ausgangssprache', dest: 'Zielsprache', file: 'Klicke oder ziehe die .srt-Datei hierher', btn: 'Übersetzung starten', load: 'Übersetzen...', mTitle: 'Übersetzung fertig!', mDesc: 'Bitte überprüfe die Übersetzung sorgfältig.', mBtn: 'OK' },
+            'fr': { title: 'Traducteur de Sous-titres SRT', sub: 'Traduisez vos sous-titres en un clic.', src: 'Langue d\'origine', dest: 'Langue cible', file: 'Cliquez ou faites glisser le fichier .srt ici', btn: 'Lancer la traduction', load: 'Traduction en cours...', mTitle: 'Traduction terminée !', mDesc: 'Veuillez vérifier la qualité de la traduction.', mBtn: 'OK' },
+            'it': { title: 'Traduttore di Sottotitoli SRT', sub: 'Converti i sottotitoli in qualsiasi lingua.', src: 'Lingua originale', dest: 'Lingua di destinazione', file: 'Fai clic o trascina qui il file .srt', btn: 'Avvia traduzione', load: 'Traduzione in corso...', mTitle: 'Traduzione completata!', mDesc: 'Controlla di nuovo l\'accuratezza della traduzione.', mBtn: 'OK' },
+            'pt': { title: 'Tradutor de Legendas SRT', sub: 'Traduza legendas para o mundo todo.', src: 'Idioma original', dest: 'Idioma de destino', file: 'Clique ou arraste o arquivo .srt aqui', btn: 'Iniciar tradução', load: 'Traduzindo...', mTitle: 'Tradução concluída!', mDesc: 'Por favor, revise a precisão da tradução.', mBtn: 'OK' },
+            'ru': { title: 'Переводчик субтитров SRT', sub: 'Лёгкий перевод субтитров на любые языки.', src: 'Исходный язык', dest: 'Целевой язык', file: 'Нажмите или перетащите файл .srt сюда', btn: 'Начать перевод', load: 'Перевод...', mTitle: 'Перевод завершён!', mDesc: 'Пожалуйста, ещё раз проверьте перевод.', mBtn: 'ОК' }
         };
 
-        const userLang = "{{ user_lang }}";
-        const content = i18n[userLang] || i18n['en'];
+        const languageLabels = {
+            'en': 'English',
+            'ko': '한국어 (Korean)',
+            'es': 'Español (Spanish)',
+            'ja': '日本語 (Japanese)',
+            'zh-cn': '简体中文 (Chinese)',
+            'vi': 'Tiếng Việt (Vietnamese)',
+            'th': 'ไทย (Thai)',
+            'de': 'Deutsch (German)',
+            'fr': 'Français (French)',
+            'it': 'Italiano (Italian)',
+            'pt': 'Português (Portuguese)',
+            'ru': 'Русский (Russian)'
+        };
 
-        document.getElementById('main-title').innerText = content.title;
-        document.getElementById('sub-title').innerText = content.sub;
-        document.getElementById('label-src').innerText = content.src;
-        document.getElementById('label-dest').innerText = content.dest;
-        document.getElementById('file-text').innerText = content.file;
-        document.getElementById('submit-btn').innerText = content.btn;
-        document.getElementById('modal-title').innerText = content.mTitle;
-        document.getElementById('modal-desc').innerText = content.mDesc;
+        const defaultLang = 'en';
+        let currentLang = localStorage.getItem('web_lang') || defaultLang;
+
+        function applyLanguage(lang) {
+            const content = i18n[lang] || i18n[defaultLang];
+            currentLang = lang;
+            localStorage.setItem('web_lang', currentLang);
+
+            document.getElementById('page-title').innerText = content.title;
+            document.getElementById('main-title').innerText = content.title;
+            document.getElementById('sub-title').innerText = content.sub;
+            document.getElementById('label-src').innerText = content.src;
+            document.getElementById('label-dest').innerText = content.dest;
+            document.getElementById('file-text').innerText = content.file;
+            document.getElementById('submit-btn').innerText = content.btn;
+            document.getElementById('loading-text').innerText = content.load;
+            document.getElementById('modal-title').innerText = content.mTitle;
+            document.getElementById('modal-desc').innerText = content.mDesc;
+            document.getElementById('lang-current-label').innerText = languageLabels[lang] || languageLabels[defaultLang];
+        }
+
+        // 초기 언어 적용 (기본값: 영어)
+        applyLanguage(currentLang);
+
+        // 언어 드롭다운 토글 & 선택
+        const langToggle = document.getElementById('lang-toggle');
+        const langMenu = document.getElementById('lang-menu');
+
+        langToggle.addEventListener('click', (e) => {
+            e.stopPropagation();
+            langMenu.classList.toggle('hidden');
+        });
+
+        langMenu.querySelectorAll('button[data-lang]').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                const lang = e.currentTarget.getAttribute('data-lang');
+                applyLanguage(lang);
+                langMenu.classList.add('hidden');
+            });
+        });
+
+        // 메뉴 밖 클릭 시 닫기
+        document.addEventListener('click', () => {
+            langMenu.classList.add('hidden');
+        });
 
         const form = document.getElementById('trans-form');
         const modal = document.getElementById('result-modal');
