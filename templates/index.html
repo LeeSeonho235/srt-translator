@@ -27,8 +27,7 @@
                     </svg>
                 </button>
                 <div id="lang-menu" class="hidden absolute right-0 mt-2 w-48 origin-top-right rounded-xl bg-white py-1 shadow-lg ring-1 ring-black/5 z-20 overflow-hidden text-left">
-                    <div id="lang-options">
-                        </div>
+                    <div id="lang-options"></div>
                 </div>
             </div>
         </div>
@@ -75,7 +74,7 @@
             </div>
 
             <div id="drop-area" class="drop-zone border-2 border-dashed border-slate-200 p-10 text-center rounded-3xl relative group cursor-pointer">
-                <input type="file" id="file-input" name="file" accept=".srt" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" required>
+                <input type="file" id="file-input" name="file" accept=".srt" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" required oninvalid="handleInvalidFile(this)">
                 <div class="pointer-events-none">
                     <div class="bg-indigo-50 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
                         <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -97,21 +96,30 @@
     </div>
 
     <div id="result-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div class="bg-white rounded-3xl shadow-2xl max-w-sm w-full p-8 text-center">
-            <h2 id="modal-title" class="text-2xl font-extrabold text-slate-900 mb-2">Success!</h2>
-            <p id="modal-desc" class="text-slate-500 text-sm mb-4 font-medium">Please check the translation again.</p>
+        <div class="bg-white rounded-[2.5rem] shadow-2xl max-w-lg w-full p-10 text-center">
+            <h2 id="modal-title" class="text-4xl font-black text-slate-900 mb-4 tracking-tight">Success!</h2>
+            <p id="modal-desc" class="text-slate-500 text-lg mb-6 font-bold">Please check the translation again.</p>
             
-            <div id="modal-premium-msg" class="bg-indigo-50 text-indigo-700 text-[11px] font-bold p-3 rounded-xl mb-4 leading-relaxed">
+            <div id="modal-premium-msg" class="bg-indigo-50 text-indigo-700 text-sm font-extrabold p-5 rounded-2xl mb-6 leading-relaxed">
                 </div>
 
-            <div class="bg-slate-100 rounded-xl p-4 mb-6 border border-slate-200 border-dashed">
-                <p class="text-[10px] text-slate-400 uppercase font-bold mb-1">Advertisement</p>
-                <div class="h-20 bg-slate-200 rounded flex items-center justify-center text-slate-400 italic text-xs">
+            <div class="grid grid-cols-2 gap-4 mb-8">
+                <button onclick="signInWithGoogle()" class="bg-indigo-600 text-white font-black py-4 px-2 rounded-2xl hover:bg-indigo-700 transition-all text-sm uppercase">
+                    Sign Up
+                </button>
+                <button onclick="location.href='#'" class="bg-slate-900 text-white font-black py-4 px-2 rounded-2xl hover:bg-slate-800 transition-all text-sm uppercase">
+                    Buy Pass
+                </button>
+            </div>
+
+            <div class="bg-slate-100 rounded-2xl p-6 mb-8 border border-slate-200 border-dashed">
+                <p class="text-[12px] text-slate-400 uppercase font-black mb-2">Advertisement</p>
+                <div class="h-28 bg-slate-200 rounded-xl flex items-center justify-center text-slate-400 italic text-sm font-bold">
                     Ad Space (knamegenerator.com)
                 </div>
             </div>
 
-            <button onclick="closeModal()" id="modal-btn" class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl">OK</button>
+            <button onclick="closeModal()" id="modal-btn" class="w-full bg-slate-900 text-white font-black py-5 rounded-2xl text-xl hover:bg-slate-800 shadow-xl">OK</button>
         </div>
     </div>
 
@@ -122,7 +130,6 @@
 
         let currentUser = null;
 
-        // UI용 5개 언어
         const uiLanguages = [
             { code: 'en', name: 'English', flag: '🇺🇸' },
             { code: 'ko', name: '한국어 (Korean)', flag: '🇰🇷' },
@@ -131,7 +138,6 @@
             { code: 'zh-cn', name: '简体中文 (Chinese)', flag: '🇨🇳' }
         ];
 
-        // 번역 드롭다운용 12개 언어
         const transLanguages = [
             ...uiLanguages,
             { code: 'vi', name: 'Tiếng Việt (vietnamese)', flag: '🇻🇳' },
@@ -144,11 +150,11 @@
         ];
 
         const i18n = {
-            'en': { web: 'WEB LANGUAGE', title: 'SRT Translator', sub: 'Global subtitle conversion made easy.', src: 'Original Language', dest: 'Target Language', format: 'Format:', file: 'Click or drag .srt file here', btn: 'Start Translation', load: 'Translating...', mTitle: 'Success!', mDesc: 'Please check the translation again.', mPremium: 'Free users: 1 per week. Buy a pass for unlimited access!', mBtn: 'OK', alert: 'Limit: 1 per week for free users!' },
-            'ko': { web: '웹 언어 설정', title: 'SRT 자막 번역기', sub: '전 세계 언어로 자막을 번역하세요.', src: '원본 언어', dest: '번역할 언어', format: '형식:', file: '.srt 파일을 클릭 또는 드래그하세요', btn: '번역 시작', load: '번역 중...', mTitle: '번역 완료!', mDesc: '번역본을 다시 한번 확인해 주세요.', mPremium: '비회원 및 일반 회원은 주 1회만 이용 가능합니다. 무제한 이용권을 구매하세요!', mBtn: '확인', alert: '비회원/일반회원은 주 1회만 가능합니다!' },
-            'es': { web: 'IDIOMA WEB', title: 'Traductor SRT', sub: 'Subtítulos globales fáciles.', src: 'Idioma original', dest: 'Idioma de destino', format: 'Formato:', file: 'Haz clic o arrastra el archivo', btn: 'Iniciar traducción', load: 'Traduciendo...', mTitle: '¡Éxito!', mDesc: 'Verifique la traducción de nuevo.', mPremium: 'Límite de 1 por semana. ¡Compra acceso ilimitado!', mBtn: 'OK', alert: '¡Límite de 1 traducción por semana!' },
-            'ja': { web: 'ウェブ言語', title: 'SRT字幕翻訳', sub: '字幕を簡単に翻訳します。', src: '元の言語', dest: '翻訳後の言語', format: '形式:', file: 'ファイルを選択', btn: '翻訳開始', load: '翻訳中...', mTitle: '成功！', mDesc: '翻訳をもう 한 번 확인してください。', mPremium: '無料版は週1回のみ。無制限パスを購入してください！', mBtn: 'OK', alert: '無料版は週1回までです！' },
-            'zh-cn': { web: '网站语言', title: 'SRT 字幕翻译器', sub: '轻松翻译全球字幕。', src: '原始语言', dest: '目标语言', format: '格式:', file: '点击或拖拽文件', btn: '开始翻译', load: '正在翻译...', mTitle: '完成！', mDesc: '请再次检查翻译。', mPremium: '免费用户每周1次。购买无限制通行证！', mBtn: '好的', alert: '免费用户每周只能翻译一次！' }
+            'en': { web: 'WEB LANGUAGE', title: 'SRT Translator', sub: 'Global subtitle conversion made easy.', src: 'Original Language', dest: 'Target Language', format: 'Format:', file: 'Click or drag .srt file here', btn: 'Start Translation', load: 'Translating...', mTitle: 'Success!', mDesc: 'Please check the translation again.', mPremium: 'Free users: 1 per week. Buy a pass for unlimited access!', mBtn: 'OK', alert: 'Limit: 1 per week for free users!', fileRequired: 'Please select a file.' },
+            'ko': { web: '웹 언어 설정', title: 'SRT 자막 번역기', sub: '전 세계 언어로 자막을 번역하세요.', src: '원본 언어', dest: '번역할 언어', format: '형식:', file: '.srt 파일을 클릭 또는 드래그하세요', btn: '번역 시작', load: '번역 중...', mTitle: '번역 완료!', mDesc: '번역본을 다시 한번 확인해 주세요.', mPremium: '비회원 및 일반 회원은 주 1회만 이용 가능합니다. 무제한 이용권을 구매하세요!', mBtn: '확인', alert: '비회원/일반회원은 주 1회만 가능합니다!', fileRequired: '파일을 선택하세요.' },
+            'es': { web: 'IDIOMA WEB', title: 'Traductor SRT', sub: 'Subtítulos globales fáciles.', src: 'Idioma original', dest: 'Idioma de destino', format: 'Formato:', file: 'Haz clic o arrastra el archivo', btn: 'Iniciar traducción', load: 'Traduciendo...', mTitle: '¡Éxito!', mDesc: 'Verifique la traducción de nuevo.', mPremium: 'Límite de 1 por semana. ¡Compra acceso ilimitado!', mBtn: 'OK', alert: '¡Límite de 1 traducción por semana!', fileRequired: 'Por favor, seleccione un archivo.' },
+            'ja': { web: 'ウェブ言語', title: 'SRT字幕翻訳', sub: '字幕を簡単に翻訳します。', src: '元の言語', dest: '翻訳後の言語', format: '形式:', file: 'ファイルを選択', btn: '翻訳開始', load: '翻訳中...', mTitle: '成功！', mDesc: '翻訳をもう一度確認してください。', mPremium: '無料版は週1回のみ。無制限パスを購入してください！', mBtn: 'OK', alert: '無料版は週1回までです！', fileRequired: 'ファイルを選択してください。' },
+            'zh-cn': { web: '网站语言', title: 'SRT 字幕翻译器', sub: '轻松翻译全球字幕。', src: '原始语言', dest: '目标语言', format: '格式:', file: '点击 or 拖拽文件', btn: '开始翻译', load: '正在翻译...', mTitle: '完成！', mDesc: '请再次检查翻译。', mPremium: '免费用户每周1次。购买无限制通行证！', mBtn: '好的', alert: '免费用户每周只能翻译一次！', fileRequired: '请选择一个文件。' }
         };
 
         function applyLanguage(langCode) {
@@ -174,18 +180,22 @@
             document.getElementById('lang-menu').classList.add('hidden');
         }
 
-        // 초기화
+        // 파일 선택 안되었을 때 메시지 언어별 처리
+        function handleInvalidFile(input) {
+            const currentLang = localStorage.getItem('web_lang') || 'en';
+            const content = i18n[currentLang] || i18n['en'];
+            input.setCustomValidity(content.fileRequired);
+        }
+
         const srcSelect = document.getElementById('src-select');
         const destSelect = document.getElementById('dest-select');
         const langOptions = document.getElementById('lang-options');
 
-        // 드롭다운 (12개 언어 유지)
         transLanguages.forEach(lang => {
             srcSelect.add(new Option(lang.name, lang.code));
             destSelect.add(new Option(lang.name, lang.code));
         });
 
-        // 웹 언어 선택 메뉴 (5개 언어만)
         uiLanguages.forEach(lang => {
             const btn = document.createElement('button');
             btn.className = "flex w-full items-center gap-3 px-4 py-2 text-[11px] font-semibold text-slate-700 hover:bg-slate-50";
@@ -253,8 +263,8 @@
         document.onclick = () => document.getElementById('lang-menu').classList.add('hidden');
         function closeModal() { document.getElementById('result-modal').classList.add('hidden'); }
 
-        // 파일 선택 시 즉시 이름 표시 로직
         document.getElementById('file-input').onchange = function() {
+            this.setCustomValidity(''); // 파일 선택 시 오류 메시지 초기화
             const fileNameDisplay = document.getElementById('file-name-display');
             const fileText = document.getElementById('file-text');
             if (this.files.length > 0) {
