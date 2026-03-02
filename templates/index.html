@@ -25,12 +25,8 @@
                     <svg class="h-3 w-3 text-slate-400" viewBox="0 0 20 20" fill="none" stroke="currentColor"><path d="M5 7l5 6 5-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
                 </button>
                 <div id="lang-menu" class="hidden absolute right-0 mt-2 w-48 rounded-2xl bg-white py-2 shadow-xl ring-1 ring-black/5 overflow-hidden">
-                    <div class="max-h-64 overflow-y-auto">
-                        <button data-lang="en" class="flex w-full items-center gap-3 px-4 py-2.5 text-[11px] font-semibold text-slate-700 hover:bg-slate-50"><span>🇺🇸</span><span>English</span></button>
-                        <button data-lang="ko" class="flex w-full items-center gap-3 px-4 py-2.5 text-[11px] font-semibold text-slate-700 hover:bg-slate-50"><span>🇰🇷</span><span>한국어 (Korean)</span></button>
-                        <button data-lang="es" class="flex w-full items-center gap-3 px-4 py-2.5 text-[11px] font-semibold text-slate-700 hover:bg-slate-50"><span>🇪🇸</span><span>Español</span></button>
-                        <button data-lang="ja" class="flex w-full items-center gap-3 px-4 py-2.5 text-[11px] font-semibold text-slate-700 hover:bg-slate-50"><span>🇯🇵</span><span>日本語</span></button>
-                    </div>
+                    <div id="lang-options" class="max-h-64 overflow-y-auto">
+                        </div>
                 </div>
             </div>
         </div>
@@ -57,35 +53,25 @@
             <div class="grid grid-cols-1 gap-6">
                 <div>
                     <label id="label-src" class="block text-[11px] font-bold text-slate-400 uppercase mb-3 ml-1">Original Language</label>
-                    <select name="src_lang" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer text-slate-700 font-semibold transition-all">
-                        <option value="ko">한국어 (Korean)</option>
-                        <option value="en" selected>English</option>
-                        <option value="es">Español</option>
-                        <option value="ja">日本語</option>
-                        <option value="zh-cn">简体中文</option>
-                    </select>
+                    <select id="src-select" name="src_lang" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer text-slate-700 font-semibold transition-all">
+                        </select>
                 </div>
                 <div>
                     <label id="label-dest" class="block text-[11px] font-bold text-slate-400 uppercase mb-3 ml-1">Target Language</label>
-                    <select name="dest_lang" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer text-slate-700 font-semibold transition-all">
-                        <option value="ko" selected>한국어 (Korean)</option>
-                        <option value="en">English</option>
-                        <option value="es">Español</option>
-                        <option value="ja">日本語</option>
-                        <option value="zh-cn">简体中文</option>
-                    </select>
+                    <select id="dest-select" name="dest_lang" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none cursor-pointer text-slate-700 font-semibold transition-all">
+                        </select>
                 </div>
             </div>
 
             <div class="flex items-center justify-center space-x-8 py-5 bg-slate-50/50 rounded-2xl border border-slate-100">
                 <span class="text-[10px] font-bold text-slate-400">FORMAT:</span>
                 <label class="flex items-center cursor-pointer group">
-                    <input type="radio" name="newline_type" value="crlf" checked class="w-4 h-4 text-indigo-600 border-slate-300">
-                    <span class="ml-2 text-xs text-slate-600 font-bold group-hover:text-indigo-600">Windows (CRLF)</span>
+                    <input type="radio" name="newline_type" value="crlf" checked class="w-4 h-4 text-indigo-600">
+                    <span class="ml-2 text-xs text-slate-600 font-bold">Windows (CRLF)</span>
                 </label>
                 <label class="flex items-center cursor-pointer group">
-                    <input type="radio" name="newline_type" value="lf" class="w-4 h-4 text-indigo-600 border-slate-300">
-                    <span class="ml-2 text-xs text-slate-600 font-bold group-hover:text-indigo-600">Mac/Linux (LF)</span>
+                    <input type="radio" name="newline_type" value="lf" class="w-4 h-4 text-indigo-600">
+                    <span class="ml-2 text-xs text-slate-600 font-bold">Mac/Linux (LF)</span>
                 </label>
             </div>
 
@@ -101,28 +87,88 @@
             <button type="submit" id="submit-btn" class="w-full bg-indigo-600 text-white text-lg font-bold py-5 rounded-2xl hover:bg-indigo-700 shadow-2xl transition-all">Start Translation</button>
             <div id="loading-area" class="hidden mt-6 text-center">
                 <div class="inline-block animate-spin rounded-full h-10 w-10 border-[4px] border-indigo-500 border-t-transparent mb-3"></div>
-                <p class="text-[11px] font-bold text-slate-400 tracking-wider">TRANSLATING...</p>
+                <p id="loading-text" class="text-[11px] font-bold text-slate-400 tracking-wider">TRANSLATING...</p>
             </div>
         </form>
     </div>
 
     <div id="result-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-md flex items-center justify-center z-[100] p-4">
         <div class="bg-white rounded-[2.5rem] shadow-2xl max-w-sm w-full p-8 text-center">
-            <h2 id="modal-title" class="text-2xl font-extrabold text-slate-900 mb-3">Translation Complete!</h2>
-            <p id="modal-desc" class="text-slate-500 text-sm font-medium mb-8">Please check the translation accuracy.</p>
-            <button onclick="closeModal()" class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl">OK</button>
+            <h2 id="modal-title" class="text-2xl font-extrabold text-slate-900 mb-3">Success!</h2>
+            <p id="modal-desc" class="text-slate-500 text-sm font-medium mb-8">Ready for download.</p>
+            <button onclick="closeModal()" id="modal-btn" class="w-full bg-slate-900 text-white font-bold py-4 rounded-xl">OK</button>
         </div>
     </div>
 
     <script>
-        // Supabase Initialization
+        // 1. Language Definitions (12 Languages)
+        const languages = [
+            { code: 'en', name: 'English', flag: '🇺🇸' },
+            { code: 'ko', name: '한국어 (Korean)', flag: '🇰🇷' },
+            { code: 'es', name: 'Español (Spanish)', flag: '🇪🇸' },
+            { code: 'ja', name: '日本語 (Japanese)', flag: '🇯🇵' },
+            { code: 'zh-cn', name: '简体中文 (Chinese)', flag: '🇨🇳' },
+            { code: 'vi', name: 'Tiếng Việt (Vietnamese)', flag: '🇻🇳' },
+            { code: 'th', name: 'ไทย (Thai)', flag: '🇹🇭' },
+            { code: 'de', name: 'Deutsch (German)', flag: '🇩🇪' },
+            { code: 'fr', name: 'Français (French)', flag: '🇫🇷' },
+            { code: 'it', name: 'Italiano (Italian)', flag: '🇮🇹' },
+            { code: 'pt', name: 'Português (Portuguese)', flag: '🇵🇹' },
+            { code: 'ru', name: 'Русский (Russian)', flag: '🇷🇺' }
+        ];
+
+        const i18n = {
+            'en': { title: 'SRT Translator', sub: 'Global subtitle conversion made easy.', src: 'Original Language', dest: 'Target Language', file: 'Click or drag .srt file here', btn: 'Start Translation', load: 'TRANSLATING...', mTitle: 'Translation Complete!', mDesc: 'Please double-check the accuracy.', mBtn: 'OK' },
+            'ko': { title: 'SRT 자막 번역기', sub: '전 세계 언어로 자막을 번역하세요.', src: '원본 언어', dest: '번역할 언어', file: '.srt 파일을 클릭 또는 드래그하세요', btn: '번역 시작', load: '번역 중...', mTitle: '번역 완료!', mDesc: '번역된 자막을 꼭 다시 확인해주세요.', mBtn: '확인' },
+            'es': { title: 'Traductor SRT', sub: 'Convierte subtítulos fácilmente.', src: 'Idioma original', dest: 'Idioma de destino', file: 'Haz clic o arrastra el archivo .srt', btn: 'Empezar traducción', load: 'TRADUCIENDO...', mTitle: '¡Completo!', mDesc: 'Revisa la precisión.', mBtn: 'OK' },
+            'ja': { title: 'SRT 字막 번역', sub: '字幕을 편리하게 번역.', src: '元の言語', dest: '翻訳後の言語', file: 'ファイルを選択', btn: '翻訳開始', load: '翻訳中...', mTitle: '翻訳完了！', mDesc: '内容を確認してください。', mBtn: 'OK' }
+        };
+
+        // 2. Initialize UI
+        const srcSelect = document.getElementById('src-select');
+        const destSelect = document.getElementById('dest-select');
+        const langOptions = document.getElementById('lang-options');
+
+        languages.forEach(lang => {
+            // Select dropdowns
+            srcSelect.add(new Option(lang.name, lang.code));
+            destSelect.add(new Option(lang.name, lang.code));
+            
+            // Web Language menu
+            const btn = document.createElement('button');
+            btn.className = "flex w-full items-center gap-3 px-4 py-2.5 text-[11px] font-semibold text-slate-700 hover:bg-slate-50";
+            btn.innerHTML = `<span>${lang.flag}</span><span>${lang.name}</span>`;
+            btn.onclick = () => applyLanguage(lang.code);
+            langOptions.appendChild(btn);
+        });
+        
+        // Default selections
+        srcSelect.value = 'en';
+        destSelect.value = 'ko';
+
+        function applyLanguage(langCode) {
+            const content = i18n[langCode] || i18n['en'];
+            const lang = languages.find(l => l.code === langCode);
+            document.getElementById('lang-current-label').innerText = `${lang.flag} ${lang.name}`;
+            document.getElementById('main-title').innerText = content.title;
+            document.getElementById('sub-title').innerText = content.sub;
+            document.getElementById('label-src').innerText = content.src;
+            document.getElementById('label-dest').innerText = content.dest;
+            document.getElementById('file-text').innerText = content.file;
+            document.getElementById('submit-btn').innerText = content.btn;
+            document.getElementById('loading-text').innerText = content.load;
+            document.getElementById('modal-title').innerText = content.mTitle;
+            document.getElementById('modal-desc').innerText = content.mDesc;
+            document.getElementById('modal-btn').innerText = content.mBtn;
+            document.getElementById('lang-menu').classList.add('hidden');
+        }
+
+        // 3. Supabase & Auth Logic
         const supabaseUrl = 'https://dwkwvqldlykzmnfffflu.supabase.co';
-        const supabaseKey = 'sb_publishable_vmHL9-yPRdTF9jI57kZaqQ_a22ZqJp2';
+        const supabaseKey = 'sb_publishable_vmHL9-yPRdTF9jI57kZaqQ_a22ZqJp2'; 
         const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
 
         let currentUser = null;
-
-        // Auth Status Check
         _supabase.auth.onAuthStateChange((event, session) => {
             const loginBtn = document.getElementById('google-login-btn');
             const info = document.getElementById('user-info');
@@ -141,28 +187,19 @@
         async function signInWithGoogle() {
             await _supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin }});
         }
+        async function signOut() { await _supabase.auth.signOut(); location.reload(); }
 
-        async function signOut() {
-            await _supabase.auth.signOut();
-            location.reload();
-        }
-
-        // Translation logic with Limits
+        // 4. Form Submission & Limits
         const form = document.getElementById('trans-form');
         form.onsubmit = async function(e) {
             e.preventDefault();
-
-            // 유저 결제 여부 확인 (나중에 DB 메타데이터에 추가할 값)
             const isPaid = currentUser && currentUser.user_metadata && currentUser.user_metadata.is_paid;
-
-            // 결제 안 한 사람은(비회원/회원 모두) 일주일 1회 제한
             if (!isPaid) {
                 const lastUse = localStorage.getItem("last_translate_date");
                 if (lastUse) {
                     const diff = (new Date() - new Date(lastUse)) / (1000 * 60 * 60 * 24);
                     if (diff < 7) {
-                        const msg = currentUser ? "회원님도 기본 주 1회만 가능합니다. 무제한은 유료 구독이 필요합니다!" : "비회원은 주 1회만 가능합니다. 로그인하고 구독을 시작해 보세요!";
-                        alert(msg);
+                        alert(currentUser ? "회원님도 기본 주 1회만 가능합니다. 무제한은 유료 구독이 필요합니다!" : "비회원은 주 1회만 가능합니다. 로그인하고 구독을 시작해 보세요!");
                         return;
                     }
                 }
@@ -170,8 +207,7 @@
 
             const submitBtn = document.getElementById('submit-btn');
             const loadingArea = document.getElementById('loading-area');
-            submitBtn.disabled = true;
-            loadingArea.classList.remove('hidden');
+            submitBtn.disabled = true; loadingArea.classList.remove('hidden');
 
             const formData = new FormData(form);
             try {
@@ -180,19 +216,17 @@
                     const blob = await response.blob();
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `translated_${formData.get('dest_lang')}.srt`;
-                    a.click();
-                    
-                    // 유료 유저가 아닐 때만 기록
+                    a.href = url; a.download = `translated_${formData.get('dest_lang')}.srt`; a.click();
                     if (!isPaid) localStorage.setItem("last_translate_date", new Date().toISOString());
-                    
                     document.getElementById('result-modal').classList.remove('hidden');
                 }
             } catch (err) { alert("Error!"); }
             finally { submitBtn.disabled = false; loadingArea.classList.add('hidden'); }
         };
 
+        // UI Interactions
+        document.getElementById('lang-toggle').onclick = (e) => { e.stopPropagation(); document.getElementById('lang-menu').classList.toggle('hidden'); };
+        document.onclick = () => document.getElementById('lang-menu').classList.add('hidden');
         function closeModal() { document.getElementById('result-modal').classList.add('hidden'); }
         document.getElementById('file-input').onchange = function() {
             if (this.files.length > 0) {
@@ -200,12 +234,6 @@
                 document.getElementById('file-name').classList.remove('hidden').innerText = "📄 " + this.files[0].name;
             }
         };
-
-        // Language toggle UI (simplified for English/Korean)
-        const langToggle = document.getElementById('lang-toggle');
-        const langMenu = document.getElementById('lang-menu');
-        langToggle.addEventListener('click', (e) => { e.stopPropagation(); langMenu.classList.toggle('hidden'); });
-        document.addEventListener('click', () => langMenu.classList.add('hidden'));
     </script>
 </body>
 </html>
