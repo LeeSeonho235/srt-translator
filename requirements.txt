@@ -3,3 +3,4 @@ pysrt
 deepl
 python-dotenv
 gunicorn
+supabase
