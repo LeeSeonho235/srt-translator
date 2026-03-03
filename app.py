@@ -78,7 +78,7 @@ def translate_srt():
         return f"Error: {str(e)}", 500
 
 if __name__ == "__main__":
-    # Render는 PORT 환경 변수를 통해 포트를 지정하므로 이를 읽어와야 합니다.
+    # Render 환경변수 PORT가 있으면 사용하고, 없으면 5000번 사용
     port = int(os.environ.get("PORT", 5000))
-    # host를 0.0.0.0으로 설정해야 외부(Render)에서 접속이 가능합니다.
+    # host를 0.0.0.0으로 설정해야 외부 접속이 가능합니다.
     app.run(host="0.0.0.0", port=port)
