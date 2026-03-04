@@ -97,53 +97,66 @@
 
 {% elif view == 'pricing' %}
     <!-- ========== 플랜 선택 ========== -->
-    <div class="container mx-auto px-4 py-12 max-w-6xl w-full">
+    <div class="fixed top-8 right-8 flex flex-col items-end gap-3 z-50">
+        <div class="text-right">
+            <p id="pricing-lang-label" class="text-[9px] font-bold tracking-[0.15em] uppercase text-slate-400 mb-1 mr-1">WEB LANGUAGE</p>
+            <div class="relative inline-block">
+                <button id="pricing-lang-toggle" type="button" class="inline-flex items-center gap-2 rounded-full border border-slate-600 bg-slate-800 px-4 py-1.5 text-[11px] font-semibold text-slate-200 shadow-sm hover:bg-slate-700 transition-all">
+                    <span id="pricing-lang-current" class="whitespace-nowrap">🇺🇸 English</span>
+                    <svg class="h-3 w-3 text-slate-400" viewBox="0 0 20 20" fill="none" stroke="currentColor"><path d="M5 7l5 6 5-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </button>
+                <div id="pricing-lang-menu" class="hidden absolute right-0 mt-2 w-48 origin-top-right rounded-xl bg-slate-800 border border-slate-600 py-1 shadow-lg z-20 overflow-hidden text-left"><div id="pricing-lang-options"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-12 max-w-6xl w-full pt-20">
         <div class="text-center mb-12">
-            <a href="/" class="inline-block text-slate-400 hover:text-white text-sm font-bold mb-6 transition-colors">← 홈으로</a>
-            <h1 class="text-3xl font-extrabold mb-2">플랜 업그레이드</h1>
-            <p class="text-slate-400">SRT 자막 번역 무제한 이용권</p>
+            <a href="/" id="pricing-back" class="inline-block text-slate-400 hover:text-white text-sm font-bold mb-6 transition-colors">← Home</a>
+            <h1 id="pricing-title" class="text-3xl font-extrabold mb-2">Plan Upgrade</h1>
+            <p id="pricing-subtitle" class="text-slate-400">Unlimited SRT subtitle translation</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700 relative">
                 <h3 class="text-xl font-bold mb-2">Free</h3>
-                <p class="text-3xl font-extrabold mb-4">₩0 <span class="text-sm font-normal text-slate-400">/ 월</span></p>
-                <p class="text-slate-400 text-sm mb-6">주 1회 번역 가능</p>
+                <p class="text-3xl font-extrabold mb-4">₩0 <span id="free-period" class="text-sm font-normal text-slate-400">/ mo</span></p>
+                <p id="free-desc" class="text-slate-400 text-sm mb-6">1 translation per week</p>
                 <ul class="space-y-3 text-sm text-slate-300 mb-8">
-                    <li class="flex items-center gap-2">◇ 기본 번역 기능</li>
-                    <li class="flex items-center gap-2">○ 주 1회 제한</li>
+                    <li class="flex items-center gap-2"><span id="free-f1">◇ Basic translation</span></li>
+                    <li class="flex items-center gap-2"><span id="free-f2">○ Weekly limit</span></li>
                 </ul>
-                <button disabled class="w-full py-3 rounded-xl bg-slate-700 text-slate-400 font-bold cursor-not-allowed">현재 플랜</button>
+                <button disabled class="w-full py-3 rounded-xl bg-slate-700 text-slate-400 font-bold cursor-not-allowed" id="pricing-current-plan">Current Plan</button>
             </div>
             <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700 relative hover:border-indigo-500/50 transition-colors">
                 <h3 class="text-xl font-bold mb-2">A Week</h3>
-                <p class="text-3xl font-extrabold mb-4">₩5,000 <span class="text-sm font-normal text-slate-400">/ 주</span></p>
-                <p class="text-slate-400 text-sm mb-6">1주일 무제한 번역</p>
+                <p class="text-3xl font-extrabold mb-4">₩5,000 <span id="week-period" class="text-sm font-normal text-slate-400">/ wk</span></p>
+                <p id="week-desc" class="text-slate-400 text-sm mb-6">1 week unlimited</p>
                 <ul class="space-y-3 text-sm text-slate-300 mb-8">
-                    <li class="flex items-center gap-2">☆ 1주일 무제한</li>
-                    <li class="flex items-center gap-2">○ 모든 언어 지원</li>
+                    <li class="flex items-center gap-2"><span id="week-f1">☆ 1 week unlimited</span></li>
+                    <li class="flex items-center gap-2"><span id="week-f2">○ All languages</span></li>
                 </ul>
-                <button onclick="requestPayment('week', 5000, 'A Week 1주일 이용권')" class="w-full py-3 rounded-xl bg-white text-slate-900 font-bold hover:bg-slate-100 transition-colors">구매하기</button>
+                <button onclick="requestPayment('week', 5000, 'A Week 1주일 이용권')" class="w-full py-3 rounded-xl bg-white text-slate-900 font-bold hover:bg-slate-100 transition-colors" id="pricing-buy-btn">Buy</button>
             </div>
             <div class="bg-slate-800/50 rounded-2xl p-6 border-2 border-indigo-500 relative">
-                <span class="absolute top-4 right-4 bg-indigo-600 text-white text-xs font-bold px-2 py-1 rounded-full">인기</span>
+                <span id="pricing-popular" class="absolute top-4 right-4 bg-indigo-600 text-white text-xs font-bold px-2 py-1 rounded-full">Popular</span>
                 <h3 class="text-xl font-bold mb-2">A Month</h3>
-                <p class="text-3xl font-extrabold mb-4">₩10,000 <span class="text-sm font-normal text-slate-400">/ 월</span></p>
-                <p class="text-slate-400 text-sm mb-6">한 달 무제한 번역</p>
+                <p class="text-3xl font-extrabold mb-4">₩10,000 <span id="month-period" class="text-sm font-normal text-slate-400">/ mo</span></p>
+                <p id="month-desc" class="text-slate-400 text-sm mb-6">1 month unlimited</p>
                 <ul class="space-y-3 text-sm text-slate-300 mb-8">
-                    <li class="flex items-center gap-2">☆ 한 달 무제한</li>
-                    <li class="flex items-center gap-2">○ 모든 언어 지원</li>
-                    <li class="flex items-center gap-2">◇ 가장 인기 있는 플랜</li>
+                    <li class="flex items-center gap-2"><span id="month-f1">☆ 1 month unlimited</span></li>
+                    <li class="flex items-center gap-2"><span id="month-f2">○ All languages</span></li>
+                    <li class="flex items-center gap-2"><span id="month-f3">◇ Most popular plan</span></li>
                 </ul>
-                <button onclick="requestPayment('month', 10000, 'A Month 1개월 이용권')" class="w-full py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-colors">구매하기</button>
+                <button onclick="requestPayment('month', 10000, 'A Month 1개월 이용권')" class="w-full py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-colors" id="pricing-buy-month">Buy</button>
             </div>
             <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700 relative opacity-80">
                 <h3 class="text-xl font-bold mb-2">Pro</h3>
-                <p class="text-slate-500 text-sm font-bold mb-4">준비중</p>
-                <p class="text-slate-500 text-sm mb-6">곧 만나요</p>
+                <p id="pro-coming" class="text-slate-500 text-sm font-bold mb-4">Coming Soon</p>
+                <p id="pro-desc" class="text-slate-500 text-sm mb-6">Stay tuned</p>
                 <ul class="space-y-3 text-sm text-slate-500 mb-8">
-                    <li class="flex items-center gap-2">☆ 향후 출시 예정</li>
+                    <li class="flex items-center gap-2"><span id="pro-f1">☆ Coming soon</span></li>
                 </ul>
-                <button disabled class="w-full py-3 rounded-xl bg-slate-700 text-slate-500 font-bold cursor-not-allowed">준비중</button>
+                <button disabled class="w-full py-3 rounded-xl bg-slate-700 text-slate-500 font-bold cursor-not-allowed" id="pro-disabled">Coming Soon</button>
             </div>
         </div>
     </div>
@@ -204,8 +217,20 @@
 {% elif view == 'pricing' %}
         const CLIENT_KEY = "{{ TOSSPAYMENTS_CLIENT_KEY }}";
         const tossPayments = TossPayments(CLIENT_KEY);
-        function generateOrderId(){return 'order_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);}
-        function requestPayment(planType,amount,orderName){const orderId=generateOrderId();tossPayments.requestPayment('카드',{amount:amount,orderId:orderId,orderName:orderName,successUrl:window.location.origin+'/success?plan='+planType,failUrl:window.location.origin+'/fail'}).catch(function(err){if(err.code==='USER_CANCEL')alert('결제가 취소되었습니다.');else alert('결제 요청 중 오류가 발생했습니다: '+(err.message||'알 수 없는 오류'));});}
+        const pricingUiLangs = [{code:'en',name:'English',flag:'🇺🇸'},{code:'ko',name:'한국어 (Korean)',flag:'🇰🇷'},{code:'es',name:'Español (Spanish)',flag:'🇪🇸'},{code:'ja',name:'日本語 (Japanese)',flag:'🇯🇵'},{code:'zh-cn',name:'简体中文 (Chinese)',flag:'🇨🇳'}];
+        const pricingI18n = {
+            'en':{web:'WEB LANGUAGE',back:'Home',title:'Plan Upgrade',subtitle:'Unlimited SRT subtitle translation',freePeriod:'/ mo',freeDesc:'1 translation per week',freeF1:'◇ Basic translation',freeF2:'○ Weekly limit',currentPlan:'Current Plan',weekPeriod:'/ wk',weekDesc:'1 week unlimited',weekF1:'☆ 1 week unlimited',weekF2:'○ All languages',buy:'Buy',popular:'Popular',monthPeriod:'/ mo',monthDesc:'1 month unlimited',monthF1:'☆ 1 month unlimited',monthF2:'○ All languages',monthF3:'◇ Most popular plan',comingSoon:'Coming Soon',proDesc:'Stay tuned',proF1:'☆ Coming soon',payCancel:'Payment cancelled.',payError:'Payment error: '},
+            'ko':{web:'웹 언어 설정',back:'홈으로',title:'플랜 업그레이드',subtitle:'SRT 자막 번역 무제한 이용권',freePeriod:'/ 월',freeDesc:'주 1회 번역 가능',freeF1:'◇ 기본 번역 기능',freeF2:'○ 주 1회 제한',currentPlan:'현재 플랜',weekPeriod:'/ 주',weekDesc:'1주일 무제한 번역',weekF1:'☆ 1주일 무제한',weekF2:'○ 모든 언어 지원',buy:'구매하기',popular:'인기',monthPeriod:'/ 월',monthDesc:'한 달 무제한 번역',monthF1:'☆ 한 달 무제한',monthF2:'○ 모든 언어 지원',monthF3:'◇ 가장 인기 있는 플랜',comingSoon:'준비중',proDesc:'곧 만나요',proF1:'☆ 향후 출시 예정',payCancel:'결제가 취소되었습니다.',payError:'결제 요청 중 오류가 발생했습니다: '},
+            'es':{web:'IDIOMA WEB',back:'Inicio',title:'Actualizar plan',subtitle:'Traducción ilimitada de subtítulos SRT',freePeriod:'/ mes',freeDesc:'1 traducción por semana',freeF1:'◇ Traducción básica',freeF2:'○ Límite semanal',currentPlan:'Plan actual',weekPeriod:'/ sem',weekDesc:'1 semana ilimitada',weekF1:'☆ 1 semana ilimitada',weekF2:'○ Todos los idiomas',buy:'Comprar',popular:'Popular',monthPeriod:'/ mes',monthDesc:'1 mes ilimitado',monthF1:'☆ 1 mes ilimitado',monthF2:'○ Todos los idiomas',monthF3:'◇ Plan más popular',comingSoon:'Próximamente',proDesc:'Muy pronto',proF1:'☆ Próximamente',payCancel:'Pago cancelado.',payError:'Error de pago: '},
+            'ja':{web:'ウェブ言語',back:'ホーム',title:'プランアップグレード',subtitle:'SRT字幕無制限翻訳',freePeriod:'/ 月',freeDesc:'週1回翻訳可能',freeF1:'◇ 基本翻訳',freeF2:'○ 週間制限',currentPlan:'現在のプラン',weekPeriod:'/ 週',weekDesc:'1週間無制限',weekF1:'☆ 1週間無制限',weekF2:'○ 全言語対応',buy:'購入',popular:'人気',monthPeriod:'/ 月',monthDesc:'1ヶ月無制限',monthF1:'☆ 1ヶ月無制限',monthF2:'○ 全言語対応',monthF3:'◇ 最も人気のプラン',comingSoon:'準備中',proDesc:'近日公開',proF1:'☆ 近日公開',payCancel:'支払いがキャンセルされました。',payError:'支払いエラー: '},
+            'zh-cn':{web:'网站语言',back:'首页',title:'套餐升级',subtitle:'SRT字幕翻译无限制',freePeriod:'/ 月',freeDesc:'每周1次翻译',freeF1:'◇ 基本翻译',freeF2:'○ 周限制',currentPlan:'当前套餐',weekPeriod:'/ 周',weekDesc:'1周无限',weekF1:'☆ 1周无限',weekF2:'○ 所有语言',buy:'购买',popular:'热门',monthPeriod:'/ 月',monthDesc:'1个月无限',monthF1:'☆ 1个月无限',monthF2:'○ 所有语言',monthF3:'◇ 最受欢迎',comingSoon:'即将推出',proDesc:'敬请期待',proF1:'☆ 即将推出',payCancel:'支付已取消。',payError:'支付错误: '}
+        };
+        function applyPricingLang(lc){const c=pricingI18n[lc]||pricingI18n['en'];const l=pricingUiLangs.find(x=>x.code===lc)||pricingUiLangs[0];localStorage.setItem('web_lang',lc);document.getElementById('pricing-lang-label').innerText=c.web;document.getElementById('pricing-lang-current').innerText=l.flag+' '+l.name;document.getElementById('pricing-back').innerHTML='← '+c.back;document.getElementById('pricing-title').innerText=c.title;document.getElementById('pricing-subtitle').innerText=c.subtitle;document.getElementById('free-period').innerText=c.freePeriod;document.getElementById('free-desc').innerText=c.freeDesc;document.getElementById('free-f1').innerText=c.freeF1;document.getElementById('free-f2').innerText=c.freeF2;document.getElementById('pricing-current-plan').innerText=c.currentPlan;document.getElementById('week-period').innerText=c.weekPeriod;document.getElementById('week-desc').innerText=c.weekDesc;document.getElementById('week-f1').innerText=c.weekF1;document.getElementById('week-f2').innerText=c.weekF2;document.getElementById('pricing-buy-btn').innerText=c.buy;document.getElementById('pricing-popular').innerText=c.popular;document.getElementById('month-period').innerText=c.monthPeriod;document.getElementById('month-desc').innerText=c.monthDesc;document.getElementById('month-f1').innerText=c.monthF1;document.getElementById('month-f2').innerText=c.monthF2;document.getElementById('month-f3').innerText=c.monthF3;document.getElementById('pricing-buy-month').innerText=c.buy;document.getElementById('pro-coming').innerText=c.comingSoon;document.getElementById('pro-desc').innerText=c.proDesc;document.getElementById('pro-f1').innerText=c.proF1;document.getElementById('pro-disabled').innerText=c.comingSoon;document.getElementById('pricing-lang-menu').classList.add('hidden');}
+        pricingUiLangs.forEach(l=>{const b=document.createElement('button');b.className='flex w-full items-center gap-3 px-4 py-2 text-[11px] font-semibold text-slate-200 hover:bg-slate-700';b.innerHTML='<span>'+l.flag+'</span><span>'+l.name+'</span>';b.onclick=()=>applyPricingLang(l.code);document.getElementById('pricing-lang-options').appendChild(b);});
+        applyPricingLang(localStorage.getItem('web_lang')||'en');
+        document.getElementById('pricing-lang-toggle').onclick=(e)=>{e.stopPropagation();document.getElementById('pricing-lang-menu').classList.toggle('hidden');};
+        document.onclick=()=>document.getElementById('pricing-lang-menu').classList.add('hidden');
+        function requestPayment(planType,amount,orderName){const orderId='order_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);const c=pricingI18n[localStorage.getItem('web_lang')]||pricingI18n['en'];tossPayments.requestPayment('카드',{amount:amount,orderId:orderId,orderName:orderName,successUrl:window.location.origin+'/success?plan='+planType,failUrl:window.location.origin+'/fail'}).catch(function(err){if(err.code==='USER_CANCEL')alert(c.payCancel);else alert(c.payError+(err.message||''));});}
 {% endif %}
     </script>
 </body>
