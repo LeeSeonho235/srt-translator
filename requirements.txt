@@ -4,3 +4,4 @@ deepl
 python-dotenv
 gunicorn
 supabase
+requests
