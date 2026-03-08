@@ -3,235 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if view == 'main' %}SRT Translator{% elif view == 'pricing' %}플랜 업그레이드{% elif view == 'success' %}결제 완료{% elif view == 'fail' %}결제 실패{% endif %} - SRT Translator</title>
+    <title>SRT Translator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script src="https://js.tosspayments.com/v1/payment"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
         body { font-family: 'Inter', sans-serif; }
-        .drop-zone { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .drop-zone.active { border-color: #6366f1; background-color: #f8fafc; scale: 1.02; }
-        select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.25rem; }
+        .drop-zone { transition: all 0.3s ease; }
+        .drop-zone.active { border-color: #6366f1; background-color: #f8fafc; }
     </style>
 </head>
-<body class="{% if view == 'pricing' %}bg-slate-900 min-h-screen text-white{% else %}bg-slate-50 min-h-screen flex flex-col items-center justify-center p-4{% endif %}">
+<body class="{% if view == 'pricing' %}bg-slate-900 text-white{% else %}bg-slate-50 flex items-center justify-center min-h-screen p-4{% endif %}">
 
 {% if view == 'main' %}
-    <!-- ========== 메인: 번역 폼 ========== -->
+    <!-- 메인 번역 화면 (생략 없이 통합) -->
     <div class="fixed top-8 right-8 flex flex-col items-end gap-3 z-50">
         <div class="text-right">
-            <p id="web-lang-label" class="text-[9px] font-bold tracking-[0.15em] uppercase text-slate-400 mb-1 mr-1">WEB LANGUAGE</p>
-            <div class="relative inline-block">
-                <button id="lang-toggle" type="button" class="inline-flex items-center gap-2 rounded-full border border-slate-200 bg-white px-4 py-1.5 text-[11px] font-semibold text-slate-700 shadow-sm hover:bg-slate-50 transition-all">
-                    <span id="lang-current-label" class="whitespace-nowrap">🇺🇸 English</span>
-                    <svg class="h-3 w-3 text-slate-400" viewBox="0 0 20 20" fill="none" stroke="currentColor"><path d="M5 7l5 6 5-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                </button>
-                <div id="lang-menu" class="hidden absolute right-0 mt-2 w-48 origin-top-right rounded-xl bg-white py-1 shadow-lg ring-1 ring-black/5 z-20 overflow-hidden text-left"><div id="lang-options"></div></div>
-            </div>
-        </div>
-        <div id="auth-section">
-            <button id="google-login-btn" onclick="signInWithGoogle()" class="flex items-center gap-2 bg-white border border-slate-200 px-4 py-1.5 rounded-full text-[11px] font-bold text-slate-700 shadow-sm hover:bg-slate-50 transition-all">
-                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-3.5 h-3.5"> Google Login
+            <p id="web-lang-label" class="text-[9px] font-bold text-slate-400 mb-1 uppercase tracking-widest">WEB LANGUAGE</p>
+            <button id="lang-toggle" class="bg-white border border-slate-200 px-4 py-1.5 rounded-full text-[11px] font-bold text-slate-700 shadow-sm">
+                <span id="lang-current-label">🇺🇸 English</span>
             </button>
-            <div id="user-profile" class="hidden flex items-center gap-3 bg-white border border-slate-200 px-4 py-1.5 rounded-full shadow-sm">
-                <span id="user-email" class="text-[11px] font-bold text-slate-600"></span>
-                <button onclick="signOut()" class="text-[11px] text-red-500 font-bold hover:underline">Logout</button>
+            <div id="lang-menu" class="hidden absolute right-0 mt-2 w-40 bg-white shadow-xl rounded-xl py-2 text-left z-50 border border-slate-100">
+                <button onclick="applyLanguage('en')" class="block w-full px-4 py-2 text-xs hover:bg-slate-50">🇺🇸 English</button>
+                <button onclick="applyLanguage('ko')" class="block w-full px-4 py-2 text-xs hover:bg-slate-50">🇰🇷 한국어</button>
             </div>
         </div>
     </div>
 
-    <div class="bg-white py-12 px-8 md:px-12 rounded-[2.5rem] shadow-2xl w-full max-w-lg border border-slate-100 relative text-center">
-        <header class="mb-10">
-            <h1 id="main-title" class="text-3xl font-extrabold text-slate-900 tracking-tight">SRT Translator</h1>
-            <p id="sub-title" class="text-slate-500 mt-2 text-sm font-medium">Global subtitle conversion made easy.</p>
-        </header>
+    <div class="bg-white py-12 px-10 rounded-[2.5rem] shadow-2xl w-full max-w-lg border border-slate-100 text-center">
+        <h1 id="main-title" class="text-3xl font-extrabold text-slate-900 mb-2">SRT Translator</h1>
+        <p id="sub-title" class="text-slate-500 mb-10 text-sm font-medium">Subtitle conversion made easy.</p>
+        
         <form id="trans-form" class="space-y-6 text-left">
-            <div>
-                <label id="label-src" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 ml-1">Original Language</label>
-                <select id="src-select" name="src_lang" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none appearance-none cursor-pointer text-slate-700 font-medium transition-all"></select>
+            <select id="src-select" name="src_lang" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl outline-none"></select>
+            <select id="dest-select" name="dest_lang" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl outline-none"></select>
+            
+            <div id="drop-area" class="drop-zone border-2 border-dashed border-slate-200 p-10 rounded-3xl relative text-center">
+                <input type="file" id="file-input" name="file" accept=".srt" class="absolute inset-0 opacity-0 cursor-pointer" required>
+                <p id="file-text" class="text-sm font-bold text-slate-600">Click or drag .srt file here</p>
+                <p id="file-name-display" class="text-xs text-indigo-600 font-bold hidden"></p>
             </div>
-            <div>
-                <label id="label-dest" class="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-2 ml-1">Target Language</label>
-                <select id="dest-select" name="dest_lang" class="w-full bg-slate-50 border border-slate-200 p-4 rounded-2xl focus:ring-2 focus:ring-indigo-500 outline-none appearance-none cursor-pointer text-slate-700 font-medium transition-all"></select>
-            </div>
-            <div class="flex items-center justify-center space-x-6 py-4 bg-slate-50 rounded-2xl">
-                <span id="format-label" class="text-xs font-bold text-slate-500 uppercase tracking-wider">Format:</span>
-                <label class="flex items-center cursor-pointer group"><input type="radio" name="newline_type" value="crlf" checked class="w-4 h-4 text-indigo-600 border-slate-300"><span class="ml-2 text-sm text-slate-600 font-semibold group-hover:text-indigo-600">Windows(CRLF)</span></label>
-                <label class="flex items-center cursor-pointer group"><input type="radio" name="newline_type" value="lf" class="w-4 h-4 text-indigo-600 border-slate-300"><span class="ml-2 text-sm text-slate-600 font-semibold group-hover:text-indigo-600">Mac/Linux(LF)</span></label>
-            </div>
-            <div id="drop-area" class="drop-zone border-2 border-dashed border-slate-200 p-10 text-center rounded-3xl relative group cursor-pointer">
-                <input type="file" id="file-input" name="file" accept=".srt" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" required oninvalid="handleInvalidFile(this)">
-                <div class="pointer-events-none">
-                    <div class="bg-indigo-50 w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
-                        <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
-                    </div>
-                    <p id="file-text" class="text-sm font-bold text-slate-600">Click or drag .srt file here</p>
-                    <p id="file-name-display" class="text-xs text-indigo-500 mt-2 font-bold hidden"></p>
-                </div>
-            </div>
-            <button type="submit" id="submit-btn" class="w-full bg-indigo-600 text-white font-extrabold py-5 rounded-2xl hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all text-lg">Start Translation</button>
-            <div id="loading-area" class="hidden mt-6 text-center">
-                <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent mb-2"></div>
-                <p id="loading-text" class="text-xs font-bold text-slate-500 animate-pulse">Translating...</p>
-            </div>
+            
+            <button type="submit" id="submit-btn" class="w-full bg-indigo-600 text-white font-extrabold py-5 rounded-2xl text-lg hover:bg-indigo-700 transition-all">Start Translation</button>
         </form>
     </div>
 
+    <!-- 결과 모달 -->
     <div id="result-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-[2.5rem] shadow-2xl max-w-lg w-full p-10 text-center">
-            <h2 id="modal-title" class="text-4xl font-black text-slate-900 mb-4 tracking-tight">Success!</h2>
-            <p id="modal-desc" class="text-slate-500 text-lg mb-6 font-bold">Please check the translation again.</p>
-            <div id="modal-premium-msg" class="bg-indigo-50 text-indigo-700 text-sm font-extrabold p-5 rounded-2xl mb-6 leading-relaxed"></div>
+            <h2 id="modal-title" class="text-4xl font-black text-slate-900 mb-4">Success!</h2>
             <div class="grid grid-cols-2 gap-4 mb-8">
-                <button onclick="signInWithGoogle()" class="bg-indigo-600 text-white font-black py-4 px-2 rounded-2xl hover:bg-indigo-700 transition-all text-sm uppercase">Sign Up</button>
-                <button onclick="location.href='/pricing'" class="bg-slate-900 text-white font-black py-4 px-2 rounded-2xl hover:bg-slate-800 transition-all text-sm uppercase">Buy Pass</button>
+                <button onclick="signInWithGoogle()" class="bg-indigo-600 text-white font-bold py-4 rounded-2xl">SIGN UP</button>
+                <button onclick="location.href='/pricing'" class="bg-slate-900 text-white font-bold py-4 rounded-2xl">BUY PASS</button>
             </div>
-            <div class="bg-slate-100 rounded-2xl p-6 mb-8 border border-slate-200 border-dashed">
-                <p class="text-[12px] text-slate-400 uppercase font-black mb-2">Advertisement</p>
-                <div class="h-28 bg-slate-200 rounded-xl flex items-center justify-center text-slate-400 italic text-sm font-bold">Ad Space (knamegenerator.com)</div>
-            </div>
-            <button onclick="closeModal()" id="modal-btn" class="w-full bg-slate-900 text-white font-black py-5 rounded-2xl text-xl hover:bg-slate-800 shadow-xl">OK</button>
+            <button onclick="closeModal()" class="w-full bg-slate-100 text-slate-600 font-bold py-4 rounded-2xl">Close</button>
         </div>
     </div>
 
 {% elif view == 'pricing' %}
-    <!-- ========== 플랜 선택 ========== -->
-    <div class="fixed top-8 right-8 flex flex-col items-end gap-3 z-50">
-        <div class="text-right">
-            <p id="pricing-lang-label" class="text-[9px] font-bold tracking-[0.15em] uppercase text-slate-400 mb-1 mr-1">WEB LANGUAGE</p>
-            <div class="relative inline-block">
-                <button id="pricing-lang-toggle" type="button" class="inline-flex items-center gap-2 rounded-full border border-slate-600 bg-slate-800 px-4 py-1.5 text-[11px] font-semibold text-slate-200 shadow-sm hover:bg-slate-700 transition-all">
-                    <span id="pricing-lang-current" class="whitespace-nowrap">🇺🇸 English</span>
-                    <svg class="h-3 w-3 text-slate-400" viewBox="0 0 20 20" fill="none" stroke="currentColor"><path d="M5 7l5 6 5-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
-                </button>
-                <div id="pricing-lang-menu" class="hidden absolute right-0 mt-2 w-48 origin-top-right rounded-xl bg-slate-800 border border-slate-600 py-1 shadow-lg z-20 overflow-hidden text-left"><div id="pricing-lang-options"></div></div>
-            </div>
+    <!-- 플랜 업그레이드 화면 -->
+    <div class="fixed top-8 right-8 z-50">
+        <button id="pricing-lang-toggle" class="bg-slate-800 border border-slate-700 px-4 py-2 rounded-full text-xs font-bold text-white">
+            🌐 <span id="pricing-lang-label">English</span>
+        </button>
+        <div id="pricing-lang-menu" class="hidden absolute right-0 mt-2 w-40 bg-slate-800 border border-slate-700 rounded-xl py-2 text-left shadow-2xl">
+            <button onclick="applyPricingLang('en')" class="block w-full px-4 py-2 text-xs hover:bg-slate-700 text-white">🇺🇸 English</button>
+            <button onclick="applyPricingLang('ko')" class="block w-full px-4 py-2 text-xs hover:bg-slate-700 text-white">🇰🇷 한국어</button>
         </div>
     </div>
 
-    <div class="container mx-auto px-4 py-12 max-w-6xl w-full pt-20">
-        <div class="text-center mb-12">
-            <a href="/" id="pricing-back" class="inline-block text-slate-400 hover:text-white text-sm font-bold mb-6 transition-colors">← Home</a>
-            <h1 id="pricing-title" class="text-3xl font-extrabold mb-2">Plan Upgrade</h1>
-            <p id="pricing-subtitle" class="text-slate-400">Unlimited SRT subtitle translation</p>
+    <div class="container mx-auto px-4 py-16 max-w-6xl">
+        <div class="text-center mb-16">
+            <a href="/" class="text-slate-400 hover:text-white text-sm mb-4 inline-block">← Home</a>
+            <h1 id="pricing-title" class="text-4xl font-black mb-4">Plan Upgrade</h1>
+            <p id="pricing-subtitle" class="text-slate-400">Unlimited SRT translation for global users</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700 relative">
+
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+            <!-- Free -->
+            <div class="bg-slate-800/50 border border-slate-700 p-8 rounded-3xl text-center">
                 <h3 class="text-xl font-bold mb-2">Free</h3>
-                <p class="text-3xl font-extrabold mb-4">₩0 <span id="free-period" class="text-sm font-normal text-slate-400">/ mo</span></p>
-                <p id="free-desc" class="text-slate-400 text-sm mb-6">1 translation per week</p>
-                <ul class="space-y-3 text-sm text-slate-300 mb-8">
-                    <li class="flex items-center gap-2"><span id="free-f1">◇ Basic translation</span></li>
-                    <li class="flex items-center gap-2"><span id="free-f2">○ Weekly limit</span></li>
-                </ul>
-                <button disabled class="w-full py-3 rounded-xl bg-slate-700 text-slate-400 font-bold cursor-not-allowed" id="pricing-current-plan">Current Plan</button>
+                <p class="text-3xl font-black mb-6">₩0 <span class="text-sm font-normal text-slate-500">/ use</span></p>
+                <p id="free-desc" class="text-sm text-slate-400 mb-8">1 use per week</p>
+                <button disabled class="w-full py-3 rounded-xl bg-slate-700 text-slate-500 font-bold">Current Plan</button>
             </div>
-            <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700 relative hover:border-indigo-500/50 transition-colors">
+            <!-- Week -->
+            <div class="bg-slate-800/50 border border-slate-700 p-8 rounded-3xl text-center hover:border-indigo-500 transition-all">
                 <h3 class="text-xl font-bold mb-2">A Week</h3>
-                <p class="text-3xl font-extrabold mb-4">₩5,000 <span id="week-period" class="text-sm font-normal text-slate-400">/ wk</span></p>
-                <p id="week-desc" class="text-slate-400 text-sm mb-6">1 week unlimited</p>
-                <ul class="space-y-3 text-sm text-slate-300 mb-8">
-                    <li class="flex items-center gap-2"><span id="week-f1">☆ 1 week unlimited</span></li>
-                    <li class="flex items-center gap-2"><span id="week-f2">○ All languages</span></li>
-                </ul>
-                <button onclick="requestPayment('week', 5000, 'A Week 1주일 이용권')" class="w-full py-3 rounded-xl bg-white text-slate-900 font-bold hover:bg-slate-100 transition-colors" id="pricing-buy-btn">Buy</button>
+                <p class="text-3xl font-black mb-6">₩5,000 <span class="text-sm font-normal text-slate-500">/ wk</span></p>
+                <p id="week-desc" class="text-sm text-slate-400 mb-8">7 days unlimited</p>
+                <button onclick="requestPayment('week', 5000, 'A Week 1주일 이용권')" class="w-full py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-all">Upgrade</button>
             </div>
-            <div class="bg-slate-800/50 rounded-2xl p-6 border-2 border-indigo-500 relative">
-                <span id="pricing-popular" class="absolute top-4 right-4 bg-indigo-600 text-white text-xs font-bold px-2 py-1 rounded-full">Popular</span>
+            <!-- Month -->
+            <div class="bg-slate-800/50 border-2 border-indigo-600 p-8 rounded-3xl text-center relative">
+                <span class="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-[10px] font-black px-3 py-1 rounded-full uppercase">Popular</span>
                 <h3 class="text-xl font-bold mb-2">A Month</h3>
-                <p class="text-3xl font-extrabold mb-4">₩10,000 <span id="month-period" class="text-sm font-normal text-slate-400">/ mo</span></p>
-                <p id="month-desc" class="text-slate-400 text-sm mb-6">1 month unlimited</p>
-                <ul class="space-y-3 text-sm text-slate-300 mb-8">
-                    <li class="flex items-center gap-2"><span id="month-f1">☆ 1 month unlimited</span></li>
-                    <li class="flex items-center gap-2"><span id="month-f2">○ All languages</span></li>
-                    <li class="flex items-center gap-2"><span id="month-f3">◇ Most popular plan</span></li>
-                </ul>
-                <button onclick="requestPayment('month', 10000, 'A Month 1개월 이용권')" class="w-full py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-colors" id="pricing-buy-month">Buy</button>
+                <p class="text-3xl font-black mb-6">₩10,000 <span class="text-sm font-normal text-slate-500">/ mo</span></p>
+                <p id="month-desc" class="text-sm text-slate-400 mb-8">30 days unlimited</p>
+                <button onclick="requestPayment('month', 10000, 'A Month 1개월 이용권')" class="w-full py-3 rounded-xl bg-white text-slate-900 font-bold hover:bg-slate-100 transition-all">Upgrade</button>
             </div>
-            <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700 relative opacity-80">
+            <!-- Pro -->
+            <div class="bg-slate-800/20 border border-slate-800 p-8 rounded-3xl text-center opacity-50">
                 <h3 class="text-xl font-bold mb-2">Pro</h3>
-                <p id="pro-coming" class="text-slate-500 text-sm font-bold mb-4">Coming Soon</p>
-                <p id="pro-desc" class="text-slate-500 text-sm mb-6">Stay tuned</p>
-                <ul class="space-y-3 text-sm text-slate-500 mb-8">
-                    <li class="flex items-center gap-2"><span id="pro-f1">☆ Coming soon</span></li>
-                </ul>
-                <button disabled class="w-full py-3 rounded-xl bg-slate-700 text-slate-500 font-bold cursor-not-allowed" id="pro-disabled">Coming Soon</button>
+                <p class="text-3xl font-black mb-6">Preparing</p>
+                <p id="pro-desc" class="text-sm text-slate-500 mb-8">Business solutions</p>
+                <button disabled class="w-full py-3 rounded-xl bg-slate-800 text-slate-600 font-bold">Coming Soon</button>
             </div>
         </div>
     </div>
-
-{% elif view == 'success' %}
-    <!-- ========== 결제 성공 ========== -->
-    <div class="bg-white rounded-3xl shadow-2xl p-10 max-w-md w-full text-center">
-        <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-        </div>
-        <h1 class="text-2xl font-extrabold text-slate-900 mb-2">결제 완료!</h1>
-        <p class="text-slate-600 mb-6">{{ message }}</p>
-        <p class="text-sm text-slate-500 mb-8">
-            {% if plan == 'week' %}1주일 무제한 번역을 이용하실 수 있습니다.{% endif %}
-            {% if plan == 'month' %}1개월 무제한 번역을 이용하실 수 있습니다.{% endif %}
-        </p>
-        <a href="/" class="block w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl hover:bg-indigo-700 transition-colors">홈으로 돌아가기</a>
-    </div>
-
-{% elif view == 'fail' %}
-    <!-- ========== 결제 실패 ========== -->
-    <div class="bg-white rounded-3xl shadow-2xl p-10 max-w-md w-full text-center">
-        <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-            <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
-        </div>
-        <h1 class="text-2xl font-extrabold text-slate-900 mb-2">결제 실패</h1>
-        <p class="text-slate-600 mb-8">결제가 완료되지 않았습니다. 다시 시도해 주세요.</p>
-        <div class="space-y-3">
-            <a href="/pricing" class="block w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl hover:bg-indigo-700 transition-colors">다시 결제하기</a>
-            <a href="/" class="block w-full bg-slate-200 text-slate-700 font-bold py-4 rounded-2xl hover:bg-slate-300 transition-colors">홈으로</a>
-        </div>
-    </div>
 {% endif %}
 
-    <script>
-{% if view == 'main' %}
-        const supabaseUrl = 'https://dwkwvqldlykzmnfffflu.supabase.co';
-        const supabaseKey = 'sb_publishable_vmHL9-yPRdTF9jI57kZaqQ_a22ZqJp2';
-        const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
-        let currentUser = null;
-        const uiLanguages = [{ code: 'en', name: 'English', flag: '🇺🇸' },{ code: 'ko', name: '한국어 (Korean)', flag: '🇰🇷' },{ code: 'es', name: 'Español (Spanish)', flag: '🇪🇸' },{ code: 'ja', name: '日本語 (Japanese)', flag: '🇯🇵' },{ code: 'zh-cn', name: '简体中文 (Chinese)', flag: '🇨🇳' }];
-        const transLanguages = [...uiLanguages,{ code: 'vi', name: 'Tiếng Việt (vietnamese)', flag: '🇻🇳' },{ code: 'th', name: 'ไทย (Thai)', flag: '🇹🇭' },{ code: 'de', name: 'Deutsch (German)', flag: '🇩🇪' },{ code: 'fr', name: 'Français (French)', flag: '🇫🇷' },{ code: 'it', name: 'Italiano (Italian)', flag: '🇮🇹' },{ code: 'pt', name: 'Português (Portuguese)', flag: '🇵🇹' },{ code: 'ru', name: 'Русский (Russian)', flag: '🇷🇺' }];
-        const i18n = {'en':{web:'WEB LANGUAGE',title:'SRT Translator',sub:'Global subtitle conversion made easy.',src:'Original Language',dest:'Target Language',format:'Format:',file:'Click or drag .srt file here',btn:'Start Translation',load:'Translating...',mTitle:'Success!',mDesc:'Please check the translation again.',mPremium:'Free users: 1 per week. Buy a pass for unlimited access!',mBtn:'OK',alert:'Limit: 1 per week for free users!',fileRequired:'Please select a file.'},'ko':{web:'웹 언어 설정',title:'SRT 자막 번역기',sub:'전 세계 언어로 자막을 번역하세요.',src:'원본 언어',dest:'번역할 언어',format:'형식:',file:'.srt 파일을 클릭 또는 드래그하세요',btn:'번역 시작',load:'번역 중...',mTitle:'번역 완료!',mDesc:'번역본을 다시 한번 확인해 주세요.',mPremium:'비회원 및 일반 회원은 주 1회만 이용 가능합니다. 무제한 이용권을 구매하세요!',mBtn:'확인',alert:'비회원/일반회원은 주 1회만 가능합니다!',fileRequired:'파일을 선택하세요.'},'es':{web:'IDIOMA WEB',title:'Traductor SRT',sub:'Subtítulos globales fáciles.',src:'Idioma original',dest:'Idioma de destino',format:'Formato:',file:'Haz clic o arrastra el archivo',btn:'Iniciar traducción',load:'Traduciendo...',mTitle:'¡Éxito!',mDesc:'Verifique la traducción de nuevo.',mPremium:'Límite de 1 por semana. ¡Compra acceso ilimitado!',mBtn:'OK',alert:'¡Límite de 1 traducción por semana!',fileRequired:'Por favor, seleccione un archivo.'},'ja':{web:'ウェブ言語',title:'SRT字幕翻訳',sub:'字幕を簡単に翻訳します。',src:'元の言語',dest:'翻訳後の言語',format:'形式:',file:'ファイルを選択',btn:'翻訳開始',load:'翻訳中...',mTitle:'成功！',mDesc:'翻訳をもう一度確認してください。',mPremium:'無料版は週1回のみ。無制限パスを購入してください！',mBtn:'OK',alert:'無料版は週1回までです！',fileRequired:'ファイルを選択してください。'},'zh-cn':{web:'网站语言',title:'SRT 字幕翻译器',sub:'轻松翻译全球字幕。',src:'原始语言',dest:'目标语言',format:'格式:',file:'点击 or 拖拽文件',btn:'开始翻译',load:'正在翻译...',mTitle:'完成！',mDesc:'请再次检查翻译。',mPremium:'免费用户每周1次。购买无限制通行证！',mBtn:'好的',alert:'免费用户每周只能翻译一次！',fileRequired:'请选择一个文件。'}};
-        function applyLanguage(langCode){const c=i18n[langCode]||i18n['en'];const l=uiLanguages.find(x=>x.code===langCode)||uiLanguages[0];document.getElementById('lang-current-label').innerText=l.flag+' '+l.name;document.getElementById('web-lang-label').innerText=c.web;document.getElementById('main-title').innerText=c.title;document.getElementById('sub-title').innerText=c.sub;document.getElementById('label-src').innerText=c.src;document.getElementById('label-dest').innerText=c.dest;document.getElementById('format-label').innerText=c.format;document.getElementById('file-text').innerText=c.file;document.getElementById('submit-btn').innerText=c.btn;document.getElementById('loading-text').innerText=c.load;document.getElementById('modal-title').innerText=c.mTitle;document.getElementById('modal-desc').innerText=c.mDesc;document.getElementById('modal-premium-msg').innerText=c.mPremium;document.getElementById('modal-btn').innerText=c.mBtn;localStorage.setItem('web_lang',langCode);document.getElementById('lang-menu').classList.add('hidden');}
-        function handleInvalidFile(input){const c=i18n[localStorage.getItem('web_lang')]||i18n['en'];input.setCustomValidity(c.fileRequired);}
-        const srcSelect=document.getElementById('src-select');const destSelect=document.getElementById('dest-select');const langOptions=document.getElementById('lang-options');
-        transLanguages.forEach(l=>{srcSelect.add(new Option(l.name,l.code));destSelect.add(new Option(l.name,l.code));});
-        uiLanguages.forEach(l=>{const b=document.createElement('button');b.className="flex w-full items-center gap-3 px-4 py-2 text-[11px] font-semibold text-slate-700 hover:bg-slate-50";b.innerHTML='<span>'+l.flag+'</span><span>'+l.name+'</span>';b.onclick=()=>applyLanguage(l.code);langOptions.appendChild(b);});
-        srcSelect.value='en';destSelect.value='ko';applyLanguage(localStorage.getItem('web_lang')||'en');
-        _supabase.auth.onAuthStateChange((e,s)=>{const lb=document.getElementById('google-login-btn');const p=document.getElementById('user-profile');if(s){currentUser=s.user;lb.classList.add('hidden');p.classList.remove('hidden');document.getElementById('user-email').innerText=currentUser.email;}else{currentUser=null;lb.classList.remove('hidden');p.classList.add('hidden');}});
-        async function signInWithGoogle(){await _supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin}});}
-        async function signOut(){await _supabase.auth.signOut();location.reload();}
-        document.getElementById('trans-form').onsubmit=async function(e){e.preventDefault();const isPaid=currentUser&&currentUser.user_metadata&&currentUser.user_metadata.is_paid===true;if(!isPaid){const lu=localStorage.getItem("last_translate_date");if(lu){const d=(new Date()-new Date(lu))/(1000*60*60*24);if(d<7){alert((i18n[localStorage.getItem('web_lang')]||i18n['en']).alert);return;}}}const sb=document.getElementById('submit-btn');const la=document.getElementById('loading-area');sb.disabled=true;la.classList.remove('hidden');const fd=new FormData(this);try{const r=await fetch('/translate',{method:'POST',body:fd});if(r.ok){const blob=await r.blob();const url=window.URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='translated_'+fd.get('dest_lang')+'.srt';a.click();if(!isPaid)localStorage.setItem("last_translate_date",new Date().toISOString());document.getElementById('result-modal').classList.remove('hidden');}}catch(err){alert("Error!");}finally{sb.disabled=false;la.classList.add('hidden');}};
-        document.getElementById('lang-toggle').onclick=(e)=>{e.stopPropagation();document.getElementById('lang-menu').classList.toggle('hidden');};
-        document.onclick=()=>document.getElementById('lang-menu').classList.add('hidden');
-        function closeModal(){document.getElementById('result-modal').classList.add('hidden');}
-        document.getElementById('file-input').onchange=function(){this.setCustomValidity('');const fd=document.getElementById('file-name-display');const ft=document.getElementById('file-text');if(this.files.length>0){ft.classList.add('hidden');fd.classList.remove('hidden');fd.innerText="📄 "+this.files[0].name;}};
-{% elif view == 'pricing' %}
-        const CLIENT_KEY = "{{ TOSSPAYMENTS_CLIENT_KEY }}";
-        const tossPayments = TossPayments(CLIENT_KEY);
-        const pricingUiLangs = [{code:'en',name:'English',flag:'🇺🇸'},{code:'ko',name:'한국어 (Korean)',flag:'🇰🇷'},{code:'es',name:'Español (Spanish)',flag:'🇪🇸'},{code:'ja',name:'日本語 (Japanese)',flag:'🇯🇵'},{code:'zh-cn',name:'简体中文 (Chinese)',flag:'🇨🇳'}];
-        const pricingI18n = {
-            'en':{web:'WEB LANGUAGE',back:'Home',title:'Plan Upgrade',subtitle:'Unlimited SRT subtitle translation',freePeriod:'/ mo',freeDesc:'1 translation per week',freeF1:'◇ Basic translation',freeF2:'○ Weekly limit',currentPlan:'Current Plan',weekPeriod:'/ wk',weekDesc:'1 week unlimited',weekF1:'☆ 1 week unlimited',weekF2:'○ All languages',buy:'Buy',popular:'Popular',monthPeriod:'/ mo',monthDesc:'1 month unlimited',monthF1:'☆ 1 month unlimited',monthF2:'○ All languages',monthF3:'◇ Most popular plan',comingSoon:'Coming Soon',proDesc:'Stay tuned',proF1:'☆ Coming soon',payCancel:'Payment cancelled.',payError:'Payment error: '},
-            'ko':{web:'웹 언어 설정',back:'홈으로',title:'플랜 업그레이드',subtitle:'SRT 자막 번역 무제한 이용권',freePeriod:'/ 월',freeDesc:'주 1회 번역 가능',freeF1:'◇ 기본 번역 기능',freeF2:'○ 주 1회 제한',currentPlan:'현재 플랜',weekPeriod:'/ 주',weekDesc:'1주일 무제한 번역',weekF1:'☆ 1주일 무제한',weekF2:'○ 모든 언어 지원',buy:'구매하기',popular:'인기',monthPeriod:'/ 월',monthDesc:'한 달 무제한 번역',monthF1:'☆ 한 달 무제한',monthF2:'○ 모든 언어 지원',monthF3:'◇ 가장 인기 있는 플랜',comingSoon:'준비중',proDesc:'곧 만나요',proF1:'☆ 향후 출시 예정',payCancel:'결제가 취소되었습니다.',payError:'결제 요청 중 오류가 발생했습니다: '},
-            'es':{web:'IDIOMA WEB',back:'Inicio',title:'Actualizar plan',subtitle:'Traducción ilimitada de subtítulos SRT',freePeriod:'/ mes',freeDesc:'1 traducción por semana',freeF1:'◇ Traducción básica',freeF2:'○ Límite semanal',currentPlan:'Plan actual',weekPeriod:'/ sem',weekDesc:'1 semana ilimitada',weekF1:'☆ 1 semana ilimitada',weekF2:'○ Todos los idiomas',buy:'Comprar',popular:'Popular',monthPeriod:'/ mes',monthDesc:'1 mes ilimitado',monthF1:'☆ 1 mes ilimitado',monthF2:'○ Todos los idiomas',monthF3:'◇ Plan más popular',comingSoon:'Próximamente',proDesc:'Muy pronto',proF1:'☆ Próximamente',payCancel:'Pago cancelado.',payError:'Error de pago: '},
-            'ja':{web:'ウェブ言語',back:'ホーム',title:'プランアップグレード',subtitle:'SRT字幕無制限翻訳',freePeriod:'/ 月',freeDesc:'週1回翻訳可能',freeF1:'◇ 基本翻訳',freeF2:'○ 週間制限',currentPlan:'現在のプラン',weekPeriod:'/ 週',weekDesc:'1週間無制限',weekF1:'☆ 1週間無制限',weekF2:'○ 全言語対応',buy:'購入',popular:'人気',monthPeriod:'/ 月',monthDesc:'1ヶ月無制限',monthF1:'☆ 1ヶ月無制限',monthF2:'○ 全言語対応',monthF3:'◇ 最も人気のプラン',comingSoon:'準備中',proDesc:'近日公開',proF1:'☆ 近日公開',payCancel:'支払いがキャンセルされました。',payError:'支払いエラー: '},
-            'zh-cn':{web:'网站语言',back:'首页',title:'套餐升级',subtitle:'SRT字幕翻译无限制',freePeriod:'/ 月',freeDesc:'每周1次翻译',freeF1:'◇ 基本翻译',freeF2:'○ 周限制',currentPlan:'当前套餐',weekPeriod:'/ 周',weekDesc:'1周无限',weekF1:'☆ 1周无限',weekF2:'○ 所有语言',buy:'购买',popular:'热门',monthPeriod:'/ 月',monthDesc:'1个月无限',monthF1:'☆ 1个月无限',monthF2:'○ 所有语言',monthF3:'◇ 最受欢迎',comingSoon:'即将推出',proDesc:'敬请期待',proF1:'☆ 即将推出',payCancel:'支付已取消。',payError:'支付错误: '}
-        };
-        function applyPricingLang(lc){const c=pricingI18n[lc]||pricingI18n['en'];const l=pricingUiLangs.find(x=>x.code===lc)||pricingUiLangs[0];localStorage.setItem('web_lang',lc);document.getElementById('pricing-lang-label').innerText=c.web;document.getElementById('pricing-lang-current').innerText=l.flag+' '+l.name;document.getElementById('pricing-back').innerHTML='← '+c.back;document.getElementById('pricing-title').innerText=c.title;document.getElementById('pricing-subtitle').innerText=c.subtitle;document.getElementById('free-period').innerText=c.freePeriod;document.getElementById('free-desc').innerText=c.freeDesc;document.getElementById('free-f1').innerText=c.freeF1;document.getElementById('free-f2').innerText=c.freeF2;document.getElementById('pricing-current-plan').innerText=c.currentPlan;document.getElementById('week-period').innerText=c.weekPeriod;document.getElementById('week-desc').innerText=c.weekDesc;document.getElementById('week-f1').innerText=c.weekF1;document.getElementById('week-f2').innerText=c.weekF2;document.getElementById('pricing-buy-btn').innerText=c.buy;document.getElementById('pricing-popular').innerText=c.popular;document.getElementById('month-period').innerText=c.monthPeriod;document.getElementById('month-desc').innerText=c.monthDesc;document.getElementById('month-f1').innerText=c.monthF1;document.getElementById('month-f2').innerText=c.monthF2;document.getElementById('month-f3').innerText=c.monthF3;document.getElementById('pricing-buy-month').innerText=c.buy;document.getElementById('pro-coming').innerText=c.comingSoon;document.getElementById('pro-desc').innerText=c.proDesc;document.getElementById('pro-f1').innerText=c.proF1;document.getElementById('pro-disabled').innerText=c.comingSoon;document.getElementById('pricing-lang-menu').classList.add('hidden');}
-        pricingUiLangs.forEach(l=>{const b=document.createElement('button');b.className='flex w-full items-center gap-3 px-4 py-2 text-[11px] font-semibold text-slate-200 hover:bg-slate-700';b.innerHTML='<span>'+l.flag+'</span><span>'+l.name+'</span>';b.onclick=()=>applyPricingLang(l.code);document.getElementById('pricing-lang-options').appendChild(b);});
-        applyPricingLang(localStorage.getItem('web_lang')||'en');
-        document.getElementById('pricing-lang-toggle').onclick=(e)=>{e.stopPropagation();document.getElementById('pricing-lang-menu').classList.toggle('hidden');};
-        document.onclick=()=>document.getElementById('pricing-lang-menu').classList.add('hidden');
-        function requestPayment(planType,amount,orderName){const orderId='order_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);const c=pricingI18n[localStorage.getItem('web_lang')]||pricingI18n['en'];tossPayments.requestPayment('카드',{amount:amount,orderId:orderId,orderName:orderName,successUrl:window.location.origin+'/success?plan='+planType,failUrl:window.location.origin+'/fail'}).catch(function(err){if(err.code==='USER_CANCEL')alert(c.payCancel);else alert(c.payError+(err.message||''));});}
-{% endif %}
-    </script>
+<script>
+    const CLIENT_KEY = "{{ TOSSPAYMENTS_CLIENT_KEY }}";
+    const tossPayments = TossPayments(CLIENT_KEY);
+
+    // 언어 데이터
+    const i18n = {
+        'en': { web: 'WEB LANGUAGE', title: 'Plan Upgrade', subtitle: 'Unlimited translation', free: '1 use per week', week: '7 days unlimited', month: '30 days unlimited', pro: 'Business solutions', buy: 'Upgrade' },
+        'ko': { web: '웹 언어 설정', title: '플랜 업그레이드', subtitle: 'SRT 자막 무제한 이용권', free: '주 1회 번역 가능', week: '1주일 무제한', month: '한 달 무제한', pro: '기업용 준비 중', buy: '구매하기' }
+    };
+
+    function applyLanguage(code) { localStorage.setItem('web_lang', code); location.reload(); }
+    function applyPricingLang(code) {
+        const c = i18n[code] || i18n['en'];
+        document.getElementById('pricing-lang-label').innerText = code === 'ko' ? '한국어' : 'English';
+        document.getElementById('pricing-title').innerText = c.title;
+        document.getElementById('pricing-subtitle').innerText = c.subtitle;
+        document.getElementById('free-desc').innerText = c.free;
+        document.getElementById('week-desc').innerText = c.week;
+        document.getElementById('month-desc').innerText = c.month;
+        document.getElementById('pro-desc').innerText = c.pro;
+        localStorage.setItem('web_lang', code);
+    }
+
+    // 결제 요청
+    function requestPayment(plan, amount, name) {
+        tossPayments.requestPayment('카드', {
+            amount: amount,
+            orderId: 'order_' + Date.now(),
+            orderName: name,
+            successUrl: window.location.origin + '/success?plan=' + plan,
+            failUrl: window.location.origin + '/fail',
+        }).catch(err => {
+            if (err.code === 'USER_CANCEL') alert('결제가 취소되었습니다.');
+            else alert('결제 에러: ' + err.message);
+        });
+    }
+
+    // 초기 설정
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedLang = localStorage.getItem('web_lang') || 'en';
+        if (document.getElementById('pricing-lang-label')) applyPricingLang(savedLang);
+        
+        // 토글 메뉴 이벤트
+        const toggle = document.getElementById('lang-toggle') || document.getElementById('pricing-lang-toggle');
+        const menu = document.getElementById('lang-menu') || document.getElementById('pricing-lang-menu');
+        if (toggle) toggle.onclick = (e) => { e.stopPropagation(); menu.classList.toggle('hidden'); };
+        document.onclick = () => menu?.classList.add('hidden');
+    });
+
+    // 메인 전용 함수
+    function closeModal() { document.getElementById('result-modal').classList.add('hidden'); }
+    document.getElementById('file-input')?.addEventListener('change', function() {
+        if(this.files.length > 0) {
+            document.getElementById('file-text').classList.add('hidden');
+            const display = document.getElementById('file-name-display');
+            display.classList.remove('hidden');
+            display.innerText = "📄 " + this.files[0].name;
+        }
+    });
+</script>
 </body>
 </html>
