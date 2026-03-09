@@ -500,4 +500,14 @@
             const orderId = generateOrderId();
             tossPayments.requestPayment('카드', {
                 amount: amount, orderId: orderId, orderName: orderName,
-                successUrl: window.location.origin+'/success?plan='+planType
+                successUrl: window.location.origin+'/success?plan='+planType+'&user_id='+userId,
+                failUrl: window.location.origin+'/fail'
+            }).catch(function(err){
+                if(err.code==='USER_CANCEL') alert('결제가 취소되었습니다.');
+                else alert('결제 요청 중 오류: '+(err.message||'알 수 없는 오류'));
+            });
+        }
+{% endif %}
+    </script>
+</body>
+</html>
