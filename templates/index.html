@@ -31,21 +31,16 @@
             </div>
         </div>
         <div id="auth-section" class="flex flex-col items-end gap-2">
-            <!-- 비로그인 상태 -->
-            <button id="google-login-btn" onclick="signInWithGoogle()" class="flex items-center gap-2 bg-white border border-slate-200 px-4 py-1.5 rounded-full text-[11px] font-bold text-slate-700 shadow-sm hover:bg-slate-50 transition-all">
+            <button id="google-login-btn" onclick="openLoginModal()" class="flex items-center gap-2 bg-white border border-slate-200 px-4 py-1.5 rounded-full text-[11px] font-bold text-slate-700 shadow-sm hover:bg-slate-50 transition-all">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-3.5 h-3.5"> Google Login
             </button>
-            <!-- 비로그인 상태의 Buy Pass 버튼 (클릭하면 구글 로그인 유도) -->
-            <button id="buy-pass-guest-btn" onclick="signInWithGoogle()" class="hidden flex items-center gap-2 bg-indigo-600 text-white px-4 py-1.5 rounded-full text-[11px] font-bold shadow-sm hover:bg-indigo-700 transition-all">
+            <button id="buy-pass-guest-btn" onclick="openLoginModal()" class="hidden flex items-center gap-2 bg-indigo-600 text-white px-4 py-1.5 rounded-full text-[11px] font-bold shadow-sm hover:bg-indigo-700 transition-all">
                 ✨ Buy Pass
             </button>
-
-            <!-- 로그인 상태 -->
             <div id="user-profile" class="hidden flex items-center gap-3 bg-white border border-slate-200 px-4 py-1.5 rounded-full shadow-sm">
                 <span id="user-email" class="text-[11px] font-bold text-slate-600"></span>
                 <button onclick="signOut()" class="text-[11px] text-red-500 font-bold hover:underline">Logout</button>
             </div>
-            <!-- 로그인 상태의 Buy Pass 버튼 (클릭하면 pricing 페이지로) -->
             <button id="buy-pass-user-btn" onclick="location.href='/pricing'" class="hidden flex items-center gap-2 bg-indigo-600 text-white px-4 py-1.5 rounded-full text-[11px] font-bold shadow-sm hover:bg-indigo-700 transition-all">
                 ✨ Buy Pass
             </button>
@@ -89,25 +84,57 @@
         </form>
     </div>
 
-    <!-- 하단 링크 -->
     <div class="mt-6 text-center">
         <a href="/refund" class="text-[11px] text-slate-400 hover:text-slate-600 font-medium transition-colors">환불 규정 · Refund Policy</a>
     </div>
 
+    <!-- ========== 번역 완료 모달 ========== -->
     <div id="result-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div class="bg-white rounded-[2.5rem] shadow-2xl max-w-lg w-full p-10 text-center">
             <h2 id="modal-title" class="text-4xl font-black text-slate-900 mb-4 tracking-tight">Success!</h2>
             <p id="modal-desc" class="text-slate-500 text-lg mb-6 font-bold">Please check the translation again.</p>
             <div id="modal-premium-msg" class="bg-indigo-50 text-indigo-700 text-sm font-extrabold p-5 rounded-2xl mb-6 leading-relaxed"></div>
             <div class="grid grid-cols-2 gap-4 mb-8">
-                <button onclick="signInWithGoogle()" class="bg-indigo-600 text-white font-black py-4 px-2 rounded-2xl hover:bg-indigo-700 transition-all text-sm uppercase">Sign Up</button>
-                <button onclick="location.href='/pricing'" class="bg-slate-900 text-white font-black py-4 px-2 rounded-2xl hover:bg-slate-800 transition-all text-sm uppercase">Buy Pass</button>
+                <button onclick="closeModal();openLoginModal()" class="bg-indigo-600 text-white font-black py-4 px-2 rounded-2xl hover:bg-indigo-700 transition-all text-sm uppercase">Sign Up</button>
+                <button onclick="closeModal();openLoginModal()" class="bg-slate-900 text-white font-black py-4 px-2 rounded-2xl hover:bg-slate-800 transition-all text-sm uppercase">Buy Pass</button>
             </div>
             <div class="bg-slate-100 rounded-2xl p-6 mb-8 border border-slate-200 border-dashed">
                 <p class="text-[12px] text-slate-400 uppercase font-black mb-2">Advertisement</p>
                 <div class="h-28 bg-slate-200 rounded-xl flex items-center justify-center text-slate-400 italic text-sm font-bold">Ad Space (knamegenerator.com)</div>
             </div>
             <button onclick="closeModal()" id="modal-btn" class="w-full bg-slate-900 text-white font-black py-5 rounded-2xl text-xl hover:bg-slate-800 shadow-xl">OK</button>
+        </div>
+    </div>
+
+    <!-- ========== 로그인 모달 ========== -->
+    <div id="login-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-10 relative">
+            <!-- 닫기 버튼 -->
+            <button onclick="closeLoginModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+
+            <div class="text-center mb-8">
+                <h2 class="text-2xl font-extrabold text-slate-900 mb-2">로그인 또는 회원 가입</h2>
+                <p class="text-slate-500 text-sm">무제한 번역 이용권을 구매하거나<br>이용 현황을 확인하세요.</p>
+            </div>
+
+            <!-- Google 로그인 버튼 -->
+            <button onclick="signInWithGoogle()" class="w-full flex items-center gap-4 border border-slate-200 rounded-2xl px-5 py-4 hover:bg-slate-50 transition-all mb-3 group">
+                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5">
+                <span class="text-sm font-semibold text-slate-700 group-hover:text-slate-900">Google로 계속하기</span>
+            </button>
+
+            <div class="flex items-center gap-3 my-5">
+                <div class="flex-1 h-px bg-slate-200"></div>
+                <span class="text-xs text-slate-400 font-medium">또는</span>
+                <div class="flex-1 h-px bg-slate-200"></div>
+            </div>
+
+            <p class="text-center text-[11px] text-slate-400 mt-4 leading-relaxed">
+                계속 진행하면 SRT Translator의<br>
+                <a href="/refund" class="underline hover:text-slate-600">이용약관 및 환불 규정</a>에 동의하는 것으로 간주됩니다.
+            </p>
         </div>
     </div>
 
@@ -168,7 +195,6 @@
     </div>
 
 {% elif view == 'success' %}
-    <!-- ========== 결제 성공 ========== -->
     <div class="bg-white rounded-3xl shadow-2xl p-10 max-w-md w-full text-center">
         <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -186,7 +212,6 @@
     </div>
 
 {% elif view == 'fail' %}
-    <!-- ========== 결제 실패 ========== -->
     <div class="bg-white rounded-3xl shadow-2xl p-10 max-w-md w-full text-center">
         <div class="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg class="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
@@ -200,18 +225,15 @@
     </div>
 
 {% elif view == 'refund' %}
-    <!-- ========== 환불 규정 ========== -->
     <div class="max-w-2xl mx-auto px-6 py-16">
         <a href="/" class="inline-block text-slate-400 hover:text-slate-600 text-sm font-bold mb-8 transition-colors">← 홈으로</a>
         <h1 class="text-3xl font-extrabold text-slate-900 mb-2">환불 규정</h1>
         <p class="text-slate-400 text-sm mb-10">Refund Policy · 최종 수정일: 2026년 3월</p>
-
         <div class="space-y-8 text-slate-700">
             <section>
                 <h2 class="text-lg font-extrabold text-slate-900 mb-3">1. 서비스 개요</h2>
                 <p class="text-sm leading-relaxed">SRT Translator는 자막 파일(.srt)을 다양한 언어로 번역해 주는 디지털 콘텐츠 서비스입니다. 이용권 구매 시 구매일로부터 해당 기간(1주일 또는 1개월) 동안 무제한 번역 서비스를 이용하실 수 있습니다.</p>
             </section>
-
             <section>
                 <h2 class="text-lg font-extrabold text-slate-900 mb-3">2. 청약 철회 및 환불 원칙</h2>
                 <p class="text-sm leading-relaxed mb-3">「전자상거래 등에서의 소비자보호에 관한 법률」 제17조에 따라, 디지털 콘텐츠 이용권은 아래 조건에 따라 환불이 처리됩니다.</p>
@@ -221,23 +243,19 @@
                     <li>• <strong>서비스 장애</strong>: 당사 귀책 사유로 서비스 이용이 불가한 경우 전액 환불 또는 기간 연장</li>
                 </ul>
             </section>
-
             <section>
                 <h2 class="text-lg font-extrabold text-slate-900 mb-3">3. 환불 신청 방법</h2>
                 <p class="text-sm leading-relaxed">환불을 원하시는 경우 아래 이메일로 문의해 주세요. 접수 후 영업일 기준 3일 이내 처리됩니다.</p>
                 <div class="bg-slate-50 rounded-xl p-4 mt-3 text-sm font-bold text-indigo-600">📧 support@srt-translator.com</div>
             </section>
-
             <section>
                 <h2 class="text-lg font-extrabold text-slate-900 mb-3">4. 환불 처리 기간</h2>
                 <p class="text-sm leading-relaxed">환불 승인 후 카드사 및 결제 수단에 따라 3~5 영업일 이내 취소 처리됩니다.</p>
             </section>
-
             <section>
                 <h2 class="text-lg font-extrabold text-slate-900 mb-3">5. 이용권 양도 불가</h2>
                 <p class="text-sm leading-relaxed">구매한 이용권은 구매자 본인 계정에만 적용되며 타인에게 양도하거나 재판매할 수 없습니다.</p>
             </section>
-
             <section>
                 <h2 class="text-lg font-extrabold text-slate-900 mb-3">6. 문의</h2>
                 <p class="text-sm leading-relaxed">기타 결제 및 환불 관련 문의는 아래로 연락해 주세요.</p>
@@ -260,16 +278,22 @@
         const supabaseKey = 'sb_publishable_vmHL9-yPRdTF9jI57kZaqQ_a22ZqJp2';
         const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
         let currentUser = null;
+
         const uiLanguages = [{ code: 'en', name: 'English', flag: '🇺🇸' },{ code: 'ko', name: '한국어 (Korean)', flag: '🇰🇷' },{ code: 'es', name: 'Español (Spanish)', flag: '🇪🇸' },{ code: 'ja', name: '日本語 (Japanese)', flag: '🇯🇵' },{ code: 'zh-cn', name: '简体中文 (Chinese)', flag: '🇨🇳' }];
         const transLanguages = [...uiLanguages,{ code: 'vi', name: 'Tiếng Việt (vietnamese)', flag: '🇻🇳' },{ code: 'th', name: 'ไทย (Thai)', flag: '🇹🇭' },{ code: 'de', name: 'Deutsch (German)', flag: '🇩🇪' },{ code: 'fr', name: 'Français (French)', flag: '🇫🇷' },{ code: 'it', name: 'Italiano (Italian)', flag: '🇮🇹' },{ code: 'pt', name: 'Português (Portuguese)', flag: '🇵🇹' },{ code: 'ru', name: 'Русский (Russian)', flag: '🇷🇺' }];
         const i18n = {'en':{web:'WEB LANGUAGE',title:'SRT Translator',sub:'Global subtitle conversion made easy.',src:'Original Language',dest:'Target Language',format:'Format:',file:'Click or drag .srt file here',btn:'Start Translation',load:'Translating...',mTitle:'Success!',mDesc:'Please check the translation again.',mPremium:'Free users: 1 per week. Buy a pass for unlimited access!',mBtn:'OK',alert:'Limit: 1 per week for free users!',fileRequired:'Please select a file.'},'ko':{web:'웹 언어 설정',title:'SRT 자막 번역기',sub:'전 세계 언어로 자막을 번역하세요.',src:'원본 언어',dest:'번역할 언어',format:'형식:',file:'.srt 파일을 클릭 또는 드래그하세요',btn:'번역 시작',load:'번역 중...',mTitle:'번역 완료!',mDesc:'번역본을 다시 한번 확인해 주세요.',mPremium:'비회원 및 일반 회원은 주 1회만 이용 가능합니다. 무제한 이용권을 구매하세요!',mBtn:'확인',alert:'비회원/일반회원은 주 1회만 가능합니다!',fileRequired:'파일을 선택하세요.'},'es':{web:'IDIOMA WEB',title:'Traductor SRT',sub:'Subtítulos globales fáciles.',src:'Idioma original',dest:'Idioma de destino',format:'Formato:',file:'Haz clic o arrastra el archivo',btn:'Iniciar traducción',load:'Traduciendo...',mTitle:'¡Éxito!',mDesc:'Verifique la traducción de nuevo.',mPremium:'Límite de 1 por semana. ¡Compra acceso ilimitado!',mBtn:'OK',alert:'¡Límite de 1 traducción por semana!',fileRequired:'Por favor, seleccione un archivo.'},'ja':{web:'ウェブ言語',title:'SRT字幕翻訳',sub:'字幕を簡単に翻訳します。',src:'元の言語',dest:'翻訳後の言語',format:'形式:',file:'ファイルを選択',btn:'翻訳開始',load:'翻訳中...',mTitle:'成功！',mDesc:'翻訳をもう一度確認してください。',mPremium:'無料版は週1回のみ。無制限パスを購入してください！',mBtn:'OK',alert:'無料版は週1回までです！',fileRequired:'ファイルを選択してください。'},'zh-cn':{web:'网站语言',title:'SRT 字幕翻译器',sub:'轻松翻译全球字幕。',src:'原始语言',dest:'目标语言',format:'格式:',file:'点击 or 拖拽文件',btn:'开始翻译',load:'正在翻译...',mTitle:'完成！',mDesc:'请再次检查翻译。',mPremium:'免费用户每周1次。购买无限制通行证！',mBtn:'好的',alert:'免费用户每周只能翻译一次！',fileRequired:'请选择一个文件。'}};
+
         function applyLanguage(langCode){const c=i18n[langCode]||i18n['en'];const l=uiLanguages.find(x=>x.code===langCode)||uiLanguages[0];document.getElementById('lang-current-label').innerText=l.flag+' '+l.name;document.getElementById('web-lang-label').innerText=c.web;document.getElementById('main-title').innerText=c.title;document.getElementById('sub-title').innerText=c.sub;document.getElementById('label-src').innerText=c.src;document.getElementById('label-dest').innerText=c.dest;document.getElementById('format-label').innerText=c.format;document.getElementById('file-text').innerText=c.file;document.getElementById('submit-btn').innerText=c.btn;document.getElementById('loading-text').innerText=c.load;document.getElementById('modal-title').innerText=c.mTitle;document.getElementById('modal-desc').innerText=c.mDesc;document.getElementById('modal-premium-msg').innerText=c.mPremium;document.getElementById('modal-btn').innerText=c.mBtn;localStorage.setItem('web_lang',langCode);document.getElementById('lang-menu').classList.add('hidden');}
         function handleInvalidFile(input){const c=i18n[localStorage.getItem('web_lang')]||i18n['en'];input.setCustomValidity(c.fileRequired);}
-        const srcSelect=document.getElementById('src-select');const destSelect=document.getElementById('dest-select');const langOptions=document.getElementById('lang-options');
+
+        const srcSelect=document.getElementById('src-select');
+        const destSelect=document.getElementById('dest-select');
+        const langOptions=document.getElementById('lang-options');
         transLanguages.forEach(l=>{srcSelect.add(new Option(l.name,l.code));destSelect.add(new Option(l.name,l.code));});
         uiLanguages.forEach(l=>{const b=document.createElement('button');b.className="flex w-full items-center gap-3 px-4 py-2 text-[11px] font-semibold text-slate-700 hover:bg-slate-50";b.innerHTML='<span>'+l.flag+'</span><span>'+l.name+'</span>';b.onclick=()=>applyLanguage(l.code);langOptions.appendChild(b);});
-        srcSelect.value='en';destSelect.value='ko';applyLanguage(localStorage.getItem('web_lang')||'en');
+        srcSelect.value='en'; destSelect.value='ko'; applyLanguage(localStorage.getItem('web_lang')||'en');
 
+        // ── 로그인 상태 감지 ──────────────────────────────────────────
         _supabase.auth.onAuthStateChange((e, s) => {
             const lb  = document.getElementById('google-login-btn');
             const p   = document.getElementById('user-profile');
@@ -282,6 +306,7 @@
                 p.classList.remove('hidden');
                 bub.classList.remove('hidden');
                 document.getElementById('user-email').innerText = currentUser.email;
+                closeLoginModal(); // 로그인 성공 시 모달 자동 닫기
             } else {
                 currentUser = null;
                 lb.classList.remove('hidden');
@@ -291,9 +316,27 @@
             }
         });
 
-        async function signInWithGoogle(){await _supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin}});}
-        async function signOut(){await _supabase.auth.signOut();location.reload();}
+        // ── 로그인 모달 ───────────────────────────────────────────────
+        function openLoginModal() {
+            document.getElementById('login-modal').classList.remove('hidden');
+        }
+        function closeLoginModal() {
+            document.getElementById('login-modal').classList.add('hidden');
+        }
+        // 모달 바깥 클릭 시 닫기
+        document.getElementById('login-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeLoginModal();
+        });
 
+        async function signInWithGoogle() {
+            await _supabase.auth.signInWithOAuth({
+                provider: 'google',
+                options: { redirectTo: window.location.origin }
+            });
+        }
+        async function signOut() { await _supabase.auth.signOut(); location.reload(); }
+
+        // ── 유료 이용권 유효성 검사 ──────────────────────────────────
         async function checkIsPaid() {
             if (!currentUser) return false;
             try {
@@ -306,14 +349,34 @@
             } catch(e) { return false; }
         }
 
-        document.getElementById('trans-form').onsubmit=async function(e){
+        document.getElementById('trans-form').onsubmit = async function(e) {
             e.preventDefault();
             const isPaid = await checkIsPaid();
-            if(!isPaid){const lu=localStorage.getItem("last_translate_date");if(lu){const d=(new Date()-new Date(lu))/(1000*60*60*24);if(d<7){alert((i18n[localStorage.getItem('web_lang')]||i18n['en']).alert);return;}}}
-            const sb=document.getElementById('submit-btn');const la=document.getElementById('loading-area');sb.disabled=true;la.classList.remove('hidden');const fd=new FormData(this);try{const r=await fetch('/translate',{method:'POST',body:fd});if(r.ok){const blob=await r.blob();const url=window.URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='translated_'+fd.get('dest_lang')+'.srt';a.click();if(!isPaid)localStorage.setItem("last_translate_date",new Date().toISOString());document.getElementById('result-modal').classList.remove('hidden');}}catch(err){alert("Error!");}finally{sb.disabled=false;la.classList.add('hidden');}};
+            if (!isPaid) {
+                const lu = localStorage.getItem("last_translate_date");
+                if (lu) {
+                    const d = (new Date() - new Date(lu)) / (1000*60*60*24);
+                    if (d < 7) { alert((i18n[localStorage.getItem('web_lang')]||i18n['en']).alert); return; }
+                }
+            }
+            const sb=document.getElementById('submit-btn'); const la=document.getElementById('loading-area');
+            sb.disabled=true; la.classList.remove('hidden');
+            const fd=new FormData(this);
+            try {
+                const r=await fetch('/translate',{method:'POST',body:fd});
+                if(r.ok){
+                    const blob=await r.blob(); const url=window.URL.createObjectURL(blob);
+                    const a=document.createElement('a'); a.href=url; a.download='translated_'+fd.get('dest_lang')+'.srt'; a.click();
+                    if(!isPaid) localStorage.setItem("last_translate_date",new Date().toISOString());
+                    document.getElementById('result-modal').classList.remove('hidden');
+                }
+            } catch(err){ alert("Error!"); }
+            finally { sb.disabled=false; la.classList.add('hidden'); }
+        };
+
         document.getElementById('lang-toggle').onclick=(e)=>{e.stopPropagation();document.getElementById('lang-menu').classList.toggle('hidden');};
         document.onclick=()=>document.getElementById('lang-menu').classList.add('hidden');
-        function closeModal(){document.getElementById('result-modal').classList.add('hidden');}
+        function closeModal(){ document.getElementById('result-modal').classList.add('hidden'); }
         document.getElementById('file-input').onchange=function(){this.setCustomValidity('');const fd=document.getElementById('file-name-display');const ft=document.getElementById('file-text');if(this.files.length>0){ft.classList.add('hidden');fd.classList.remove('hidden');fd.innerText="📄 "+this.files[0].name;}};
 
 {% elif view == 'pricing' %}
@@ -322,7 +385,7 @@
         const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
         const CLIENT_KEY = "{{ TOSSPAYMENTS_CLIENT_KEY }}";
         const tossPayments = TossPayments(CLIENT_KEY);
-        function generateOrderId(){return 'order_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);}
+        function generateOrderId(){ return 'order_'+Date.now()+'_'+Math.random().toString(36).substr(2,9); }
         async function requestPayment(planType, amount, orderName) {
             const { data: { session } } = await _supabase.auth.getSession();
             if (!session) {
@@ -333,11 +396,11 @@
             const orderId = generateOrderId();
             tossPayments.requestPayment('카드', {
                 amount: amount, orderId: orderId, orderName: orderName,
-                successUrl: window.location.origin + '/success?plan=' + planType + '&user_id=' + userId,
-                failUrl: window.location.origin + '/fail'
-            }).catch(function(err) {
-                if (err.code === 'USER_CANCEL') alert('결제가 취소되었습니다.');
-                else alert('결제 요청 중 오류가 발생했습니다: ' + (err.message || '알 수 없는 오류'));
+                successUrl: window.location.origin+'/success?plan='+planType+'&user_id='+userId,
+                failUrl: window.location.origin+'/fail'
+            }).catch(function(err){
+                if(err.code==='USER_CANCEL') alert('결제가 취소되었습니다.');
+                else alert('결제 요청 중 오류: '+(err.message||'알 수 없는 오류'));
             });
         }
 {% endif %}
