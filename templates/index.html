@@ -159,51 +159,51 @@
 
     <div class="container mx-auto px-4 py-12 max-w-6xl w-full">
         <div class="text-center mb-12">
-            <a href="/" class="inline-block text-slate-400 hover:text-white text-sm font-bold mb-6 transition-colors">← 홈으로</a>
-            <h1 class="text-3xl font-extrabold mb-2">플랜 업그레이드</h1>
-            <p class="text-slate-400">SRT 자막 번역 무제한 이용권</p>
+            <a id="p-back" href="/" class="inline-block text-slate-400 hover:text-white text-sm font-bold mb-6 transition-colors">← 홈으로</a>
+            <h1 id="p-title" class="text-3xl font-extrabold mb-2">플랜 업그레이드</h1>
+            <p id="p-sub" class="text-slate-400">SRT 자막 번역 무제한 이용권</p>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700 relative">
                 <h3 class="text-xl font-bold mb-2">Free</h3>
-                <p class="text-3xl font-extrabold mb-4">₩0 <span class="text-sm font-normal text-slate-400">/ 월</span></p>
-                <p class="text-slate-400 text-sm mb-6">주 1회 번역 가능</p>
+                <p class="text-3xl font-extrabold mb-4">₩0 <span class="text-sm font-normal text-slate-400" id="p-free-period">/ 월</span></p>
+                <p id="p-free-desc" class="text-slate-400 text-sm mb-6">주 1회 번역 가능</p>
                 <ul class="space-y-3 text-sm text-slate-300 mb-8">
-                    <li class="flex items-center gap-2">◇ 기본 번역 기능</li>
-                    <li class="flex items-center gap-2">○ 주 1회 제한</li>
+                    <li id="p-free-f1" class="flex items-center gap-2">◇ 기본 번역 기능</li>
+                    <li id="p-free-f2" class="flex items-center gap-2">○ 주 1회 제한</li>
                 </ul>
-                <button disabled class="w-full py-3 rounded-xl bg-slate-700 text-slate-400 font-bold cursor-not-allowed">현재 플랜</button>
+                <button disabled id="p-free-btn" class="w-full py-3 rounded-xl bg-slate-700 text-slate-400 font-bold cursor-not-allowed">현재 플랜</button>
             </div>
             <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700 relative hover:border-indigo-500/50 transition-colors">
                 <h3 class="text-xl font-bold mb-2">A Week</h3>
-                <p class="text-3xl font-extrabold mb-4">₩5,000 <span class="text-sm font-normal text-slate-400">/ 주</span></p>
-                <p class="text-slate-400 text-sm mb-6">1주일 무제한 번역</p>
+                <p class="text-3xl font-extrabold mb-4">₩5,000 <span id="p-week-period" class="text-sm font-normal text-slate-400">/ 주</span></p>
+                <p id="p-week-desc" class="text-slate-400 text-sm mb-6">1주일 무제한 번역</p>
                 <ul class="space-y-3 text-sm text-slate-300 mb-8">
-                    <li class="flex items-center gap-2">☆ 1주일 무제한</li>
-                    <li class="flex items-center gap-2">○ 모든 언어 지원</li>
+                    <li id="p-week-f1" class="flex items-center gap-2">☆ 1주일 무제한</li>
+                    <li id="p-week-f2" class="flex items-center gap-2">○ 모든 언어 지원</li>
                 </ul>
-                <button onclick="requestPayment('week', 5000, 'A Week 1주일 이용권')" class="w-full py-3 rounded-xl bg-white text-slate-900 font-bold hover:bg-slate-100 transition-colors">구매하기</button>
+                <button onclick="requestPayment('week', 5000, 'A Week 1주일 이용권')" id="p-week-btn" class="w-full py-3 rounded-xl bg-white text-slate-900 font-bold hover:bg-slate-100 transition-colors">구매하기</button>
             </div>
             <div class="bg-slate-800/50 rounded-2xl p-6 border-2 border-indigo-500 relative">
-                <span class="absolute top-4 right-4 bg-indigo-600 text-white text-xs font-bold px-2 py-1 rounded-full">인기</span>
+                <span id="p-popular" class="absolute top-4 right-4 bg-indigo-600 text-white text-xs font-bold px-2 py-1 rounded-full">인기</span>
                 <h3 class="text-xl font-bold mb-2">A Month</h3>
-                <p class="text-3xl font-extrabold mb-4">₩10,000 <span class="text-sm font-normal text-slate-400">/ 월</span></p>
-                <p class="text-slate-400 text-sm mb-6">한 달 무제한 번역</p>
+                <p class="text-3xl font-extrabold mb-4">₩10,000 <span id="p-month-period" class="text-sm font-normal text-slate-400">/ 월</span></p>
+                <p id="p-month-desc" class="text-slate-400 text-sm mb-6">한 달 무제한 번역</p>
                 <ul class="space-y-3 text-sm text-slate-300 mb-8">
-                    <li class="flex items-center gap-2">☆ 한 달 무제한</li>
-                    <li class="flex items-center gap-2">○ 모든 언어 지원</li>
-                    <li class="flex items-center gap-2">◇ 가장 인기 있는 플랜</li>
+                    <li id="p-month-f1" class="flex items-center gap-2">☆ 한 달 무제한</li>
+                    <li id="p-month-f2" class="flex items-center gap-2">○ 모든 언어 지원</li>
+                    <li id="p-month-f3" class="flex items-center gap-2">◇ 가장 인기 있는 플랜</li>
                 </ul>
-                <button onclick="requestPayment('month', 10000, 'A Month 1개월 이용권')" class="w-full py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-colors">구매하기</button>
+                <button onclick="requestPayment('month', 10000, 'A Month 1개월 이용권')" id="p-month-btn" class="w-full py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-colors">구매하기</button>
             </div>
             <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700 relative opacity-80">
                 <h3 class="text-xl font-bold mb-2">Pro</h3>
-                <p class="text-slate-500 text-sm font-bold mb-4">준비중</p>
-                <p class="text-slate-500 text-sm mb-6">곧 만나요</p>
+                <p id="p-pro-soon" class="text-slate-500 text-sm font-bold mb-4">준비중</p>
+                <p id="p-pro-desc" class="text-slate-500 text-sm mb-6">곧 만나요</p>
                 <ul class="space-y-3 text-sm text-slate-500 mb-8">
-                    <li class="flex items-center gap-2">☆ 향후 출시 예정</li>
+                    <li id="p-pro-f1" class="flex items-center gap-2">☆ 향후 출시 예정</li>
                 </ul>
-                <button disabled class="w-full py-3 rounded-xl bg-slate-700 text-slate-500 font-bold cursor-not-allowed">준비중</button>
+                <button disabled id="p-pro-btn" class="w-full py-3 rounded-xl bg-slate-700 text-slate-500 font-bold cursor-not-allowed">준비중</button>
             </div>
         </div>
         <div class="text-center mt-8">
@@ -459,13 +459,59 @@
         document.onclick = () => document.getElementById('pricing-lang-menu').classList.add('hidden');
 
         // ── 환불 규정 모달 ─────────────────────────────────────────────
+        const pricingI18n = {
+            ko: {
+                back:'← 홈으로', title:'플랜 업그레이드', sub:'SRT 자막 번역 무제한 이용권',
+                freePeriod:'/ 월', freeDesc:'주 1회 번역 가능', freeF1:'◇ 기본 번역 기능', freeF2:'○ 주 1회 제한', freeBtn:'현재 플랜',
+                weekPeriod:'/ 주', weekDesc:'1주일 무제한 번역', weekF1:'☆ 1주일 무제한', weekF2:'○ 모든 언어 지원', weekBtn:'구매하기',
+                popular:'인기',
+                monthPeriod:'/ 월', monthDesc:'한 달 무제한 번역', monthF1:'☆ 한 달 무제한', monthF2:'○ 모든 언어 지원', monthF3:'◇ 가장 인기 있는 플랜', monthBtn:'구매하기',
+                proSoon:'준비중', proDesc:'곧 만나요', proF1:'☆ 향후 출시 예정', proBtn:'준비중',
+                refundLink:'환불 규정', refundTitle:'환불 규정'
+            },
+            en: {
+                back:'← Back to Home', title:'Upgrade Plan', sub:'Unlimited SRT subtitle translation pass',
+                freePeriod:'/ mo', freeDesc:'1 translation per week', freeF1:'◇ Basic translation', freeF2:'○ Weekly limit (1x)', freeBtn:'Current Plan',
+                weekPeriod:'/ week', weekDesc:'Unlimited for 1 week', weekF1:'☆ 1-week unlimited', weekF2:'○ All languages', weekBtn:'Buy Now',
+                popular:'Popular',
+                monthPeriod:'/ mo', monthDesc:'Unlimited for 1 month', monthF1:'☆ 1-month unlimited', monthF2:'○ All languages', monthF3:'◇ Most popular plan', monthBtn:'Buy Now',
+                proSoon:'Coming Soon', proDesc:'Stay tuned', proF1:'☆ Launching soon', proBtn:'Coming Soon',
+                refundLink:'Refund Policy', refundTitle:'Refund Policy'
+            }
+        };
         function applyPricingLang(code) {
             const isKo = (code === 'ko');
-            // 환불 규정 모달 언어 전환
+            const t = isKo ? pricingI18n.ko : pricingI18n.en;
+            // 플랜 카드 텍스트
+            document.getElementById('p-back').innerText        = t.back;
+            document.getElementById('p-title').innerText       = t.title;
+            document.getElementById('p-sub').innerText         = t.sub;
+            document.getElementById('p-free-period').innerText = t.freePeriod;
+            document.getElementById('p-free-desc').innerText   = t.freeDesc;
+            document.getElementById('p-free-f1').innerText     = t.freeF1;
+            document.getElementById('p-free-f2').innerText     = t.freeF2;
+            document.getElementById('p-free-btn').innerText    = t.freeBtn;
+            document.getElementById('p-week-period').innerText = t.weekPeriod;
+            document.getElementById('p-week-desc').innerText   = t.weekDesc;
+            document.getElementById('p-week-f1').innerText     = t.weekF1;
+            document.getElementById('p-week-f2').innerText     = t.weekF2;
+            document.getElementById('p-week-btn').innerText    = t.weekBtn;
+            document.getElementById('p-popular').innerText     = t.popular;
+            document.getElementById('p-month-period').innerText= t.monthPeriod;
+            document.getElementById('p-month-desc').innerText  = t.monthDesc;
+            document.getElementById('p-month-f1').innerText    = t.monthF1;
+            document.getElementById('p-month-f2').innerText    = t.monthF2;
+            document.getElementById('p-month-f3').innerText    = t.monthF3;
+            document.getElementById('p-month-btn').innerText   = t.monthBtn;
+            document.getElementById('p-pro-soon').innerText    = t.proSoon;
+            document.getElementById('p-pro-desc').innerText    = t.proDesc;
+            document.getElementById('p-pro-f1').innerText      = t.proF1;
+            document.getElementById('p-pro-btn').innerText     = t.proBtn;
+            // 환불 링크 & 모달
+            document.getElementById('refund-link-text').innerText  = t.refundLink;
+            document.getElementById('refund-modal-title').innerText= t.refundTitle;
             document.getElementById('refund-content-ko').classList.toggle('hidden', !isKo);
             document.getElementById('refund-content-en').classList.toggle('hidden', isKo);
-            document.getElementById('refund-modal-title').innerText = isKo ? '환불 규정' : 'Refund Policy';
-            document.getElementById('refund-link-text').innerText = isKo ? '환불 규정' : 'Refund Policy';
         }
         // 언어 선택 시 모달 언어도 동시에 바꾸기
         pricingLangs.forEach(l => {
