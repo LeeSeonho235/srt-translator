@@ -140,6 +140,23 @@
 
 {% elif view == 'pricing' %}
     <!-- ========== 플랜 선택 ========== -->
+
+    <!-- 언어 선택 (우측 상단) -->
+    <div class="fixed top-8 right-8 z-50">
+        <div class="text-right">
+            <p id="pricing-lang-label" class="text-[9px] font-bold tracking-[0.15em] uppercase text-slate-500 mb-1 mr-1">WEB LANGUAGE</p>
+            <div class="relative inline-block">
+                <button id="pricing-lang-toggle" type="button" class="inline-flex items-center gap-2 rounded-full border border-slate-600 bg-slate-800 px-4 py-1.5 text-[11px] font-semibold text-slate-300 shadow-sm hover:bg-slate-700 transition-all">
+                    <span id="pricing-lang-current" class="whitespace-nowrap">🇺🇸 English</span>
+                    <svg class="h-3 w-3 text-slate-400" viewBox="0 0 20 20" fill="none" stroke="currentColor"><path d="M5 7l5 6 5-6" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                </button>
+                <div id="pricing-lang-menu" class="hidden absolute right-0 mt-2 w-48 origin-top-right rounded-xl bg-slate-800 py-1 shadow-lg ring-1 ring-white/10 z-20 overflow-hidden text-left">
+                    <div id="pricing-lang-options"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="container mx-auto px-4 py-12 max-w-6xl w-full">
         <div class="text-center mb-12">
             <a href="/" class="inline-block text-slate-400 hover:text-white text-sm font-bold mb-6 transition-colors">← 홈으로</a>
@@ -190,7 +207,36 @@
             </div>
         </div>
         <div class="text-center mt-8">
-            <a href="/refund" class="text-slate-500 hover:text-slate-300 text-xs font-medium transition-colors">환불 규정 · Refund Policy</a>
+            <button onclick="openRefundModal()" class="text-slate-500 hover:text-slate-300 text-xs font-medium transition-colors underline">
+                <span id="refund-link-text">환불 규정 · Refund Policy</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- ========== 환불 규정 모달 ========== -->
+    <div id="refund-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto relative">
+            <!-- 헤더 -->
+            <div class="flex items-center justify-between px-8 py-5 border-b border-slate-100 sticky top-0 bg-white rounded-t-3xl z-10">
+                <h2 id="refund-modal-title" class="text-base font-extrabold text-slate-900">환불 규정</h2>
+                <button onclick="closeRefundModal()" class="text-slate-400 hover:text-slate-700 transition-colors">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+            </div>
+            <!-- 본문 -->
+            <div class="px-8 py-8 space-y-6 text-slate-700 text-sm leading-relaxed">
+
+                <!-- ====== 한국어 내용 ====== -->
+                <div id="refund-content-ko">
+                    <!-- 여기다 한국어 환불 규정을 적으시오 -->
+                </div>
+
+                <!-- ====== 영어 내용 ====== -->
+                <div id="refund-content-en" class="hidden">
+                    <!-- 여기다 영어 환불 규정을 적으시오 -->
+                </div>
+
+            </div>
         </div>
     </div>
 
@@ -246,7 +292,7 @@
             <section>
                 <h2 class="text-lg font-extrabold text-slate-900 mb-3">3. 환불 신청 방법</h2>
                 <p class="text-sm leading-relaxed">환불을 원하시는 경우 아래 이메일로 문의해 주세요. 접수 후 영업일 기준 3일 이내 처리됩니다.</p>
-                <div class="bg-slate-50 rounded-xl p-4 mt-3 text-sm font-bold text-indigo-600">📧 support@srt-translator.com</div>
+                <div class="bg-slate-50 rounded-xl p-4 mt-3 text-sm font-bold text-indigo-600">📧 <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="30434540405f4244704342441d4442515e435c51445f421e535f5d">[email&#160;protected]</a></div>
             </section>
             <section>
                 <h2 class="text-lg font-extrabold text-slate-900 mb-3">4. 환불 처리 기간</h2>
@@ -264,7 +310,7 @@
                     <p><strong>대표자:</strong> (본인 이름)</p>
                     <p><strong>사업자등록번호:</strong> (사업자번호)</p>
                     <p><strong>주소:</strong> (사업장 주소)</p>
-                    <p><strong>이메일:</strong> support@srt-translator.com</p>
+                    <p><strong>이메일:</strong> <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6e1d1b1e1e011c1a2e1d1c1a431a1c0f001d020f1a011c400d0103">[email&#160;protected]</a></p>
                     <p><strong>운영시간:</strong> 평일 10:00 ~ 18:00 (공휴일 제외)</p>
                 </div>
             </section>
@@ -272,7 +318,7 @@
     </div>
 {% endif %}
 
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 {% if view == 'main' %}
         const supabaseUrl = 'https://dwkwvqldlykzmnfffflu.supabase.co';
         const supabaseKey = 'sb_publishable_vmHL9-yPRdTF9jI57kZaqQ_a22ZqJp2';
@@ -384,6 +430,64 @@
         const supabaseKey = 'sb_publishable_vmHL9-yPRdTF9jI57kZaqQ_a22ZqJp2';
         const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
         const CLIENT_KEY = "{{ TOSSPAYMENTS_CLIENT_KEY }}";
+
+        // ── 언어 선택 ─────────────────────────────────────────────────
+        const pricingLangs = [
+            { code: 'en', name: 'English', flag: '🇺🇸' },
+            { code: 'ko', name: '한국어', flag: '🇰🇷' }
+        ];
+        const pricingOpts = document.getElementById('pricing-lang-options');
+        pricingLangs.forEach(l => {
+            const b = document.createElement('button');
+            b.className = "flex w-full items-center gap-3 px-4 py-2 text-[11px] font-semibold text-slate-300 hover:bg-slate-700";
+            b.innerHTML = '<span>'+l.flag+'</span><span>'+l.name+'</span>';
+            b.onclick = () => {
+                document.getElementById('pricing-lang-current').innerText = l.flag + ' ' + l.name;
+                localStorage.setItem('web_lang', l.code);
+                document.getElementById('pricing-lang-menu').classList.add('hidden');
+            };
+            pricingOpts.appendChild(b);
+        });
+        // 저장된 언어로 초기화
+        const savedLang = localStorage.getItem('web_lang') || 'en';
+        const savedPL = pricingLangs.find(x => x.code === savedLang) || pricingLangs[0];
+        document.getElementById('pricing-lang-current').innerText = savedPL.flag + ' ' + savedPL.name;
+        document.getElementById('pricing-lang-toggle').onclick = (e) => {
+            e.stopPropagation();
+            document.getElementById('pricing-lang-menu').classList.toggle('hidden');
+        };
+        document.onclick = () => document.getElementById('pricing-lang-menu').classList.add('hidden');
+
+        // ── 환불 규정 모달 ─────────────────────────────────────────────
+        function applyPricingLang(code) {
+            const isKo = (code === 'ko');
+            // 환불 규정 모달 언어 전환
+            document.getElementById('refund-content-ko').classList.toggle('hidden', !isKo);
+            document.getElementById('refund-content-en').classList.toggle('hidden', isKo);
+            document.getElementById('refund-modal-title').innerText = isKo ? '환불 규정' : 'Refund Policy';
+            document.getElementById('refund-link-text').innerText = isKo ? '환불 규정' : 'Refund Policy';
+        }
+        // 언어 선택 시 모달 언어도 동시에 바꾸기
+        pricingLangs.forEach(l => {
+            const btns = document.querySelectorAll('#pricing-lang-options button');
+            btns.forEach(b => {
+                const orig = b.onclick;
+                b.onclick = () => { if(orig) orig(); applyPricingLang(localStorage.getItem('web_lang')||'en'); };
+            });
+        });
+        // 초기 언어 적용
+        applyPricingLang(savedLang);
+
+        function openRefundModal() {
+            applyPricingLang(localStorage.getItem('web_lang') || 'en');
+            document.getElementById('refund-modal').classList.remove('hidden');
+        }
+        function closeRefundModal() {
+            document.getElementById('refund-modal').classList.add('hidden');
+        }
+        document.getElementById('refund-modal').addEventListener('click', function(e) {
+            if (e.target === this) closeRefundModal();
+        });
         const tossPayments = TossPayments(CLIENT_KEY);
         function generateOrderId(){ return 'order_'+Date.now()+'_'+Math.random().toString(36).substr(2,9); }
         async function requestPayment(planType, amount, orderName) {
@@ -396,14 +500,4 @@
             const orderId = generateOrderId();
             tossPayments.requestPayment('카드', {
                 amount: amount, orderId: orderId, orderName: orderName,
-                successUrl: window.location.origin+'/success?plan='+planType+'&user_id='+userId,
-                failUrl: window.location.origin+'/fail'
-            }).catch(function(err){
-                if(err.code==='USER_CANCEL') alert('결제가 취소되었습니다.');
-                else alert('결제 요청 중 오류: '+(err.message||'알 수 없는 오류'));
-            });
-        }
-{% endif %}
-    </script>
-</body>
-</html>
+                successUrl: window.location.origin+'/success?plan='+planType
