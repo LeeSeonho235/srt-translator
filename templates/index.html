@@ -239,6 +239,26 @@
         </div>
     </div>
 {% endif %}
+<!-- 결제 수단 선택 모달 -->
+<div id="payment-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[200] p-4">
+    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 relative">
+        <button onclick="closePaymentModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+        <h2 class="text-lg font-extrabold text-slate-900 mb-2 text-center">결제 수단 선택</h2>
+        <p class="text-slate-400 text-xs text-center mb-6">원하시는 결제 방법을 선택해주세요</p>
+        <div class="space-y-3">
+            <button onclick="proceedPayment('kakao')" class="w-full flex items-center gap-4 bg-[#FEE500] hover:bg-[#f0d800] rounded-2xl px-5 py-4 transition-all">
+                <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" class="w-7 h-7 rounded-lg">
+                <span class="text-[#3A1D1D] font-bold text-sm">카카오페이로 결제</span>
+            </button>
+            <button onclick="proceedPayment('paypal')" class="w-full flex items-center gap-4 bg-[#003087] hover:bg-[#002070] rounded-2xl px-5 py-4 transition-all">
+                <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" class="w-7 h-7 rounded-lg">
+                <span class="text-white font-bold text-sm">PayPal로 결제</span>
+            </button>
+        </div>
+    </div>
+</div>
 
     <script>
 {% if view == 'main' %}
@@ -296,35 +316,51 @@
         function openRefundModal(){applyPricingLang(localStorage.getItem('web_lang')||'en');document.getElementById('refund-modal').classList.remove('hidden');}
         function closeRefundModal(){document.getElementById('refund-modal').classList.add('hidden');}
         document.getElementById('refund-modal').addEventListener('click',function(e){if(e.target===this)closeRefundModal();});
-        async function requestPayment(planType, amount, orderName) {
-        const orderId = 'order_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-        const c = pricingI18n[localStorage.getItem('web_lang')] || pricingI18n['en'];
+        let _pendingPlan = null;
 
-    // ↓ 여기 추가
-        const method = confirm("카카오페이로 결제하시겠습니까?\n(취소 시 PayPal로 결제)");
-        const channelKey = method ? PORTONE_CHANNEL_KEY_KAKAO : PORTONE_CHANNEL_KEY_PAYPAL;
-        const payMethod = method ? "EASY_PAY" : "PAYPAL";
-        const finalAmount = method
-        ? (planType === 'week' ? 5000 : 10000)  // KRW
-        : (planType === 'week' ? 4 : 8);         // USD
-    // ↑ 여기까지
+function requestPayment(planType, amount, orderName) {
+    _pendingPlan = { planType, orderName };
+    document.getElementById('payment-modal').classList.remove('hidden');
+}
 
-        try {
-            await PortOne.requestPayment({
-                storeId: PORTONE_STORE_ID,
-                channelKey: channelKey,           // ← 변경
-                paymentId: orderId,
-                orderName: orderName,
-                totalAmount: finalAmount,         // ← amount → finalAmount 로 변경
-                currency: method ? "KRW" : "USD", // ← 변경
-                payMethod: payMethod,             // ← 변경
-                ...(method && { easyPay: { easyPayProvider: "KAKAOPAY" } }),  // ← 추가
-                redirectUrl: window.location.origin + '/success?plan=' + planType,
-            });
-        } catch (err) {
-            if (err.code === 'USER_CANCEL') alert(c.payCancel);
-            else alert(c.payError + (err.message || ''));
-        }
+function closePaymentModal() {
+    document.getElementById('payment-modal').classList.add('hidden');
+    _pendingPlan = null;
+}
+
+async function proceedPayment(method) {
+    closePaymentModal();
+    if (!_pendingPlan) return;
+    const { planType, orderName } = _pendingPlan;
+    const orderId = 'order_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    const c = pricingI18n[localStorage.getItem('web_lang')] || pricingI18n['en'];
+
+    const isKakao = method === 'kakao';
+    const channelKey = isKakao ? PORTONE_CHANNEL_KEY_KAKAO : PORTONE_CHANNEL_KEY_PAYPAL;
+    const finalAmount = isKakao
+        ? (planType === 'week' ? 5000 : 10000)
+        : (planType === 'week' ? 4 : 8);
+
+    // 채널 키 디버깅 — 나중에 지워도 됨
+    console.log('channelKey:', channelKey);
+    console.log('storeId:', PORTONE_STORE_ID);
+
+    try {
+        await PortOne.requestPayment({
+            storeId: PORTONE_STORE_ID,
+            channelKey: channelKey,
+            paymentId: orderId,
+            orderName: orderName,
+            totalAmount: finalAmount,
+            currency: isKakao ? "KRW" : "USD",
+            payMethod: isKakao ? "EASY_PAY" : "PAYPAL",
+            ...(isKakao && { easyPay: { easyPayProvider: "KAKAOPAY" } }),
+            redirectUrl: window.location.origin + '/success?plan=' + planType,
+        });
+    } catch (err) {
+        if (err.code === 'USER_CANCEL') alert(c.payCancel);
+        else alert(c.payError + (err.message || ''));
+    }
 }
 {% endif %}
     </script>
