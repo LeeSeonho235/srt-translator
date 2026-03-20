@@ -209,7 +209,26 @@
             </div>
         </div>
     </div>
-
+<!-- 결제 수단 선택 모달 -->
+    <div id="payment-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[200] p-4">
+        <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 relative">
+            <button onclick="closePaymentModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+            <h2 class="text-lg font-extrabold text-slate-900 mb-2 text-center">결제 수단 선택</h2>
+            <p class="text-slate-400 text-xs text-center mb-6">원하시는 결제 방법을 선택해주세요</p>
+            <div class="space-y-3">
+                <button onclick="proceedPayment('kakao')" class="w-full flex items-center gap-4 bg-[#FEE500] hover:bg-[#f0d800] rounded-2xl px-5 py-4 transition-all">
+                    <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" class="w-7 h-7 rounded-lg">
+                    <span class="text-[#3A1D1D] font-bold text-sm">카카오페이로 결제</span>
+                </button>
+                <button onclick="proceedPayment('paypal')" class="w-full flex items-center gap-4 bg-[#003087] hover:bg-[#002070] rounded-2xl px-5 py-4 transition-all">
+                    <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" class="w-7 h-7 rounded-lg">
+                    <span class="text-white font-bold text-sm">PayPal로 결제</span>
+                </button>
+            </div>
+        </div>
+    </div>
 {% elif view == 'success' %}
     <!-- ========== 결제 성공 ========== -->
     <div class="bg-white rounded-3xl shadow-2xl p-10 max-w-md w-full text-center">
@@ -239,26 +258,6 @@
         </div>
     </div>
 {% endif %}
-<!-- 결제 수단 선택 모달 -->
-<div id="payment-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[200] p-4">
-    <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 relative">
-        <button onclick="closePaymentModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
-        </button>
-        <h2 class="text-lg font-extrabold text-slate-900 mb-2 text-center">결제 수단 선택</h2>
-        <p class="text-slate-400 text-xs text-center mb-6">원하시는 결제 방법을 선택해주세요</p>
-        <div class="space-y-3">
-            <button onclick="proceedPayment('kakao')" class="w-full flex items-center gap-4 bg-[#FEE500] hover:bg-[#f0d800] rounded-2xl px-5 py-4 transition-all">
-                <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" class="w-7 h-7 rounded-lg">
-                <span class="text-[#3A1D1D] font-bold text-sm">카카오페이로 결제</span>
-            </button>
-            <button onclick="proceedPayment('paypal')" class="w-full flex items-center gap-4 bg-[#003087] hover:bg-[#002070] rounded-2xl px-5 py-4 transition-all">
-                <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" class="w-7 h-7 rounded-lg">
-                <span class="text-white font-bold text-sm">PayPal로 결제</span>
-            </button>
-        </div>
-    </div>
-</div>
 
     <script>
 {% if view == 'main' %}
