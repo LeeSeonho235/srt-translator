@@ -324,13 +324,14 @@ function requestPayment(planType, amount, orderName) {
 
 function closePaymentModal() {
     document.getElementById('payment-modal').classList.add('hidden');
-    _pendingPlan = null;
+    
 }
 
 async function proceedPayment(method) {
     closePaymentModal();
     if (!_pendingPlan) return;
     const { planType, orderName } = _pendingPlan;
+    _pendingPlan = null;
     const orderId = 'order_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     const c = pricingI18n[localStorage.getItem('web_lang')] || pricingI18n['en'];
 

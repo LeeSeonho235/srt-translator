@@ -44,7 +44,7 @@ def pricing():
 # ── 환불 규정 페이지 ──────────────────────────────────────────────────────────
 @app.route("/refund")
 def refund():
-    return render_template("index.html", view="refund")
+    return redirect(url_for('pricing'))
 
 
 @app.route('/success')
