@@ -215,8 +215,8 @@
             <button onclick="closePaymentModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
-            <h2 class="text-lg font-extrabold text-slate-900 mb-2 text-center">결제 수단 선택</h2>
-            <p class="text-slate-400 text-xs text-center mb-6">원하시는 결제 방법을 선택해주세요</p>
+            <h2 class="text-lg font-extrabold text-slate-900 mb-2 text-center">Select Payment Method</h2>
+            <p class="text-slate-400 text-xs text-center mb-6">Please choose your preferred payment method</p>
             <div class="space-y-3">
                 <button onclick="proceedPayment('kakao')" class="w-full flex items-center gap-4 bg-[#FEE500] hover:bg-[#f0d800] rounded-2xl px-5 py-4 transition-all">
                     <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" class="w-7 h-7 rounded-lg">
@@ -224,7 +224,7 @@
                 </button>
                 <button onclick="proceedPayment('paypal')" class="w-full flex items-center gap-4 bg-[#003087] hover:bg-[#002070] rounded-2xl px-5 py-4 transition-all">
                     <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" class="w-7 h-7 rounded-lg">
-                    <span class="text-white font-bold text-sm">PayPal로 결제</span>
+                    <span class="text-white font-bold text-sm">Pay with PayPal</span>
                 </button>
             </div>
         </div>
@@ -306,7 +306,9 @@
         function applyPricingLang(lc){const c=pricingI18n[lc]||pricingI18n['en'];const l=pricingUiLangs.find(x=>x.code===lc)||pricingUiLangs[0];localStorage.setItem('web_lang',lc);document.getElementById('pricing-lang-label').innerText=c.web;document.getElementById('pricing-lang-current').innerText=l.flag+' '+l.name;document.getElementById('pricing-back').innerHTML='← '+c.back;document.getElementById('pricing-title').innerText=c.title;document.getElementById('pricing-subtitle').innerText=c.subtitle;document.getElementById('free-period').innerText=c.freePeriod;document.getElementById('free-desc').innerText=c.freeDesc;document.getElementById('free-f1').innerText=c.freeF1;document.getElementById('free-f2').innerText=c.freeF2;document.getElementById('pricing-current-plan').innerText=c.currentPlan;document.getElementById('week-period').innerText=c.weekPeriod;document.getElementById('week-desc').innerText=c.weekDesc;document.getElementById('week-f1').innerText=c.weekF1;document.getElementById('week-f2').innerText=c.weekF2;document.getElementById('pricing-buy-btn').innerText=c.buy;document.getElementById('pricing-popular').innerText=c.popular;document.getElementById('month-period').innerText=c.monthPeriod;document.getElementById('month-desc').innerText=c.monthDesc;document.getElementById('month-f1').innerText=c.monthF1;document.getElementById('month-f2').innerText=c.monthF2;document.getElementById('month-f3').innerText=c.monthF3;document.getElementById('pricing-buy-month').innerText=c.buy;document.getElementById('pro-coming').innerText=c.comingSoon;document.getElementById('pro-desc').innerText=c.proDesc;document.getElementById('pro-f1').innerText=c.proF1;document.getElementById('pro-disabled').innerText=c.comingSoon;
         // [추가] 환불 버튼 + 모달 언어 전환
         document.getElementById('pricing-refund-btn').innerText=c.refund;document.getElementById('refund-modal-title').innerText=c.refundTitle;const isKo=(lc==='ko');document.getElementById('refund-content-ko').classList.toggle('hidden',!isKo);document.getElementById('refund-content-en').classList.toggle('hidden',isKo);
-        document.getElementById('pricing-lang-menu').classList.add('hidden');}
+        document.getElementById('pricing-lang-menu').classList.add('hidden');const isEn=(lc==='en');
+    document.getElementById('week-price').innerText=isEn?'$5':'₩5,000';
+    document.getElementById('month-price').innerText=isEn?'$10':'₩10,000';}
         pricingUiLangs.forEach(l=>{const b=document.createElement('button');b.className='flex w-full items-center gap-3 px-4 py-2 text-[11px] font-semibold text-slate-200 hover:bg-slate-700';b.innerHTML='<span>'+l.flag+'</span><span>'+l.name+'</span>';b.onclick=()=>applyPricingLang(l.code);document.getElementById('pricing-lang-options').appendChild(b);});
         applyPricingLang(localStorage.getItem('web_lang')||'en');
         document.getElementById('pricing-lang-toggle').onclick=(e)=>{e.stopPropagation();document.getElementById('pricing-lang-menu').classList.toggle('hidden');};
