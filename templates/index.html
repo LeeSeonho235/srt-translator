@@ -210,7 +210,7 @@
         </div>
     </div>
 <!-- 결제 수단 선택 모달 -->
-    <div id="payment-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[200] p-4">
+    <div id="payment-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-[200] p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 relative">
             <button onclick="closePaymentModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -321,12 +321,14 @@
 
 function requestPayment(planType, amount, orderName) {
     _pendingPlan = { planType, orderName };
-    document.getElementById('payment-modal').classList.remove('hidden');
+    const modal = document.getElementById('payment-modal');
+    modal.classList.remove('hidden');
+    modal.style.display = 'flex';  // ← 추가
 }
 
 function closePaymentModal() {
     document.getElementById('payment-modal').classList.add('hidden');
-    
+    modal.style.display = 'none';
 }
 
 async function proceedPayment(method) {
