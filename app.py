@@ -14,9 +14,7 @@ app = Flask(__name__)
 load_dotenv()
 DEEPL_AUTH_KEY = os.getenv("DEEPL_API_KEY")
 
-# 토스페이먼츠 설정
-TOSSPAYMENTS_SECRET_KEY = os.getenv("TOSSPAYMENTS_SECRET_KEY", "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6")
-TOSSPAYMENTS_CLIENT_KEY = os.getenv("TOSSPAYMENTS_CLIENT_KEY", "test_ck_D5GePWvyJnrK0W0k8eX3lmeaxYG5")
+PORTONE_API_SECRET = os.getenv("PORTONE_API_SECRET")
 
 # Supabase 설정
 SUPABASE_URL              = os.getenv("SUPABASE_URL")
@@ -31,10 +29,16 @@ def index():
     return render_template("index.html", view="main")
 
 
+# app.py /pricing 라우트
 @app.route("/pricing")
 def pricing():
-    client_key = TOSSPAYMENTS_CLIENT_KEY or "test_ck_D5GePWvyJnrK0W0k8eX3lmeaxYG5"
-    return render_template("index.html", view="pricing", TOSSPAYMENTS_CLIENT_KEY=client_key)
+    return render_template(
+        "index.html",
+        view="pricing",
+        PORTONE_STORE_ID=os.getenv("PORTONE_STORE_ID"),
+        PORTONE_CHANNEL_KEY_KAKAO=os.getenv("PORTONE_CHANNEL_KEY_KAKAO"),
+        PORTONE_CHANNEL_KEY_PAYPAL=os.getenv("PORTONE_CHANNEL_KEY_PAYPAL")
+    )
 
 
 # ── 환불 규정 페이지 ──────────────────────────────────────────────────────────
@@ -43,51 +47,35 @@ def refund():
     return render_template("index.html", view="refund")
 
 
-@app.route("/success")
-def payment_success():
-    payment_key = request.args.get("paymentKey")
-    order_id    = request.args.get("orderId")
-    amount      = request.args.get("amount")
-    plan        = request.args.get("plan", "week")
-    user_id     = request.args.get("user_id")
+@app.route('/success')
+def success():
+    payment_id = request.args.get('paymentId')  # 포트원이 리다이렉트 시 자동으로 붙여줌
+    plan = request.args.get('plan')
 
-    if not all([payment_key, order_id, amount]):
-        return "결제 정보가 올바르지 않습니다.", 400
+    # ✅ 포트원 서버에서 결제 검증
+    res = requests.get(
+        f"https://api.portone.io/payments/{payment_id}",
+        headers={"Authorization": f"PortOne {PORTONE_API_SECRET}"}
+    )
+    payment = res.json()
 
-    amount_int = int(amount)
-    if plan == "week"  and amount_int != 5000:
-        return "결제 금액이 일치하지 않습니다.", 400
-    if plan == "month" and amount_int != 10000:
-        return "결제 금액이 일치하지 않습니다.", 400
+    if payment.get('status') != 'PAID':
+        return render_template('index.html', view='fail')
 
-    user_pass   = TOSSPAYMENTS_SECRET_KEY + ":"
-    encoded_u_p = base64.b64encode(user_pass.encode()).decode()
-
-    url = "https://api.tosspayments.com/v1/payments/confirm"
-    headers = {"Authorization": f"Basic {encoded_u_p}", "Content-Type": "application/json"}
-    payload = {"paymentKey": payment_key, "orderId": order_id, "amount": amount_int}
-
-    res = requests.post(url, json=payload, headers=headers)
-
-    if res.status_code == 200:
-        now = datetime.utcnow()
-        valid_until = (now + timedelta(days=7 if plan == "week" else 30)).isoformat()
-
-        if supabase_admin and user_id:
-            try:
-                supabase_admin.auth.admin.update_user_by_id(
-                    user_id,
-                    {"user_metadata": {"is_paid": True, "plan_type": plan, "valid_until": valid_until}}
-                )
-            except Exception as e:
-                print(f"[ERROR] Supabase update failed: {e}")
-        else:
-            if not supabase_admin: print("[WARN] supabase_admin 미초기화")
-            if not user_id:        print("[WARN] user_id 없음")
-
-        return render_template("index.html", view="success", message="결제가 완료되었습니다!", plan=plan, valid_until=valid_until)
+    # 수정
+    currency = payment['amount'].get('currency', 'KRW')
+    if currency == 'USD':
+        expected = 4 if plan == 'week' else 8
     else:
-        return f"결제 승인 실패: {res.text}", 400
+        expected = 5000 if plan == 'week' else 10000
+
+    if payment['amount']['total'] != expected:
+        return render_template('index.html', view='fail')
+
+    # ✅ 여기서 DB에 사용자 플랜 업데이트 (Supabase 등)
+    # supabase_client.table('users').update({'is_paid': True}).eq('email', ...).execute()
+
+    return render_template('index.html', view='success', plan=plan, message='결제가 확인되었습니다.')
 
 
 @app.route("/fail")

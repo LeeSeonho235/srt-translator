@@ -6,7 +6,7 @@
     <title>{% if view == 'main' %}SRT Translator{% elif view == 'pricing' %}플랜 업그레이드{% elif view == 'success' %}결제 완료{% elif view == 'fail' %}결제 실패{% endif %} - SRT Translator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
-    <script src="https://js.tosspayments.com/v1/payment"></script>
+    <script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
         body { font-family: 'Inter', sans-serif; }
@@ -274,8 +274,10 @@
         function closeModal(){document.getElementById('result-modal').classList.add('hidden');}
         document.getElementById('file-input').onchange=function(){this.setCustomValidity('');const fd=document.getElementById('file-name-display');const ft=document.getElementById('file-text');if(this.files.length>0){ft.classList.add('hidden');fd.classList.remove('hidden');fd.innerText="📄 "+this.files[0].name;}};
 {% elif view == 'pricing' %}
-        const CLIENT_KEY = "{{ TOSSPAYMENTS_CLIENT_KEY }}";
-        const tossPayments = TossPayments(CLIENT_KEY);
+        // 포트원 V2는 별도 초기화 불필요 (PortOne 객체 자동 로드됨)
+        const PORTONE_STORE_ID = "{{ PORTONE_STORE_ID }}";
+        const PORTONE_CHANNEL_KEY_KAKAO = "{{ PORTONE_CHANNEL_KEY_KAKAO }}";
+        const PORTONE_CHANNEL_KEY_PAYPAL = "{{ PORTONE_CHANNEL_KEY_PAYPAL }}";
         // [변경] EN/KO 두 개만
         const pricingUiLangs = [{code:'en',name:'English',flag:'🇺🇸'},{code:'ko',name:'한국어 (Korean)',flag:'🇰🇷'}];
         const pricingI18n = {
@@ -294,7 +296,36 @@
         function openRefundModal(){applyPricingLang(localStorage.getItem('web_lang')||'en');document.getElementById('refund-modal').classList.remove('hidden');}
         function closeRefundModal(){document.getElementById('refund-modal').classList.add('hidden');}
         document.getElementById('refund-modal').addEventListener('click',function(e){if(e.target===this)closeRefundModal();});
-        function requestPayment(planType,amount,orderName){const orderId='order_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);const c=pricingI18n[localStorage.getItem('web_lang')]||pricingI18n['en'];tossPayments.requestPayment('카드',{amount:amount,orderId:orderId,orderName:orderName,successUrl:window.location.origin+'/success?plan='+planType,failUrl:window.location.origin+'/fail'}).catch(function(err){if(err.code==='USER_CANCEL')alert(c.payCancel);else alert(c.payError+(err.message||''));});}
+        async function requestPayment(planType, amount, orderName) {
+        const orderId = 'order_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+        const c = pricingI18n[localStorage.getItem('web_lang')] || pricingI18n['en'];
+
+    // ↓ 여기 추가
+        const method = confirm("카카오페이로 결제하시겠습니까?\n(취소 시 PayPal로 결제)");
+        const channelKey = method ? PORTONE_CHANNEL_KEY_KAKAO : PORTONE_CHANNEL_KEY_PAYPAL;
+        const payMethod = method ? "EASY_PAY" : "PAYPAL";
+        const finalAmount = method
+        ? (planType === 'week' ? 5000 : 10000)  // KRW
+        : (planType === 'week' ? 4 : 8);         // USD
+    // ↑ 여기까지
+
+        try {
+            await PortOne.requestPayment({
+                storeId: PORTONE_STORE_ID,
+                channelKey: channelKey,           // ← 변경
+                paymentId: orderId,
+                orderName: orderName,
+                totalAmount: finalAmount,         // ← amount → finalAmount 로 변경
+                currency: method ? "KRW" : "USD", // ← 변경
+                payMethod: payMethod,             // ← 변경
+                ...(method && { easyPay: { easyPayProvider: "KAKAOPAY" } }),  // ← 추가
+                redirectUrl: window.location.origin + '/success?plan=' + planType,
+            });
+        } catch (err) {
+            if (err.code === 'USER_CANCEL') alert(c.payCancel);
+            else alert(c.payError + (err.message || ''));
+        }
+}
 {% endif %}
     </script>
 </body>
