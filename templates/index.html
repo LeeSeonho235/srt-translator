@@ -14,7 +14,39 @@
         .drop-zone.active { border-color: #6366f1; background-color: #f8fafc; scale: 1.02; }
         select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.25rem; }
     </style>
+    <script src="https://cdn.iamport.kr/v1/iamport.js"></script>
 </head>
+<body>
+    <h1>선호님의 서비스 결제하기</h1>
+    <button onclick="pay('kakaopay.TC0ONETIME', 10000, 'KRW')">한국 결제 (10,000원)</button>
+    <button onclick="pay('paypal_v2', 10, 'USD')">International Pay ($10)</button>
+    
+    <script>
+      const IMP = window.IMP;
+      // ★ 여기에 아까 복사한 imp...로 시작하는 식별코드를 넣으세요!
+      IMP.init("impXXXXXXXX"); 
+
+      function pay(pgChannel, amount, currency) {
+        IMP.request_pay({
+          pg: pgChannel,
+          pay_method: "card",
+          merchant_uid: "order_" + new Date().getTime(),
+          name: "선호님 서비스 이용권",
+          amount: amount,
+          currency: currency,
+          buyer_email: "test@gmail.com", // 나중에 로그인한 유저 이메일로 연동
+        }, function (rsp) {
+          if (rsp.success) {
+            alert("결제 성공! 이제 서버에서 검증을 시작합니다.");
+            // 성공하면 여기서 선호님의 파이썬 서버(verify_payment)로 정보를 보낼 거예요.
+            console.log(rsp);
+          } else {
+            alert("결제 실패: " + rsp.error_msg);
+          }
+        });
+      }
+    </script>
+</body>
 <body class="{% if view == 'pricing' %}bg-slate-900 min-h-screen text-white{% else %}bg-slate-50 min-h-screen flex flex-col items-center justify-center p-4{% endif %}">
 
 {% if view == 'main' %}
@@ -273,28 +305,59 @@
         document.onclick=()=>document.getElementById('lang-menu').classList.add('hidden');
         function closeModal(){document.getElementById('result-modal').classList.add('hidden');}
         document.getElementById('file-input').onchange=function(){this.setCustomValidity('');const fd=document.getElementById('file-name-display');const ft=document.getElementById('file-text');if(this.files.length>0){ft.classList.add('hidden');fd.classList.remove('hidden');fd.innerText="📄 "+this.files[0].name;}};
+<script src="https://cdn.iamport.kr/v1/iamport.js"></script>
+
 {% elif view == 'pricing' %}
-        const CLIENT_KEY = "{{ TOSSPAYMENTS_CLIENT_KEY }}";
-        const tossPayments = TossPayments(CLIENT_KEY);
-        // [변경] EN/KO 두 개만
-        const pricingUiLangs = [{code:'en',name:'English',flag:'🇺🇸'},{code:'ko',name:'한국어 (Korean)',flag:'🇰🇷'}];
-        const pricingI18n = {
-            'en':{web:'WEB LANGUAGE',back:'Home',title:'Plan Upgrade',subtitle:'Unlimited SRT subtitle translation',freePeriod:'/ mo',freeDesc:'1 translation per week',freeF1:'◇ Basic translation',freeF2:'○ Weekly limit',currentPlan:'Current Plan',weekPeriod:'/ wk',weekDesc:'1 week unlimited',weekF1:'☆ 1 week unlimited',weekF2:'○ All languages',buy:'Buy',popular:'Popular',monthPeriod:'/ mo',monthDesc:'1 month unlimited',monthF1:'☆ 1 month unlimited',monthF2:'○ All languages',monthF3:'◇ Most popular plan',comingSoon:'Coming Soon',proDesc:'Stay tuned',proF1:'☆ Coming soon',payCancel:'Payment cancelled.',payError:'Payment error: ',refund:'Refund Policy',refundTitle:'Refund Policy'},
-            'ko':{web:'웹 언어 설정',back:'홈으로',title:'플랜 업그레이드',subtitle:'SRT 자막 번역 무제한 이용권',freePeriod:'/ 월',freeDesc:'주 1회 번역 가능',freeF1:'◇ 기본 번역 기능',freeF2:'○ 주 1회 제한',currentPlan:'현재 플랜',weekPeriod:'/ 주',weekDesc:'1주일 무제한 번역',weekF1:'☆ 1주일 무제한',weekF2:'○ 모든 언어 지원',buy:'구매하기',popular:'인기',monthPeriod:'/ 월',monthDesc:'한 달 무제한 번역',monthF1:'☆ 한 달 무제한',monthF2:'○ 모든 언어 지원',monthF3:'◇ 가장 인기 있는 플랜',comingSoon:'준비중',proDesc:'곧 만나요',proF1:'☆ 향후 출시 예정',payCancel:'결제가 취소되었습니다.',payError:'결제 요청 중 오류가 발생했습니다: ',refund:'환불 규정',refundTitle:'환불 규정'}
-        };
-        function applyPricingLang(lc){const c=pricingI18n[lc]||pricingI18n['en'];const l=pricingUiLangs.find(x=>x.code===lc)||pricingUiLangs[0];localStorage.setItem('web_lang',lc);document.getElementById('pricing-lang-label').innerText=c.web;document.getElementById('pricing-lang-current').innerText=l.flag+' '+l.name;document.getElementById('pricing-back').innerHTML='← '+c.back;document.getElementById('pricing-title').innerText=c.title;document.getElementById('pricing-subtitle').innerText=c.subtitle;document.getElementById('free-period').innerText=c.freePeriod;document.getElementById('free-desc').innerText=c.freeDesc;document.getElementById('free-f1').innerText=c.freeF1;document.getElementById('free-f2').innerText=c.freeF2;document.getElementById('pricing-current-plan').innerText=c.currentPlan;document.getElementById('week-period').innerText=c.weekPeriod;document.getElementById('week-desc').innerText=c.weekDesc;document.getElementById('week-f1').innerText=c.weekF1;document.getElementById('week-f2').innerText=c.weekF2;document.getElementById('pricing-buy-btn').innerText=c.buy;document.getElementById('pricing-popular').innerText=c.popular;document.getElementById('month-period').innerText=c.monthPeriod;document.getElementById('month-desc').innerText=c.monthDesc;document.getElementById('month-f1').innerText=c.monthF1;document.getElementById('month-f2').innerText=c.monthF2;document.getElementById('month-f3').innerText=c.monthF3;document.getElementById('pricing-buy-month').innerText=c.buy;document.getElementById('pro-coming').innerText=c.comingSoon;document.getElementById('pro-desc').innerText=c.proDesc;document.getElementById('pro-f1').innerText=c.proF1;document.getElementById('pro-disabled').innerText=c.comingSoon;
-        // [추가] 환불 버튼 + 모달 언어 전환
-        document.getElementById('pricing-refund-btn').innerText=c.refund;document.getElementById('refund-modal-title').innerText=c.refundTitle;const isKo=(lc==='ko');document.getElementById('refund-content-ko').classList.toggle('hidden',!isKo);document.getElementById('refund-content-en').classList.toggle('hidden',isKo);
-        document.getElementById('pricing-lang-menu').classList.add('hidden');}
-        pricingUiLangs.forEach(l=>{const b=document.createElement('button');b.className='flex w-full items-center gap-3 px-4 py-2 text-[11px] font-semibold text-slate-200 hover:bg-slate-700';b.innerHTML='<span>'+l.flag+'</span><span>'+l.name+'</span>';b.onclick=()=>applyPricingLang(l.code);document.getElementById('pricing-lang-options').appendChild(b);});
-        applyPricingLang(localStorage.getItem('web_lang')||'en');
-        document.getElementById('pricing-lang-toggle').onclick=(e)=>{e.stopPropagation();document.getElementById('pricing-lang-menu').classList.toggle('hidden');};
-        document.onclick=()=>document.getElementById('pricing-lang-menu').classList.add('hidden');
-        // [추가] 환불 규정 모달
-        function openRefundModal(){applyPricingLang(localStorage.getItem('web_lang')||'en');document.getElementById('refund-modal').classList.remove('hidden');}
-        function closeRefundModal(){document.getElementById('refund-modal').classList.add('hidden');}
-        document.getElementById('refund-modal').addEventListener('click',function(e){if(e.target===this)closeRefundModal();});
-        function requestPayment(planType,amount,orderName){const orderId='order_'+Date.now()+'_'+Math.random().toString(36).substr(2,9);const c=pricingI18n[localStorage.getItem('web_lang')]||pricingI18n['en'];tossPayments.requestPayment('카드',{amount:amount,orderId:orderId,orderName:orderName,successUrl:window.location.origin+'/success?plan='+planType,failUrl:window.location.origin+'/fail'}).catch(function(err){if(err.code==='USER_CANCEL')alert(c.payCancel);else alert(c.payError+(err.message||''));});}
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700 relative">
+            <h3 class="text-xl font-bold mb-2">A Week</h3>
+            <p class="text-3xl font-extrabold mb-4">₩5,000 / $5</p>
+            <button onclick="startPay('week')" class="w-full py-3 rounded-xl bg-white text-slate-900 font-bold hover:bg-slate-100 transition-colors">Buy</button>
+        </div>
+
+        <div class="bg-slate-800/50 rounded-2xl p-6 border-2 border-indigo-500 relative">
+            <h3 class="text-xl font-bold mb-2">A Month</h3>
+            <p class="text-3xl font-extrabold mb-4">₩10,000 / $10</p>
+            <button onclick="startPay('month')" class="w-full py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-colors">Buy</button>
+        </div>
+    </div>
+
+    <script>
+        // 포트원 초기화
+        const IMP = window.IMP;
+        IMP.init("imp67256044 "); 
+
+        function startPay(planType) {
+            const currentLang = localStorage.getItem('web_lang') || 'en';
+            
+            let payConfig = {
+                merchant_uid: "order_" + new Date().getTime(),
+                name: planType === 'week' ? "SRT Translator 1주일권" : "SRT Translator 1개월권",
+            };
+
+            // 한국어 설정일 때는 카카오페이(원화), 그 외에는 페이팔(달러)
+            if (currentLang === 'ko') {
+                payConfig.pg = "kakaopay.TC0ONETIME"; // 테스트용 카카오페이
+                payConfig.amount = planType === 'week' ? 5000 : 10000;
+                payConfig.currency = "KRW";
+            } else {
+                payConfig.pg = "paypal_v2"; // 테스트용 페이팔
+                payConfig.amount = planType === 'week' ? 5 : 10;
+                payConfig.currency = "USD";
+            }
+
+            // 결제 요청
+            IMP.request_pay(payConfig, function (rsp) {
+                if (rsp.success) {
+                    alert("결제 성공! 검증 페이지로 이동합니다.");
+                    // 성공 시 서버로 이동 (나중에 파이썬 verify_payment 로직과 연결)
+                    location.href = "/success?imp_uid=" + rsp.imp_uid + "&plan=" + planType;
+                } else {
+                    alert("결제 실패: " + rsp.error_msg);
+                }
+            });
+        }
+    </script>
 {% endif %}
     </script>
 </body>
