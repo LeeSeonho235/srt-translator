@@ -293,6 +293,26 @@
         document.getElementById('file-input').onchange=function(){this.setCustomValidity('');const fd=document.getElementById('file-name-display');const ft=document.getElementById('file-text');if(this.files.length>0){ft.classList.add('hidden');fd.classList.remove('hidden');fd.innerText="📄 "+this.files[0].name;}};
 {% elif view == 'pricing' %}
         // 포트원 V2는 별도 초기화 불필요 (PortOne 객체 자동 로드됨)
+        // 로그인 유저면 플랜 체크
+        const _supabasePricing = supabase.createClient(
+            'https://dwkwvqldlykzmnfffflu.supabase.co',
+            'sb_publishable_vmHL9-yPRdTF9jI57kZaqQ_a22ZqJp2'
+        );
+        _supabasePricing.auth.getUser().then(async ({data}) => {
+            if (data?.user?.email) {
+                const res = await fetch('/api/my-plan?email=' + encodeURIComponent(data.user.email));
+                const plan = await res.json();
+                if (plan.plan !== null) {
+                    // 이미 구매한 유저 → Buy 버튼 비활성화
+                    document.getElementById('pricing-buy-btn').disabled = true;
+                    document.getElementById('pricing-buy-btn').innerText = 'Already Purchased / 이미 구매하셨습니다';
+                    document.getElementById('pricing-buy-btn').classList.add('opacity-50', 'cursor-not-allowed');
+                    document.getElementById('pricing-buy-month').disabled = true;
+                    document.getElementById('pricing-buy-month').innerText = 'Already Purchased / 이미 구매하셨습니다';
+                    document.getElementById('pricing-buy-month').classList.add('opacity-50', 'cursor-not-allowed');
+                }
+            }
+        });
         const PORTONE_STORE_ID = "{{ PORTONE_STORE_ID }}";
         const PORTONE_CHANNEL_KEY_KAKAO = "{{ PORTONE_CHANNEL_KEY_KAKAO }}";
         const PORTONE_CHANNEL_KEY_PAYPAL = "{{ PORTONE_CHANNEL_KEY_PAYPAL }}";
@@ -359,6 +379,8 @@ async function proceedPayment(method) {
 
     // 카카오페이는 redirectUrl 대신 여기서 결과 받음
     if (response && response.paymentId) {
+        const userEmail = (await (await fetch('/api/my-plan?email=check')).json()) || {};
+        const _user = await _supabase?.auth?.getUser?.();  // 이건 pricing 페이지라 supabase 없음
         window.location.href = '/success?plan=' + planType + '&paymentId=' + response.paymentId;
     }
 } catch (err) {
