@@ -210,7 +210,7 @@
         </div>
     </div>
 <!-- 결제 수단 선택 모달 -->
-    <div id="payment-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[200] p-4">
+    <div id="payment-modal" style="display:none;pointer-events:none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-[200] p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-sm p-8 relative">
             <button onclick="closePaymentModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -286,7 +286,7 @@
         function openLoginModal(){document.getElementById('login-modal').classList.remove('hidden');}
         function closeLoginModal(){document.getElementById('login-modal').classList.add('hidden');}
         document.getElementById('login-modal').addEventListener('click',function(e){if(e.target===this)closeLoginModal();});
-        documendocument.getElementById('trans-form').onsubmit=async function(e){e.preventDefault();let isPaid=false;if(currentUser){const r2=await fetch('/api/my-plan?email='+encodeURIComponent(currentUser.email));const d2=await r2.json();isPaid=d2.plan!==null;}if(!isPaid){const lu=localStorage.getItem("last_translate_date");if(lu){const d=(new Date()-new Date(lu))/(1000*60*60*24);if(d<7){alert((i18n[localStorage.getItem('web_lang')]||i18n['en']).alert);return;}}}const sb=document.getElementById('submit-btn');const la=document.getElementById('loading-area');sb.disabled=true;la.classList.remove('hidden');const fd=new FormData(this);try{const r=await fetch('/translate',{method:'POST',body:fd});if(r.ok){const blob=await r.blob();const url=window.URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='translated_'+fd.get('dest_lang')+'.srt';a.click();if(!isPaid)localStorage.setItem("last_translate_date",new Date().toISOString());document.getElementById('result-modal').classList.remove('hidden');}}catch(err){alert("Error!");}finally{sb.disabled=false;la.classList.add('hidden');}};
+        document.getElementById('trans-form').onsubmit=async function(e){e.preventDefault();let isPaid=false;if(currentUser){const r2=await fetch('/api/my-plan?email='+encodeURIComponent(currentUser.email));const d2=await r2.json();isPaid=d2.plan!==null;}if(!isPaid){const lu=localStorage.getItem("last_translate_date");if(lu){const d=(new Date()-new Date(lu))/(1000*60*60*24);if(d<7){alert((i18n[localStorage.getItem('web_lang')]||i18n['en']).alert);return;}}}const sb=document.getElementById('submit-btn');const la=document.getElementById('loading-area');sb.disabled=true;la.classList.remove('hidden');const fd=new FormData(this);try{const r=await fetch('/translate',{method:'POST',body:fd});if(r.ok){const blob=await r.blob();const url=window.URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='translated_'+fd.get('dest_lang')+'.srt';a.click();if(!isPaid)localStorage.setItem("last_translate_date",new Date().toISOString());document.getElementById('result-modal').classList.remove('hidden');}}catch(err){alert("Error!");}finally{sb.disabled=false;la.classList.add('hidden');}};
         document.getElementById('lang-toggle').onclick=(e)=>{e.stopPropagation();document.getElementById('lang-menu').classList.toggle('hidden');};
         document.onclick=()=>document.getElementById('lang-menu').classList.add('hidden');
         function closeModal(){document.getElementById('result-modal').classList.add('hidden');}
@@ -296,21 +296,7 @@
         dropArea.addEventListener('dragleave',()=>{dropArea.classList.remove('active');});
         dropArea.addEventListener('drop',(e)=>{e.preventDefault();dropArea.classList.remove('active');const files=e.dataTransfer.files;if(files.length>0){const input=document.getElementById('file-input');const dt=new DataTransfer();dt.items.add(files[0]);input.files=dt.files;document.getElementById('file-text').classList.add('hidden');const fd=document.getElementById('file-name-display');fd.classList.remove('hidden');fd.innerText='📄 '+files[0].name;}});
 {% elif view == 'pricing' %}
-        _supabasePricing.auth.getUser().then(async ({data}) => {
-            if (data?.user?.email) {
-                const res = await fetch('/api/my-plan?email=' + encodeURIComponent(data.user.email));
-                const plan = await res.json();
-                if (plan.plan !== null) {
-                    // 이미 구매한 유저 → Buy 버튼 비활성화
-                    document.getElementById('pricing-buy-btn').disabled = true;
-                    document.getElementById('pricing-buy-btn').innerText = 'Already Purchased / 이미 구매하셨습니다';
-                    document.getElementById('pricing-buy-btn').classList.add('opacity-50', 'cursor-not-allowed');
-                    document.getElementById('pricing-buy-month').disabled = true;
-                    document.getElementById('pricing-buy-month').innerText = 'Already Purchased / 이미 구매하셨습니다';
-                    document.getElementById('pricing-buy-month').classList.add('opacity-50', 'cursor-not-allowed');
-                }
-            }
-        });
+
         const PORTONE_STORE_ID = "{{ PORTONE_STORE_ID }}";
         const PORTONE_CHANNEL_KEY_KAKAO = "{{ PORTONE_CHANNEL_KEY_KAKAO }}";
         const PORTONE_CHANNEL_KEY_PAYPAL = "{{ PORTONE_CHANNEL_KEY_PAYPAL }}";
@@ -336,12 +322,15 @@
 
 function requestPayment(planType, amount, orderName) {
     _pendingPlan = { planType, orderName };
-    document.getElementById('payment-modal').classList.remove('hidden');
+    const modal = document.getElementById('payment-modal');
+    modal.style.display = 'flex';
+    modal.style.pointerEvents = 'auto';
 }
 
 function closePaymentModal() {
-    document.getElementById('payment-modal').classList.add('hidden');
-    
+    const modal = document.getElementById('payment-modal');
+    modal.style.display = 'none';
+    modal.style.pointerEvents = 'none';
 }
 
 async function proceedPayment(method) {
@@ -377,8 +366,6 @@ async function proceedPayment(method) {
 
     // 카카오페이는 redirectUrl 대신 여기서 결과 받음
     if (response && response.paymentId) {
-        const userEmail = (await (await fetch('/api/my-plan?email=check')).json()) || {};
-        const _user = await _supabase?.auth?.getUser?.();  // 이건 pricing 페이지라 supabase 없음
         window.location.href = '/success?plan=' + planType + '&paymentId=' + response.paymentId;
     }
 } catch (err) {
