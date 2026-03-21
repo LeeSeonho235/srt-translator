@@ -51,6 +51,7 @@ def refund():
 def success():
     plan = request.args.get('plan')
     payment_id = request.args.get('paymentId')
+    url_email = request.args.get('email')
 
     res = requests.get(
         f"https://api.portone.io/payments/{payment_id}",
@@ -63,7 +64,7 @@ def success():
     if payment.get('status') != 'PAID':
         return render_template('index.html', view='fail')
 
-    user_email = payment.get('customer', {}).get('email')
+    user_email = payment.get('customer', {}).get('email') or url_email
 
     if plan == 'week':
         expires_at = datetime.utcnow() + timedelta(weeks=1)

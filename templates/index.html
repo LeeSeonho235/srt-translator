@@ -81,7 +81,7 @@
         </form>
     </div>
 
-    <div id="result-modal" class="hidden fixed inset-0 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+    <div id="result-modal" style="display:none;pointer-events:none;" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm items-center justify-center z-50 p-4">
         <div class="bg-white rounded-[2.5rem] shadow-2xl max-w-lg w-full p-10 text-center">
             <h2 id="modal-title" class="text-4xl font-black text-slate-900 mb-4 tracking-tight">Success!</h2>
             <p id="modal-desc" class="text-slate-500 text-lg mb-6 font-bold">Please check the translation again.</p>
@@ -100,7 +100,7 @@
     </div>
 
     <!-- [추가] 로그인 모달 -->
-    <div id="login-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+    <div id="login-modal" style="display:none;pointer-events:none;" class="fixed inset-0 bg-black/50 backdrop-blur-sm items-center justify-center z-[100] p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-md p-10 relative">
             <button onclick="closeLoginModal()" class="absolute top-5 right-5 text-slate-400 hover:text-slate-700 transition-colors">
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
@@ -191,7 +191,7 @@
     </div>
 
     <!-- [추가] 환불 규정 모달 -->
-    <div id="refund-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] p-4">
+    <div id="refund-modal" style="display:none;pointer-events:none;" class="fixed inset-0 bg-black/60 backdrop-blur-sm items-center justify-center z-[100] p-4">
         <div class="bg-white rounded-3xl shadow-2xl w-full max-w-2xl max-h-[85vh] overflow-y-auto relative">
             <div class="flex items-center justify-between px-8 py-5 border-b border-slate-100 sticky top-0 bg-white rounded-t-3xl z-10">
                 <h2 id="refund-modal-title" class="text-base font-extrabold text-slate-900">Refund Policy</h2>
@@ -283,13 +283,13 @@
         async function signInWithGoogle(){await _supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin}});}
         async function signOut(){await _supabase.auth.signOut();location.reload();}
         // [추가] 로그인 모달
-        function openLoginModal(){document.getElementById('login-modal').classList.remove('hidden');}
-        function closeLoginModal(){document.getElementById('login-modal').classList.add('hidden');}
+        function openLoginModal(){const m=document.getElementById('login-modal');m.style.display='flex';m.style.pointerEvents='auto';}
+        function closeLoginModal(){const m=document.getElementById('login-modal');m.style.display='none';m.style.pointerEvents='none';}
         document.getElementById('login-modal').addEventListener('click',function(e){if(e.target===this)closeLoginModal();});
-        document.getElementById('trans-form').onsubmit=async function(e){e.preventDefault();let isPaid=false;if(currentUser){const r2=await fetch('/api/my-plan?email='+encodeURIComponent(currentUser.email));const d2=await r2.json();isPaid=d2.plan!==null;}if(!isPaid){const lu=localStorage.getItem("last_translate_date");if(lu){const d=(new Date()-new Date(lu))/(1000*60*60*24);if(d<7){alert((i18n[localStorage.getItem('web_lang')]||i18n['en']).alert);return;}}}const sb=document.getElementById('submit-btn');const la=document.getElementById('loading-area');sb.disabled=true;la.classList.remove('hidden');const fd=new FormData(this);try{const r=await fetch('/translate',{method:'POST',body:fd});if(r.ok){const blob=await r.blob();const url=window.URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='translated_'+fd.get('dest_lang')+'.srt';a.click();if(!isPaid)localStorage.setItem("last_translate_date",new Date().toISOString());document.getElementById('result-modal').classList.remove('hidden');}}catch(err){alert("Error!");}finally{sb.disabled=false;la.classList.add('hidden');}};
+        document.getElementById('trans-form').onsubmit=async function(e){e.preventDefault();let isPaid=false;if(currentUser){const r2=await fetch('/api/my-plan?email='+encodeURIComponent(currentUser.email));const d2=await r2.json();isPaid=d2.plan!==null;}if(!isPaid){const lu=localStorage.getItem("last_translate_date");if(lu){const d=(new Date()-new Date(lu))/(1000*60*60*24);if(d<7){alert((i18n[localStorage.getItem('web_lang')]||i18n['en']).alert);return;}}}const sb=document.getElementById('submit-btn');const la=document.getElementById('loading-area');sb.disabled=true;la.classList.remove('hidden');const fd=new FormData(this);try{const r=await fetch('/translate',{method:'POST',body:fd});if(r.ok){const blob=await r.blob();const url=window.URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='translated_'+fd.get('dest_lang')+'.srt';a.click();if(!isPaid)localStorage.setItem("last_translate_date",new Date().toISOString());const rm=document.getElementById('result-modal');rm.style.display='flex';rm.style.pointerEvents='auto';}}catch(err){alert("Error!");}finally{sb.disabled=false;la.classList.add('hidden');}};
         document.getElementById('lang-toggle').onclick=(e)=>{e.stopPropagation();document.getElementById('lang-menu').classList.toggle('hidden');};
         document.onclick=()=>document.getElementById('lang-menu').classList.add('hidden');
-        function closeModal(){document.getElementById('result-modal').classList.add('hidden');}
+        function closeModal(){const m=document.getElementById('result-modal');m.style.display='none';m.style.pointerEvents='none';}
         document.getElementById('file-input').onchange=function(){this.setCustomValidity('');const fd=document.getElementById('file-name-display');const ft=document.getElementById('file-text');if(this.files.length>0){ft.classList.add('hidden');fd.classList.remove('hidden');fd.innerText="📄 "+this.files[0].name;}};
         const dropArea=document.getElementById('drop-area');
         dropArea.addEventListener('dragover',(e)=>{e.preventDefault();dropArea.classList.add('active');});
@@ -300,6 +300,8 @@
         const PORTONE_STORE_ID = "{{ PORTONE_STORE_ID }}";
         const PORTONE_CHANNEL_KEY_KAKAO = "{{ PORTONE_CHANNEL_KEY_KAKAO }}";
         const PORTONE_CHANNEL_KEY_PAYPAL = "{{ PORTONE_CHANNEL_KEY_PAYPAL }}";
+        const _spClient = supabase.createClient('https://dwkwvqldlykzmnfffflu.supabase.co','sb_publishable_vmHL9-yPRdTF9jI57kZaqQ_a22ZqJp2');
+        _spClient.auth.getUser().then(async({data})=>{if(data?.user?.email){const res=await fetch('/api/my-plan?email='+encodeURIComponent(data.user.email));const d=await res.json();if(d.plan!==null){['pricing-buy-btn','pricing-buy-month'].forEach(id=>{const b=document.getElementById(id);if(b){b.disabled=true;b.innerText='Already Purchased / 이미 구매하셨습니다';b.classList.add('opacity-50','cursor-not-allowed');}});}}});
         // [변경] EN/KO 두 개만
         const pricingUiLangs = [{code:'en',name:'English',flag:'🇺🇸'},{code:'ko',name:'한국어 (Korean)',flag:'🇰🇷'}];
         const pricingI18n = {
@@ -315,8 +317,8 @@
         document.getElementById('pricing-lang-toggle').onclick=(e)=>{e.stopPropagation();document.getElementById('pricing-lang-menu').classList.toggle('hidden');};
         document.onclick=()=>document.getElementById('pricing-lang-menu').classList.add('hidden');
         // [추가] 환불 규정 모달
-        function openRefundModal(){applyPricingLang(localStorage.getItem('web_lang')||'en');document.getElementById('refund-modal').classList.remove('hidden');}
-        function closeRefundModal(){document.getElementById('refund-modal').classList.add('hidden');}
+        function openRefundModal(){applyPricingLang(localStorage.getItem('web_lang')||'en');const m=document.getElementById('refund-modal');m.style.display='flex';m.style.pointerEvents='auto';}
+        function closeRefundModal(){const m=document.getElementById('refund-modal');m.style.display='none';m.style.pointerEvents='none';}
         document.getElementById('refund-modal').addEventListener('click',function(e){if(e.target===this)closeRefundModal();});
         let _pendingPlan = null;
 
@@ -366,7 +368,9 @@ async function proceedPayment(method) {
 
     // 카카오페이는 redirectUrl 대신 여기서 결과 받음
     if (response && response.paymentId) {
-        window.location.href = '/success?plan=' + planType + '&paymentId=' + response.paymentId;
+        const userInfo = await _spClient.auth.getUser();
+        const userEmail = userInfo?.data?.user?.email || '';
+        window.location.href = '/success?plan=' + planType + '&paymentId=' + response.paymentId + '&email=' + encodeURIComponent(userEmail);
     }
 } catch (err) {
     if (err.code === 'USER_CANCEL') alert(c.payCancel);
