@@ -49,10 +49,10 @@ def refund():
 
 @app.route('/success')
 def success():
-    payment_id = request.args.get('paymentId')  # 포트원이 리다이렉트 시 자동으로 붙여줌
     plan = request.args.get('plan')
+    payment_id = request.args.get('paymentId')
 
-    # ✅ 포트원 서버에서 결제 검증
+    # 포트원 결제 검증
     res = requests.get(
         f"https://api.portone.io/payments/{payment_id}",
         headers={"Authorization": f"PortOne {PORTONE_API_SECRET}"}
@@ -62,20 +62,26 @@ def success():
     if payment.get('status') != 'PAID':
         return render_template('index.html', view='fail')
 
-    # 수정
-    currency = payment['amount'].get('currency', 'KRW')
-    if currency == 'USD':
-        expected = 4 if plan == 'week' else 8
+    # 결제한 유저 이메일 가져오기
+    user_email = payment.get('customer', {}).get('email')
+
+    # 플랜 만료일 계산
+    if plan == 'week':
+        expires_at = datetime.utcnow() + timedelta(weeks=1)
+    elif plan == 'month':
+        expires_at = datetime.utcnow() + timedelta(days=30)
     else:
-        expected = 5000 if plan == 'week' else 10000
+        expires_at = datetime.utcnow() + timedelta(days=365)
 
-    if payment['amount']['total'] != expected:
-        return render_template('index.html', view='fail')
+    # Supabase에 저장 (이메일 기준 upsert)
+    if supabase_admin and user_email:
+        supabase_admin.table('user_plans').upsert({
+            'email': user_email,
+            'plan_type': plan,
+            'plan_expires_at': expires_at.isoformat()
+        }, on_conflict='email').execute()
 
-    # ✅ 여기서 DB에 사용자 플랜 업데이트 (Supabase 등)
-    # supabase_client.table('users').update({'is_paid': True}).eq('email', ...).execute()
-
-    return render_template('index.html', view='success', plan=plan, message='결제가 확인되었습니다.')
+    return render_template('index.html', view='success', plan=plan, message='Payment completed successfully.')
 
 
 @app.route("/fail")
