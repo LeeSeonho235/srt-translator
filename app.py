@@ -64,6 +64,27 @@ def success():
 
     if payment.get('status') != 'PAID':
         return render_template('index.html', view='fail')
+    
+    # 결제한 유저 이메일 가져오기
+    user_email = payment.get('customer', {}).get('email')
+
+    # 플랜 만료일 계산
+    if plan == 'week':
+        expires_at = datetime.utcnow() + timedelta(weeks=1)
+    elif plan == 'month':
+        expires_at = datetime.utcnow() + timedelta(days=30)
+    else:
+        expires_at = datetime.utcnow() + timedelta(days=365)
+
+    # Supabase에 저장
+    if supabase_admin and user_email:
+        supabase_admin.table('user_plans').upsert({
+            'email': user_email,
+            'plan_type': plan,
+            'plan_expires_at': expires_at.isoformat()
+        }, on_conflict='email').execute()
+
+    return render_template('index.html', view='success', plan=plan, message='Payment completed successfully.')
 
 @app.route("/fail")
 def payment_fail():
