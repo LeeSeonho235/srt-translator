@@ -230,17 +230,15 @@
         </div>
     </div>
 {% elif view == 'success' %}
-    {% elif view == 'success' %}
     <div class="bg-white rounded-3xl shadow-2xl p-10 max-w-md w-full text-center">
         <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
         </div>
-        <h1 class="text-2xl font-extrabold text-slate-900 mb-2">Payment Completed!</h1>
-        <p class="text-slate-500 font-bold">결제가 완료되었습니다.</p>
-        <p class="text-slate-400 text-sm mt-1 mb-8">Would you like to return to the main page?<br>메인 화면으로 돌아가시겠습니까?</p>
+        <h1 class="text-2xl font-extrabold text-slate-900 mb-1">Payment Completed!</h1>
+        <p class="text-slate-500 text-sm mb-4">결제가 완료되었습니다.</p>
         <p class="text-sm text-slate-500 mb-8">
-            {% if plan == 'week' %}Unlimited translation for 1 week. / 1주일 무제한 번역을 이용하실 수 있습니다.{% endif %}
-            {% if plan == 'month' %}Unlimited translation for 1 month. / 1개월 무제한 번역을 이용하실 수 있습니다.{% endif %}
+            {% if plan == 'week' %}Unlimited for 1 week. / 1주일 무제한 이용 가능합니다.{% endif %}
+            {% if plan == 'month' %}Unlimited for 1 month. / 1개월 무제한 이용 가능합니다.{% endif %}
         </p>
         <a href="/" class="block w-full bg-indigo-600 text-white font-bold py-4 rounded-2xl hover:bg-indigo-700 transition-colors">Go to Main / 홈으로 돌아가기</a>
     </div>

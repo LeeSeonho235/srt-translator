@@ -58,17 +58,13 @@ def success():
     )
     payment = res.json()
 
-    # 임시 디버깅 - 상태 확인
     print("=== PAYMENT STATUS ===", payment.get('status'))
-    print("=== PAYMENT DATA ===", payment)
 
     if payment.get('status') != 'PAID':
         return render_template('index.html', view='fail')
-    
-    # 결제한 유저 이메일 가져오기
+
     user_email = payment.get('customer', {}).get('email')
 
-    # 플랜 만료일 계산
     if plan == 'week':
         expires_at = datetime.utcnow() + timedelta(weeks=1)
     elif plan == 'month':
@@ -76,7 +72,6 @@ def success():
     else:
         expires_at = datetime.utcnow() + timedelta(days=365)
 
-    # Supabase에 저장
     if supabase_admin and user_email:
         supabase_admin.table('user_plans').upsert({
             'email': user_email,
@@ -85,7 +80,6 @@ def success():
         }, on_conflict='email').execute()
 
     return render_template('index.html', view='success', plan=plan, message='Payment completed successfully.')
-
 @app.route("/fail")
 def payment_fail():
     return render_template("index.html", view="fail")
