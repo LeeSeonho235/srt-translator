@@ -347,21 +347,26 @@ async function proceedPayment(method) {
     console.log('storeId:', PORTONE_STORE_ID);
 
     try {
-        await PortOne.requestPayment({
-            storeId: PORTONE_STORE_ID,
-            channelKey: channelKey,
-            paymentId: orderId,
-            orderName: orderName,
-            totalAmount: finalAmount,
-            currency: isKakao ? "KRW" : "USD",
-            payMethod: isKakao ? "EASY_PAY" : "PAYPAL",
-            ...(isKakao && { easyPay: { easyPayProvider: "KAKAOPAY" } }),
-            redirectUrl: window.location.origin + '/success?plan=' + planType,
-        });
-    } catch (err) {
-        if (err.code === 'USER_CANCEL') alert(c.payCancel);
-        else alert(c.payError + (err.message || ''));
+    const response = await PortOne.requestPayment({
+        storeId: PORTONE_STORE_ID,
+        channelKey: channelKey,
+        paymentId: orderId,
+        orderName: orderName,
+        totalAmount: finalAmount,
+        currency: isKakao ? "KRW" : "USD",
+        payMethod: isKakao ? "EASY_PAY" : "PAYPAL",
+        ...(isKakao && { easyPay: { easyPayProvider: "KAKAOPAY" } }),
+        redirectUrl: window.location.origin + '/success?plan=' + planType,
+    });
+
+    // 카카오페이는 redirectUrl 대신 여기서 결과 받음
+    if (response && response.paymentId) {
+        window.location.href = '/success?plan=' + planType + '&paymentId=' + response.paymentId;
     }
+} catch (err) {
+    if (err.code === 'USER_CANCEL') alert(c.payCancel);
+    else alert(c.payError + (err.message || ''));
+}
 }
 {% endif %}
     </script>
