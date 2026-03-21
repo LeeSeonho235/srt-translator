@@ -291,13 +291,11 @@
         document.onclick=()=>document.getElementById('lang-menu').classList.add('hidden');
         function closeModal(){document.getElementById('result-modal').classList.add('hidden');}
         document.getElementById('file-input').onchange=function(){this.setCustomValidity('');const fd=document.getElementById('file-name-display');const ft=document.getElementById('file-text');if(this.files.length>0){ft.classList.add('hidden');fd.classList.remove('hidden');fd.innerText="📄 "+this.files[0].name;}};
+        const dropArea=document.getElementById('drop-area');
+        dropArea.addEventListener('dragover',(e)=>{e.preventDefault();dropArea.classList.add('active');});
+        dropArea.addEventListener('dragleave',()=>{dropArea.classList.remove('active');});
+        dropArea.addEventListener('drop',(e)=>{e.preventDefault();dropArea.classList.remove('active');const files=e.dataTransfer.files;if(files.length>0){const input=document.getElementById('file-input');const dt=new DataTransfer();dt.items.add(files[0]);input.files=dt.files;document.getElementById('file-text').classList.add('hidden');const fd=document.getElementById('file-name-display');fd.classList.remove('hidden');fd.innerText='📄 '+files[0].name;}});
 {% elif view == 'pricing' %}
-        // 포트원 V2는 별도 초기화 불필요 (PortOne 객체 자동 로드됨)
-        // 로그인 유저면 플랜 체크
-        const _supabasePricing = supabase.createClient(
-            'https://dwkwvqldlykzmnfffflu.supabase.co',
-            'sb_publishable_vmHL9-yPRdTF9jI57kZaqQ_a22ZqJp2'
-        );
         _supabasePricing.auth.getUser().then(async ({data}) => {
             if (data?.user?.email) {
                 const res = await fetch('/api/my-plan?email=' + encodeURIComponent(data.user.email));
