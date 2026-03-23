@@ -103,9 +103,12 @@ def my_plan():
     result = supabase_admin.table('user_plans').select('*').eq('email', email).execute()
     if result.data:
         plan = result.data[0]
-        expires_at = datetime.fromisoformat(plan['plan_expires_at'])
-        if expires_at > datetime.utcnow():
-            return {'plan': plan['plan_type'], 'expires_at': plan['plan_expires_at']}
+        expires_str = plan['plan_expires_at']
+        # timezone-aware 비교
+        expires_at = datetime.fromisoformat(expires_str.replace('Z', '+00:00'))
+        now = datetime.now(expires_at.tzinfo)
+        if expires_at > now:
+            return {'plan': plan['plan_type'], 'expires_at': expires_str}
     return {'plan': None}
 
 
