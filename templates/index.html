@@ -35,12 +35,12 @@
             <button id="google-login-btn" onclick="openLoginModal()" class="flex items-center gap-2 bg-white border border-slate-200 px-4 py-1.5 rounded-full text-[11px] font-bold text-slate-700 shadow-sm hover:bg-slate-50 transition-all">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-3.5 h-3.5"> Google Login
             </button>
-            <button id="buy-pass-guest-btn" onclick="openLoginModal()" class="hidden flex items-center gap-2 bg-indigo-600 text-white px-4 py-1.5 rounded-full text-[11px] font-bold shadow-sm hover:bg-indigo-700 transition-all">✨ Buy Pass</button>
-            <div id="user-profile" class="hidden flex items-center gap-3 bg-white border border-slate-200 px-4 py-1.5 rounded-full shadow-sm">
+            <button id="buy-pass-guest-btn" onclick="openLoginModal()" style="display:none;" class="flex items-center gap-2 bg-indigo-600 text-white px-4 py-1.5 rounded-full text-[11px] font-bold shadow-sm hover:bg-indigo-700 transition-all">✨ Buy Pass</button>
+            <div id="user-profile" style="display:none;" class="flex items-center gap-3 bg-white border border-slate-200 px-4 py-1.5 rounded-full shadow-sm">
                 <span id="user-email" class="text-[11px] font-bold text-slate-600"></span>
                 <button onclick="signOut()" class="text-[11px] text-red-500 font-bold hover:underline">Logout</button>
             </div>
-            <button id="buy-pass-user-btn" onclick="location.href='/pricing'" class="hidden flex items-center gap-2 bg-indigo-600 text-white px-4 py-1.5 rounded-full text-[11px] font-bold shadow-sm hover:bg-indigo-700 transition-all">✨ Buy Pass</button>
+            <button id="buy-pass-user-btn" onclick="location.href='/pricing'" style="display:none;" class="flex items-center gap-2 bg-indigo-600 text-white px-4 py-1.5 rounded-full text-[11px] font-bold shadow-sm hover:bg-indigo-700 transition-all">✨ Buy Pass</button>
         </div>
     </div>
 
@@ -230,6 +230,7 @@
         </div>
     </div>
 {% elif view == 'success' %}
+    <script>localStorage.removeItem('last_translate_date');</script>
     <div class="bg-white rounded-3xl shadow-2xl p-10 max-w-md w-full text-center">
         <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -260,8 +261,8 @@
 
     <script>
 {% if view == 'main' %}
-        const supabaseUrl = 'https://dwkwvqldlykzmnfffflu.supabase.co';
-        const supabaseKey = 'sb_publishable_vmHL9-yPRdTF9jI57kZaqQ_a22ZqJp2';
+        const supabaseUrl = '{{ SUPABASE_URL }}';
+        const supabaseKey = '{{ SUPABASE_ANON_KEY }}';
         const _supabase = supabase.createClient(supabaseUrl, supabaseKey);
         let currentUser = null;
         const uiLanguages = [{ code: 'en', name: 'English', flag: '🇺🇸' },{ code: 'ko', name: '한국어 (Korean)', flag: '🇰🇷' },{ code: 'es', name: 'Español (Spanish)', flag: '🇪🇸' },{ code: 'ja', name: '日本語 (Japanese)', flag: '🇯🇵' },{ code: 'zh-cn', name: '简体中文 (Chinese)', flag: '🇨🇳' }];
@@ -277,8 +278,8 @@
         _supabase.auth.onAuthStateChange((e,s)=>{
             const lb=document.getElementById('google-login-btn');const p=document.getElementById('user-profile');
             const bgb=document.getElementById('buy-pass-guest-btn');const bub=document.getElementById('buy-pass-user-btn');
-            if(s){currentUser=s.user;lb.classList.add('hidden');bgb.classList.add('hidden');p.classList.remove('hidden');bub.classList.remove('hidden');document.getElementById('user-email').innerText=currentUser.email;closeLoginModal();}
-            else{currentUser=null;lb.classList.remove('hidden');bgb.classList.remove('hidden');p.classList.add('hidden');bub.classList.add('hidden');}
+            if(s){currentUser=s.user;lb.style.display='none';bgb.style.display='none';p.style.display='flex';bub.style.display='flex';document.getElementById('user-email').innerText=currentUser.email;closeLoginModal();}
+            else{currentUser=null;lb.style.display='';bgb.style.display='none';p.style.display='none';bub.style.display='none';}
         });
         async function signInWithGoogle(){await _supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin}});}
         async function signOut(){await _supabase.auth.signOut();location.reload();}
@@ -286,7 +287,7 @@
         function openLoginModal(){const m=document.getElementById('login-modal');m.style.display='flex';m.style.pointerEvents='auto';}
         function closeLoginModal(){const m=document.getElementById('login-modal');m.style.display='none';m.style.pointerEvents='none';}
         document.getElementById('login-modal').addEventListener('click',function(e){if(e.target===this)closeLoginModal();});
-        document.getElementById('trans-form').onsubmit=async function(e){e.preventDefault();let isPaid=false;if(currentUser){const r2=await fetch('/api/my-plan?email='+encodeURIComponent(currentUser.email));const d2=await r2.json();isPaid=d2.plan!==null;}if(!isPaid){const lu=localStorage.getItem("last_translate_date");if(lu){const d=(new Date()-new Date(lu))/(1000*60*60*24);if(d<7){alert((i18n[localStorage.getItem('web_lang')]||i18n['en']).alert);return;}}}const sb=document.getElementById('submit-btn');const la=document.getElementById('loading-area');sb.disabled=true;la.classList.remove('hidden');const fd=new FormData(this);try{const r=await fetch('/translate',{method:'POST',body:fd});if(r.ok){const blob=await r.blob();const url=window.URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='translated_'+fd.get('dest_lang')+'.srt';a.click();if(!isPaid)localStorage.setItem("last_translate_date",new Date().toISOString());const rm=document.getElementById('result-modal');rm.style.display='flex';rm.style.pointerEvents='auto';}}catch(err){alert("Error!");}finally{sb.disabled=false;la.classList.add('hidden');}};
+        document.getElementById('trans-form').onsubmit=async function(e){e.preventDefault();let isPaid=false;if(currentUser){try{const r2=await fetch('/api/my-plan?email='+encodeURIComponent(currentUser.email));const d2=await r2.json();isPaid=d2.plan!==null;}catch(err2){isPaid=false;}}if(!isPaid){const lu=localStorage.getItem("last_translate_date");if(lu){const d=(new Date()-new Date(lu))/(1000*60*60*24);if(d<7){alert((i18n[localStorage.getItem('web_lang')]||i18n['en']).alert);return;}}}const sb=document.getElementById('submit-btn');const la=document.getElementById('loading-area');sb.disabled=true;la.classList.remove('hidden');const fd=new FormData(this);try{const r=await fetch('/translate',{method:'POST',body:fd});if(r.ok){const blob=await r.blob();const url=window.URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='translated_'+fd.get('dest_lang')+'.srt';a.click();if(!isPaid)localStorage.setItem("last_translate_date",new Date().toISOString());const rm=document.getElementById('result-modal');rm.style.display='flex';rm.style.pointerEvents='auto';}}catch(err){alert("Error!");}finally{sb.disabled=false;la.classList.add('hidden');}};
         document.getElementById('lang-toggle').onclick=(e)=>{e.stopPropagation();document.getElementById('lang-menu').classList.toggle('hidden');};
         document.onclick=()=>document.getElementById('lang-menu').classList.add('hidden');
         function closeModal(){const m=document.getElementById('result-modal');m.style.display='none';m.style.pointerEvents='none';}
@@ -300,7 +301,7 @@
         const PORTONE_STORE_ID = "{{ PORTONE_STORE_ID }}";
         const PORTONE_CHANNEL_KEY_KAKAO = "{{ PORTONE_CHANNEL_KEY_KAKAO }}";
         const PORTONE_CHANNEL_KEY_PAYPAL = "{{ PORTONE_CHANNEL_KEY_PAYPAL }}";
-        const _spClient = supabase.createClient('https://dwkwvqldlykzmnfffflu.supabase.co','sb_publishable_vmHL9-yPRdTF9jI57kZaqQ_a22ZqJp2');
+        const _spClient = supabase.createClient('{{ SUPABASE_URL }}','{{ SUPABASE_ANON_KEY }}');
         _spClient.auth.getUser().then(async({data})=>{if(data?.user?.email){const res=await fetch('/api/my-plan?email='+encodeURIComponent(data.user.email));const d=await res.json();if(d.plan!==null){['pricing-buy-btn','pricing-buy-month'].forEach(id=>{const b=document.getElementById(id);if(b){b.disabled=true;b.innerText='Already Purchased / 이미 구매하셨습니다';b.classList.add('opacity-50','cursor-not-allowed');}});}}});
         // [변경] EN/KO 두 개만
         const pricingUiLangs = [{code:'en',name:'English',flag:'🇺🇸'},{code:'ko',name:'한국어 (Korean)',flag:'🇰🇷'}];

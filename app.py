@@ -24,9 +24,15 @@ supabase_client: Client   = create_client(SUPABASE_URL, SUPABASE_ANON_KEY) if SU
 supabase_admin:  Client   = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY) if (SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY) else None
 
 
+def get_common_vars(**kwargs):
+    kwargs['SUPABASE_URL'] = os.getenv("SUPABASE_URL", "")
+    kwargs['SUPABASE_ANON_KEY'] = os.getenv("SUPABASE_ANON_KEY", "")
+    return kwargs
+
+
 @app.route("/")
 def index():
-    return render_template("index.html", view="main")
+    return render_template("index.html", **get_common_vars(view="main"))
 
 
 # app.py /pricing 라우트
@@ -34,10 +40,12 @@ def index():
 def pricing():
     return render_template(
         "index.html",
-        view="pricing",
-        PORTONE_STORE_ID=os.getenv("PORTONE_STORE_ID"),
-        PORTONE_CHANNEL_KEY_KAKAO=os.getenv("PORTONE_CHANNEL_KEY_KAKAO"),
-        PORTONE_CHANNEL_KEY_PAYPAL=os.getenv("PORTONE_CHANNEL_KEY_PAYPAL")
+        **get_common_vars(
+            view="pricing",
+            PORTONE_STORE_ID=os.getenv("PORTONE_STORE_ID"),
+            PORTONE_CHANNEL_KEY_KAKAO=os.getenv("PORTONE_CHANNEL_KEY_KAKAO"),
+            PORTONE_CHANNEL_KEY_PAYPAL=os.getenv("PORTONE_CHANNEL_KEY_PAYPAL")
+        )
     )
 
 
@@ -80,10 +88,10 @@ def success():
             'plan_expires_at': expires_at.isoformat()
         }, on_conflict='email').execute()
 
-    return render_template('index.html', view='success', plan=plan, message='Payment completed successfully.')
+    return render_template('index.html', **get_common_vars(view='success', plan=plan, message='Payment completed successfully.'))
 @app.route("/fail")
 def payment_fail():
-    return render_template("index.html", view="fail")
+    return render_template("index.html", **get_common_vars(view='fail'))
 
 
 @app.route('/api/my-plan')
