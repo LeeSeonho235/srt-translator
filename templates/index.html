@@ -320,17 +320,47 @@
         const PORTONE_CHANNEL_KEY_KAKAO = "{{ PORTONE_CHANNEL_KEY_KAKAO }}";
         const PORTONE_CHANNEL_KEY_PAYPAL = "{{ PORTONE_CHANNEL_KEY_PAYPAL }}";
         const _spClient = supabase.createClient('{{ SUPABASE_URL }}','{{ SUPABASE_ANON_KEY }}');
-        _spClient.auth.getUser().then(async({data})=>{if(data?.user?.email){const res=await fetch('/api/my-plan?email='+encodeURIComponent(data.user.email));const d=await res.json();if(d.plan!==null){['pricing-buy-btn','pricing-buy-month'].forEach(id=>{const b=document.getElementById(id);if(b){b.disabled=true;b.innerText='Already Purchased / 이미 구매하셨습니다';b.classList.add('opacity-50','cursor-not-allowed');}});}}});
+        window._userPlan = null;
+        _spClient.auth.getUser().then(async({data})=>{
+            if(data?.user?.email){
+                const res=await fetch('/api/my-plan?email='+encodeURIComponent(data.user.email));
+                const d=await res.json();
+                if(d.plan!==null){
+                    window._userPlan=d.plan;
+                    applyPlanUI(localStorage.getItem('web_lang')||'en');
+                }
+            }
+        });
+        function applyPlanUI(lc){
+            if(!window._userPlan) return;
+            const c=pricingI18n[lc]||pricingI18n['en'];
+            const plan=window._userPlan;
+            // Free 현재 플랜 버튼 → 비활성 상태 유지하되 텍스트 제거
+            const freBtn=document.getElementById('pricing-current-plan');
+            if(freBtn){freBtn.innerText=c.notCurrentPlan;}
+            // 구매한 플랜 버튼 → 현재 플랜
+            const weekBtn=document.getElementById('pricing-buy-btn');
+            const monthBtn=document.getElementById('pricing-buy-month');
+            if(plan==='week'&&weekBtn){
+                weekBtn.disabled=true;weekBtn.innerText=c.currentPlan;
+                weekBtn.className='w-full py-3 rounded-xl bg-indigo-600 text-white font-bold cursor-not-allowed opacity-80';
+                if(monthBtn){monthBtn.disabled=true;monthBtn.innerText=c.alreadyPurchased;monthBtn.classList.add('opacity-50','cursor-not-allowed');}
+            } else if(plan==='month'&&monthBtn){
+                monthBtn.disabled=true;monthBtn.innerText=c.currentPlan;
+                monthBtn.className='w-full py-3 rounded-xl bg-indigo-600 text-white font-bold cursor-not-allowed opacity-80';
+                if(weekBtn){weekBtn.disabled=true;weekBtn.innerText=c.alreadyPurchased;weekBtn.classList.add('opacity-50','cursor-not-allowed');}
+            }
+        }
         // [변경] EN/KO 두 개만
         const pricingUiLangs = [{code:'en',name:'English',flag:'🇺🇸'},{code:'ko',name:'한국어 (Korean)',flag:'🇰🇷'}];
         const pricingI18n = {
-            'en':{web:'WEB LANGUAGE',back:'Home',title:'Plan Upgrade',subtitle:'Unlimited SRT subtitle translation',freePeriod:'/ mo',freeDesc:'1 translation per week',freeF1:'◇ Basic translation',freeF2:'○ Weekly limit',currentPlan:'Current Plan',weekPeriod:'/ wk',weekDesc:'1 week unlimited',weekF1:'☆ 1 week unlimited',weekF2:'○ All languages',buy:'Buy',popular:'Popular',monthPeriod:'/ mo',monthDesc:'1 month unlimited',monthF1:'☆ 1 month unlimited',monthF2:'○ All languages',monthF3:'◇ Most popular plan',comingSoon:'Coming Soon',proDesc:'Stay tuned',proF1:'☆ Coming soon',payCancel:'Payment cancelled.',payError:'Payment error: ',refund:'Refund Policy',refundTitle:'Refund Policy'},
-            'ko':{web:'웹 언어 설정',back:'홈으로',title:'플랜 업그레이드',subtitle:'SRT 자막 번역 무제한 이용권',freePeriod:'/ 월',freeDesc:'주 1회 번역 가능',freeF1:'◇ 기본 번역 기능',freeF2:'○ 주 1회 제한',currentPlan:'현재 플랜',weekPeriod:'/ 주',weekDesc:'1주일 무제한 번역',weekF1:'☆ 1주일 무제한',weekF2:'○ 모든 언어 지원',buy:'구매하기',popular:'인기',monthPeriod:'/ 월',monthDesc:'한 달 무제한 번역',monthF1:'☆ 한 달 무제한',monthF2:'○ 모든 언어 지원',monthF3:'◇ 가장 인기 있는 플랜',comingSoon:'준비중',proDesc:'곧 만나요',proF1:'☆ 향후 출시 예정',payCancel:'결제가 취소되었습니다.',payError:'결제 요청 중 오류가 발생했습니다: ',refund:'환불 규정',refundTitle:'환불 규정'}
+            'en':{web:'WEB LANGUAGE',back:'Home',title:'Plan Upgrade',subtitle:'Unlimited SRT subtitle translation',freePeriod:'/ mo',freeDesc:'1 translation per week',freeF1:'◇ Basic translation',freeF2:'○ Weekly limit',currentPlan:'Current Plan',notCurrentPlan:'—',alreadyPurchased:'Already Purchased',weekPeriod:'/ wk',weekDesc:'1 week unlimited',weekF1:'☆ 1 week unlimited',weekF2:'○ All languages',buy:'Buy',popular:'Popular',monthPeriod:'/ mo',monthDesc:'1 month unlimited',monthF1:'☆ 1 month unlimited',monthF2:'○ All languages',monthF3:'◇ Most popular plan',comingSoon:'Coming Soon',proDesc:'Stay tuned',proF1:'☆ Coming soon',payCancel:'Payment cancelled.',payError:'Payment error: ',refund:'Refund Policy',refundTitle:'Refund Policy'},
+            'ko':{web:'웹 언어 설정',back:'홈으로',title:'플랜 업그레이드',subtitle:'SRT 자막 번역 무제한 이용권',freePeriod:'/ 월',freeDesc:'주 1회 번역 가능',freeF1:'◇ 기본 번역 기능',freeF2:'○ 주 1회 제한',currentPlan:'현재 플랜',notCurrentPlan:'—',alreadyPurchased:'이미 구매하셨습니다',weekPeriod:'/ 주',weekDesc:'1주일 무제한 번역',weekF1:'☆ 1주일 무제한',weekF2:'○ 모든 언어 지원',buy:'구매하기',popular:'인기',monthPeriod:'/ 월',monthDesc:'한 달 무제한 번역',monthF1:'☆ 한 달 무제한',monthF2:'○ 모든 언어 지원',monthF3:'◇ 가장 인기 있는 플랜',comingSoon:'준비중',proDesc:'곧 만나요',proF1:'☆ 향후 출시 예정',payCancel:'결제가 취소되었습니다.',payError:'결제 요청 중 오류가 발생했습니다: ',refund:'환불 규정',refundTitle:'환불 규정'}
         };
         function applyPricingLang(lc){const c=pricingI18n[lc]||pricingI18n['en'];const l=pricingUiLangs.find(x=>x.code===lc)||pricingUiLangs[0];localStorage.setItem('web_lang',lc);document.getElementById('pricing-lang-label').innerText=c.web;document.getElementById('pricing-lang-current').innerText=l.flag+' '+l.name;document.getElementById('pricing-back').innerHTML='← '+c.back;document.getElementById('pricing-title').innerText=c.title;document.getElementById('pricing-subtitle').innerText=c.subtitle;document.getElementById('free-period').innerText=c.freePeriod;document.getElementById('free-desc').innerText=c.freeDesc;document.getElementById('free-f1').innerText=c.freeF1;document.getElementById('free-f2').innerText=c.freeF2;document.getElementById('pricing-current-plan').innerText=c.currentPlan;document.getElementById('week-period').innerText=c.weekPeriod;document.getElementById('week-desc').innerText=c.weekDesc;document.getElementById('week-f1').innerText=c.weekF1;document.getElementById('week-f2').innerText=c.weekF2;document.getElementById('pricing-buy-btn').innerText=c.buy;document.getElementById('pricing-popular').innerText=c.popular;document.getElementById('month-period').innerText=c.monthPeriod;document.getElementById('month-desc').innerText=c.monthDesc;document.getElementById('month-f1').innerText=c.monthF1;document.getElementById('month-f2').innerText=c.monthF2;document.getElementById('month-f3').innerText=c.monthF3;document.getElementById('pricing-buy-month').innerText=c.buy;document.getElementById('pro-coming').innerText=c.comingSoon;document.getElementById('pro-desc').innerText=c.proDesc;document.getElementById('pro-f1').innerText=c.proF1;document.getElementById('pro-disabled').innerText=c.comingSoon;
         // [추가] 환불 버튼 + 모달 언어 전환
         document.getElementById('pricing-refund-btn').innerText=c.refund;document.getElementById('refund-modal-title').innerText=c.refundTitle;const isKo=(lc==='ko');document.getElementById('refund-content-ko').classList.toggle('hidden',!isKo);document.getElementById('refund-content-en').classList.toggle('hidden',isKo);
-        document.getElementById('pricing-lang-menu').classList.add('hidden');}
+        document.getElementById('pricing-lang-menu').classList.add('hidden');applyPlanUI(lc);}
         pricingUiLangs.forEach(l=>{const b=document.createElement('button');b.className='flex w-full items-center gap-3 px-4 py-2 text-[11px] font-semibold text-slate-200 hover:bg-slate-700';b.innerHTML='<span>'+l.flag+'</span><span>'+l.name+'</span>';b.onclick=()=>applyPricingLang(l.code);document.getElementById('pricing-lang-options').appendChild(b);});
         applyPricingLang(localStorage.getItem('web_lang')||'en');
         document.getElementById('pricing-lang-toggle').onclick=(e)=>{e.stopPropagation();document.getElementById('pricing-lang-menu').classList.toggle('hidden');};
