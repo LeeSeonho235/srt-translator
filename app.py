@@ -144,10 +144,56 @@ def translate_srt():
         translator = deepl.Translator(DEEPL_AUTH_KEY)
         subs        = pysrt.open(temp_path, encoding='utf-8')
         texts       = [sub.text for sub in subs]
-        results     = translator.translate_text(texts, source_lang=source_lang, target_lang=target_lang)
 
+        # 문맥 포함 번역: 앞뒤 자막 합쳐서 보내고 결과만 추출
+        CONTEXT_WINDOW = 2  # 앞뒤 N개 자막을 문맥으로 활용
+        translated_texts = []
+
+        # 짧거나 의성어/감탄사처럼 보이는 텍스트 처리
+        def is_skip_text(t):
+            t = t.strip()
+            # 특수문자만, 숫자만, 1글자 자음/모음, 괄호 안 지문 등
+            import re
+            if re.match(r'^[\(\[（【].*[\)\]）】]$', t): return False  # 괄호 지문은 번역
+            if len(t) <= 1: return True  # 1글자 단독
+            return False
+
+        # 배치 번역 (문맥 포함)
+        batch_texts = []
+        batch_indices = []
+        skip_map = {}
+
+        for i, text in enumerate(texts):
+            if is_skip_text(text):
+                skip_map[i] = text  # 의성어/짧은 텍스트는 그대로
+            else:
+                # 앞뒤 문맥 포함한 텍스트 생성
+                context_parts = []
+                for j in range(max(0, i-CONTEXT_WINDOW), min(len(texts), i+CONTEXT_WINDOW+1)):
+                    if j == i:
+                        context_parts.append(f"[[[{text}]]]")  # 번역 대상 표시
+                    else:
+                        context_parts.append(texts[j])
+                batch_texts.append('\n'.join(context_parts))
+                batch_indices.append(i)
+
+        if batch_texts:
+            import re as _re
+            results = translator.translate_text(batch_texts, source_lang=source_lang, target_lang=target_lang)
+            for idx, result in zip(batch_indices, results):
+                translated = result.text
+                # [[[...]]] 사이의 번역된 텍스트만 추출
+                match = _re.search(r'\[\[\[(.*?)\]\]\]', translated, _re.DOTALL)
+                if match:
+                    translated_texts_map = getattr(translated_texts, '_map', {})
+                    skip_map[idx] = match.group(1).strip()
+                else:
+                    # 매칭 실패시 전체 결과 사용
+                    skip_map[idx] = translated.strip()
+
+        # 순서대로 자막에 적용
         for i, sub in enumerate(subs):
-            sub.text = results[i].text
+            sub.text = skip_map.get(i, texts[i])
 
         output_temp = "/tmp/output_temp.srt"
         subs.save(output_temp, encoding='utf-8')
