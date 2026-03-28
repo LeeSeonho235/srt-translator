@@ -607,7 +607,11 @@
                     totalAmount: finalAmount,
                     currency: currency,
                     payMethod: payMethod,
-                    customer: { email: userEmail },
+                    customer: {
+                        email: userEmail,
+                        phoneNumber: '',
+                        fullName: '',
+                    },
                     ...(isKakao && { easyPay: { easyPayProvider: "KAKAOPAY" } }),
                     redirectUrl: window.location.origin + '/success?plan=' + planType + '&email=' + encodeURIComponent(userEmail),
                 });
