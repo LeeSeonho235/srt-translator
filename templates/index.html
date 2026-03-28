@@ -609,8 +609,7 @@
                     payMethod: payMethod,
                     customer: {
                         email: userEmail,
-                        phoneNumber: '',
-                        fullName: '',
+                        phoneNumber: '01000000000',  // 테스트용 더미, 실계약 후 제거
                     },
                     ...(isKakao && { easyPay: { easyPayProvider: "KAKAOPAY" } }),
                     redirectUrl: window.location.origin + '/success?plan=' + planType + '&email=' + encodeURIComponent(userEmail),
