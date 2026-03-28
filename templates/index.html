@@ -351,7 +351,7 @@
         const srcSelect=document.getElementById('src-select');const destSelect=document.getElementById('dest-select');const langOptions=document.getElementById('lang-options');
         transLanguages.forEach(l=>{srcSelect.add(new Option(l.name,l.code));destSelect.add(new Option(l.name,l.code));});
         uiLanguages.forEach(l=>{const b=document.createElement('button');b.className="flex w-full items-center gap-3 px-4 py-2 text-[11px] font-semibold text-slate-700 hover:bg-slate-50";b.innerHTML='<span>'+l.flag+'</span><span>'+l.name+'</span>';b.onclick=()=>applyLanguage(l.code);langOptions.appendChild(b);});
-        srcSelect.value='en';destSelect.value='ko';applyLanguage(localStorage.getItem('web_lang')||'en');
+        srcSelect.addEventListener('change',()=>{const f=document.getElementById('file-input').files[0];if(f)checkLangMismatch(f);});
         // [추가] 로그인 상태 → Buy Pass 버튼 전환
         _supabase.auth.onAuthStateChange((e,s)=>{
             const lb=document.getElementById('google-login-btn');const p=document.getElementById('user-profile');
