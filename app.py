@@ -132,7 +132,7 @@ def translate_srt():
     if not DEEPL_AUTH_KEY:
         return "Error: DeepL API 키가 설정되지 않았습니다.", 500
 
-    temp_path = "temp_to_translate.srt"
+    temp_path = "/tmp/temp_to_translate.srt"
     uploaded_file.save(temp_path)
 
     try:
@@ -149,7 +149,7 @@ def translate_srt():
         for i, sub in enumerate(subs):
             sub.text = results[i].text
 
-        output_temp = "output_temp.srt"
+        output_temp = "/tmp/output_temp.srt"
         subs.save(output_temp, encoding='utf-8')
 
         with open(output_temp, 'r', encoding='utf-8') as f:

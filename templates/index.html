@@ -127,9 +127,11 @@
         </div>
         <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-5 text-center">
             <p class="text-xs text-slate-400 mb-1">문의 / Contact</p>
-            <a href="mailto:support@srt-translator.com" class="text-sm font-bold text-indigo-600 hover:underline">support@srt-translator.com</a>
+            <a href="/cdn-cgi/l/email-protection#34474144445b464074474640194046555a475855405b461a575b59" class="text-sm font-bold text-indigo-600 hover:underline"><span class="__cf_email__" data-cfemail="ed9e989d9d829f99ad9e9f99c0999f8c839e818c99829fc38e8280">[email&#160;protected]</span></a>
         </div>
-    </div> style="display:none;pointer-events:none;" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm items-center justify-center z-50 p-4">
+    </div>
+
+    <div id="result-modal" style="display:none;pointer-events:none;" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm items-center justify-center z-50 p-4">
         <div class="bg-white rounded-[2.5rem] shadow-2xl max-w-lg w-full p-10 text-center">
             <!-- 유료 유저용 -->
             <div id="modal-paid" style="display:none;">
@@ -362,7 +364,7 @@
         </div>
     </div>
 {% elif view == 'success' %}
-    <script>localStorage.removeItem('last_translate_date');</script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>localStorage.removeItem('last_translate_date');</script>
     <div class="bg-white rounded-3xl shadow-2xl p-10 max-w-md w-full text-center">
         <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -614,14 +616,4 @@ async function proceedPayment(method) {
     if (response && response.paymentId) {
         const userInfo = await _spClient.auth.getUser();
         const userEmail = userInfo?.data?.user?.email || '';
-        window.location.href = '/success?plan=' + planType + '&paymentId=' + response.paymentId + '&email=' + encodeURIComponent(userEmail);
-    }
-} catch (err) {
-    if (err.code === 'USER_CANCEL') alert(c.payCancel);
-    else alert(c.payError + (err.message || ''));
-}
-}
-{% endif %}
-    </script>
-</body>
-</html>
+        window.location.href = '/success?plan=' + planTyp
