@@ -616,4 +616,14 @@ async function proceedPayment(method) {
     if (response && response.paymentId) {
         const userInfo = await _spClient.auth.getUser();
         const userEmail = userInfo?.data?.user?.email || '';
-        window.location.href = '/success?plan=' + planTyp
+                window.location.href = '/success?plan=' + planType + '&paymentId=' + response.paymentId + '&email=' + encodeURIComponent(userEmail);
+    }
+} catch (err) {
+    if (err.code === 'USER_CANCEL') alert(c.payCancel);
+    else alert(c.payError + (err.message || ''));
+}
+}
+{% endif %}
+    </script>
+</body>
+</html>
