@@ -50,6 +50,11 @@ def pricing():
 
 
 # ── 환불 규정 페이지 ──────────────────────────────────────────────────────────
+@app.route("/preview")
+def preview():
+    return render_template("preview.html")
+
+
 @app.route("/refund")
 def refund():
     return redirect(url_for('pricing'))
@@ -78,6 +83,8 @@ def success():
         expires_at = datetime.utcnow() + timedelta(weeks=1)
     elif plan == 'month':
         expires_at = datetime.utcnow() + timedelta(days=30)
+    elif plan == 'annual':
+        expires_at = datetime.utcnow() + timedelta(days=365)
     else:
         expires_at = datetime.utcnow() + timedelta(days=365)
 

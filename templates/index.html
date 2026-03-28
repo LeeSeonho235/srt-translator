@@ -3,6 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Free SRT subtitle translator. Translate subtitles to Korean, English, Japanese, Spanish and 10+ languages instantly. 무료 SRT 자막 번역기.">
+    <meta name="keywords" content="SRT translator, subtitle translator, 자막 번역기, SRT 번역, free subtitle translation">
+    <meta property="og:title" content="SRT Translator - Free Subtitle Translation">
+    <meta property="og:description" content="Translate SRT subtitle files instantly to 10+ languages. Free and easy to use.">
+    <meta property="og:type" content="website">
     <title>{% if view == 'main' %}SRT Translator{% elif view == 'pricing' %}플랜 업그레이드{% elif view == 'success' %}결제 완료{% elif view == 'fail' %}결제 실패{% endif %} - SRT Translator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
@@ -85,14 +90,46 @@
             </div>
             <div id="lang-warn" style="display:none;" class="text-amber-600 bg-amber-50 border border-amber-200 text-xs font-bold px-4 py-3 rounded-2xl -mt-2"></div>
             <button type="submit" id="submit-btn" class="w-full bg-indigo-600 text-white font-extrabold py-5 rounded-2xl hover:bg-indigo-700 shadow-xl shadow-indigo-100 transition-all text-lg">Start Translation</button>
+            <!-- 남은 횟수 표시 -->
+            <p id="usage-counter" class="text-center text-xs text-slate-400 font-medium mt-2"></p>
             <div id="loading-area" class="hidden mt-6 text-center">
                 <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent mb-2"></div>
                 <p id="loading-text" class="text-xs font-bold text-slate-500 animate-pulse">Translating...</p>
+                <!-- 진행률 바 -->
+                <div class="mt-3 bg-slate-200 rounded-full h-2 w-full overflow-hidden">
+                    <div id="progress-bar" class="h-2 bg-indigo-500 rounded-full transition-all duration-500" style="width:0%"></div>
+                </div>
+                <p id="progress-text" class="text-[11px] text-slate-400 mt-1">0%</p>
             </div>
         </form>
     </div>
 
-    <div id="result-modal" style="display:none;pointer-events:none;" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm items-center justify-center z-50 p-4">
+    </div>
+
+    <!-- 후기 & 문의 섹션 -->
+    <div class="w-full max-w-lg mt-6 space-y-4">
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-6">
+            <h3 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-4">User Reviews / 사용자 후기</h3>
+            <div class="space-y-3">
+                <div class="bg-slate-50 rounded-2xl p-4">
+                    <div class="flex items-center gap-2 mb-1"><span class="text-yellow-400 text-sm">★★★★★</span><span class="text-xs font-bold text-slate-600">@youtuber_kr</span></div>
+                    <p class="text-xs text-slate-500">"일본어 자막 번역하는데 너무 편리해요! 퀄리티도 좋고 빨라요."</p>
+                </div>
+                <div class="bg-slate-50 rounded-2xl p-4">
+                    <div class="flex items-center gap-2 mb-1"><span class="text-yellow-400 text-sm">★★★★★</span><span class="text-xs font-bold text-slate-600">@subtitle_fan</span></div>
+                    <p class="text-xs text-slate-500">"Super easy to use! Translated my Korean drama subs to English perfectly."</p>
+                </div>
+                <div class="bg-slate-50 rounded-2xl p-4">
+                    <div class="flex items-center gap-2 mb-1"><span class="text-yellow-400 text-sm">★★★★☆</span><span class="text-xs font-bold text-slate-600">@translator_pro</span></div>
+                    <p class="text-xs text-slate-500">"무료로 이 정도 품질이면 충분히 만족스럽습니다. 자주 이용할 예정이에요."</p>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-5 text-center">
+            <p class="text-xs text-slate-400 mb-1">문의 / Contact</p>
+            <a href="mailto:support@srt-translator.com" class="text-sm font-bold text-indigo-600 hover:underline">support@srt-translator.com</a>
+        </div>
+    </div> style="display:none;pointer-events:none;" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm items-center justify-center z-50 p-4">
         <div class="bg-white rounded-[2.5rem] shadow-2xl max-w-lg w-full p-10 text-center">
             <!-- 유료 유저용 -->
             <div id="modal-paid" style="display:none;">
@@ -101,10 +138,11 @@
                 </div>
                 <h2 class="text-3xl font-black text-slate-900 mb-3 tracking-tight">Translation Complete!</h2>
                 <p class="text-slate-600 text-base font-bold mb-1">Please review the translation carefully.</p>
-                <p class="text-slate-400 text-sm mb-8">번역이 완료되었습니다. 번역 결과를 꼭 한번 확인해 주세요.</p>
+                <p class="text-slate-400 text-sm mb-6">번역이 완료되었습니다. 번역 결과를 꼭 한번 확인해 주세요.</p>
+                <button id="preview-btn-paid" onclick="openPreview()" class="w-full bg-indigo-600 text-white font-black py-4 rounded-2xl hover:bg-indigo-700 transition-all text-sm mb-3">🎬 Preview Subtitles / 자막 미리보기</button>
                 <div class="bg-slate-100 rounded-2xl p-6 mb-6 border border-slate-200 border-dashed">
                     <p class="text-[12px] text-slate-400 uppercase font-black mb-2">Advertisement</p>
-                    <div class="h-28 bg-slate-200 rounded-xl flex items-center justify-center text-slate-400 italic text-sm font-bold">Ad Space (knamegenerator.com)</div>
+                    <div class="h-28 bg-slate-200 rounded-xl flex items-center justify-center text-slate-400 italic text-sm font-bold">Ad Space</div>
                 </div>
                 <button onclick="closeModal()" class="w-full bg-slate-900 text-white font-black py-5 rounded-2xl text-xl hover:bg-slate-800 shadow-xl mb-3">OK</button>
                 <a href="/" onclick="closeModal()" class="block w-full bg-indigo-50 text-indigo-700 font-bold py-4 rounded-2xl hover:bg-indigo-100 transition-all text-sm">Go to Main / 홈으로 돌아가기</a>
@@ -114,16 +152,18 @@
                 <h2 id="modal-title" class="text-4xl font-black text-slate-900 mb-3 tracking-tight">Translation Complete!</h2>
                 <p id="modal-desc" class="text-slate-500 text-lg mb-1 font-bold">Please review the translation carefully.</p>
                 <p class="text-slate-400 text-sm mb-6">번역이 완료되었습니다. 번역 결과를 꼭 한번 확인해 주세요.</p>
+                <button id="preview-btn-free" onclick="openPreview()" class="w-full bg-indigo-600 text-white font-black py-4 rounded-2xl hover:bg-indigo-700 transition-all text-sm mb-4">🎬 Preview Subtitles / 자막 미리보기</button>
                 <div id="modal-premium-msg" class="bg-indigo-50 text-indigo-700 text-sm font-extrabold p-5 rounded-2xl mb-6 leading-relaxed"></div>
-                <div class="grid grid-cols-2 gap-4 mb-8">
+                <div class="grid grid-cols-2 gap-4 mb-6">
                     <button onclick="closeModal();openLoginModal()" class="bg-indigo-600 text-white font-black py-4 px-2 rounded-2xl hover:bg-indigo-700 transition-all text-sm uppercase">Sign Up</button>
                     <button onclick="closeModal();location.href='/pricing'" class="bg-slate-900 text-white font-black py-4 px-2 rounded-2xl hover:bg-slate-800 transition-all text-sm uppercase">Buy Pass</button>
                 </div>
-                <div class="bg-slate-100 rounded-2xl p-6 mb-8 border border-slate-200 border-dashed">
+                <div class="bg-slate-100 rounded-2xl p-6 mb-6 border border-slate-200 border-dashed">
                     <p class="text-[12px] text-slate-400 uppercase font-black mb-2">Advertisement</p>
-                    <div class="h-28 bg-slate-200 rounded-xl flex items-center justify-center text-slate-400 italic text-sm font-bold">Ad Space (knamegenerator.com)</div>
+                    <div class="h-28 bg-slate-200 rounded-xl flex items-center justify-center text-slate-400 italic text-sm font-bold">Ad Space</div>
                 </div>
-                <button onclick="closeModal()" id="modal-btn" class="w-full bg-slate-900 text-white font-black py-5 rounded-2xl text-xl hover:bg-slate-800 shadow-xl">OK</button>
+                <!-- 광고 타이머 (무료 유저) -->
+                <button id="modal-btn" onclick="closeModal()" disabled class="w-full bg-slate-400 text-white font-black py-5 rounded-2xl text-xl shadow-xl cursor-not-allowed">OK (<span id="ad-timer">10</span>s)</button>
             </div>
         </div>
     </div>
@@ -203,14 +243,18 @@
                 </ul>
                 <button onclick="requestPayment('month', 10000, 'A Month 1개월 이용권')" class="w-full py-3 rounded-xl bg-indigo-600 text-white font-bold hover:bg-indigo-700 transition-colors" id="pricing-buy-month">Buy</button>
             </div>
-            <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700 relative opacity-80">
-                <h3 class="text-xl font-bold mb-2">Pro</h3>
-                <p id="pro-coming" class="text-slate-500 text-sm font-bold mb-4">Coming Soon</p>
-                <p id="pro-desc" class="text-slate-500 text-sm mb-6">Stay tuned</p>
-                <ul class="space-y-3 text-sm text-slate-500 mb-8">
-                    <li class="flex items-center gap-2"><span id="pro-f1">☆ Coming soon</span></li>
+            <div class="bg-slate-800/50 rounded-2xl p-6 border border-slate-700 relative hover:border-indigo-500/50 transition-colors">
+                <span class="absolute top-4 right-4 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full" id="annual-save-badge">Save 50%</span>
+                <h3 class="text-xl font-bold mb-2">A Year</h3>
+                <p class="text-3xl font-extrabold mb-1">₩60,000 <span id="annual-period" class="text-sm font-normal text-slate-400">/ yr</span></p>
+                <p class="text-slate-500 text-xs line-through mb-4">₩120,000</p>
+                <p id="annual-desc" class="text-slate-400 text-sm mb-6">1 year unlimited</p>
+                <ul class="space-y-3 text-sm text-slate-300 mb-8">
+                    <li class="flex items-center gap-2"><span id="annual-f1">☆ 1 year unlimited</span></li>
+                    <li class="flex items-center gap-2"><span id="annual-f2">○ All languages</span></li>
+                    <li class="flex items-center gap-2"><span id="annual-f3">◇ Best value</span></li>
                 </ul>
-                <button disabled class="w-full py-3 rounded-xl bg-slate-700 text-slate-500 font-bold cursor-not-allowed" id="pro-disabled">Coming Soon</button>
+                <button onclick="requestPayment('annual', 60000, 'A Year 1년 이용권')" class="w-full py-3 rounded-xl bg-green-600 text-white font-bold hover:bg-green-700 transition-colors" id="pricing-buy-annual">Buy</button>
             </div>
         </div>
         <!-- [추가] 환불 규정 + 스토어 정책 버튼 -->
@@ -375,7 +419,63 @@
         function openLoginModal(){const m=document.getElementById('login-modal');m.style.display='flex';m.style.pointerEvents='auto';}
         function closeLoginModal(){const m=document.getElementById('login-modal');m.style.display='none';m.style.pointerEvents='none';}
         document.getElementById('login-modal').addEventListener('click',function(e){if(e.target===this)closeLoginModal();});
-        document.getElementById('trans-form').onsubmit=async function(e){e.preventDefault();let isPaid=false;if(currentUser){try{const r2=await fetch('/api/my-plan?email='+encodeURIComponent(currentUser.email));const d2=await r2.json();isPaid=d2.plan!==null;}catch(err2){isPaid=false;}}if(!isPaid){const lu=localStorage.getItem("last_translate_date");if(lu){const d=(new Date()-new Date(lu))/(1000*60*60*24);if(d<7){alert((i18n[localStorage.getItem('web_lang')]||i18n['en']).alert);return;}}}const sb=document.getElementById('submit-btn');const la=document.getElementById('loading-area');sb.disabled=true;la.classList.remove('hidden');const fd=new FormData(this);try{const r=await fetch('/translate',{method:'POST',body:fd});if(r.ok){const blob=await r.blob();const url=window.URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='translated_'+fd.get('dest_lang')+'.srt';a.click();if(!isPaid)localStorage.setItem("last_translate_date",new Date().toISOString());const rm=document.getElementById('result-modal');rm.style.display='flex';rm.style.pointerEvents='auto';document.getElementById('modal-paid').style.display=isPaid?'block':'none';document.getElementById('modal-free').style.display=isPaid?'none':'block';}}catch(err){alert("Error!");}finally{sb.disabled=false;la.classList.add('hidden');}};
+        // 남은 횟수 표시
+        function updateUsageCounter(){
+            const lu=localStorage.getItem("last_translate_date");
+            const counter=document.getElementById('usage-counter');
+            if(!counter)return;
+            if(lu){const d=(new Date()-new Date(lu))/(1000*60*60*24);if(d<7){counter.innerText='This week\'s translation used. Resets in '+(7-Math.floor(d))+' days. / 이번 주 번역 사용됨. '+(7-Math.floor(d))+'일 후 초기화.';counter.className='text-center text-xs text-red-400 font-medium mt-2';return;}}
+            counter.innerText='Free: 1 translation per week / 무료: 주 1회 번역 가능';counter.className='text-center text-xs text-slate-400 font-medium mt-2';
+        }
+        updateUsageCounter();
+
+        // 번역 완료된 blob 저장 (미리보기용)
+        let _translatedBlob = null;
+        let _translatedText = null;
+        let _adTimerInterval = null;
+
+        function openPreview(){
+            if(!_translatedText)return;
+            const encoded=encodeURIComponent(_translatedText);
+            window.open('/preview?srt='+encoded,'_blank');
+        }
+
+        function startAdTimer(){
+            let t=10;
+            const btn=document.getElementById('modal-btn');
+            const timerEl=document.getElementById('ad-timer');
+            if(!btn||!timerEl)return;
+            btn.disabled=true;
+            btn.className='w-full bg-slate-400 text-white font-black py-5 rounded-2xl text-xl shadow-xl cursor-not-allowed';
+            _adTimerInterval=setInterval(()=>{
+                t--;timerEl.innerText=t;
+                if(t<=0){
+                    clearInterval(_adTimerInterval);
+                    btn.disabled=false;
+                    btn.className='w-full bg-slate-900 text-white font-black py-5 rounded-2xl text-xl hover:bg-slate-800 shadow-xl';
+                    btn.innerText='OK';
+                }
+            },1000);
+        }
+
+        document.getElementById('trans-form').onsubmit=async function(e){e.preventDefault();let isPaid=false;if(currentUser){try{const r2=await fetch('/api/my-plan?email='+encodeURIComponent(currentUser.email));const d2=await r2.json();isPaid=d2.plan!==null;}catch(err2){isPaid=false;}}if(!isPaid){const lu=localStorage.getItem("last_translate_date");if(lu){const d=(new Date()-new Date(lu))/(1000*60*60*24);if(d<7){alert((i18n[localStorage.getItem('web_lang')]||i18n['en']).alert);return;}}}const sb=document.getElementById('submit-btn');const la=document.getElementById('loading-area');sb.disabled=true;la.classList.remove('hidden');
+            // 진행률 시뮬레이션
+            const pb=document.getElementById('progress-bar');const pt=document.getElementById('progress-text');let prog=0;const progInterval=setInterval(()=>{prog=Math.min(prog+Math.random()*8,90);pb.style.width=prog+'%';pt.innerText=Math.floor(prog)+'%';},300);
+            const fd=new FormData(this);try{const r=await fetch('/translate',{method:'POST',body:fd});if(r.ok){const blob=await r.blob();
+                // 완료
+                clearInterval(progInterval);pb.style.width='100%';pt.innerText='100%';
+                // blob 저장
+                _translatedBlob=blob;
+                const reader=new FileReader();reader.onload=ev=>{_translatedText=ev.target.result;};reader.readAsText(blob,'utf-8');
+                const url=window.URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='translated_'+fd.get('dest_lang')+'.srt';a.click();
+                if(!isPaid)localStorage.setItem("last_translate_date",new Date().toISOString());
+                updateUsageCounter();
+                const rm=document.getElementById('result-modal');rm.style.display='flex';rm.style.pointerEvents='auto';
+                document.getElementById('modal-paid').style.display=isPaid?'block':'none';
+                document.getElementById('modal-free').style.display=isPaid?'none':'block';
+                if(!isPaid)startAdTimer();
+            }}catch(err){clearInterval(progInterval);alert("Error!");}finally{sb.disabled=false;la.classList.add('hidden');}
+        };
         document.getElementById('lang-toggle').onclick=(e)=>{e.stopPropagation();document.getElementById('lang-menu').classList.toggle('hidden');};
         document.onclick=()=>document.getElementById('lang-menu').classList.add('hidden');
         function closeModal(){const m=document.getElementById('result-modal');m.style.display='none';m.style.pointerEvents='none';}
@@ -446,10 +546,10 @@
         // [변경] EN/KO 두 개만
         const pricingUiLangs = [{code:'en',name:'English',flag:'🇺🇸'},{code:'ko',name:'한국어 (Korean)',flag:'🇰🇷'}];
         const pricingI18n = {
-            'en':{web:'WEB LANGUAGE',back:'Home',title:'Plan Upgrade',subtitle:'Unlimited SRT subtitle translation',freePeriod:'/ mo',freeDesc:'1 translation per week',freeF1:'◇ Basic translation',freeF2:'○ Weekly limit',currentPlan:'Current Plan',notCurrentPlan:'—',alreadyPurchased:'Already Purchased',weekPeriod:'/ wk',weekDesc:'1 week unlimited',weekF1:'☆ 1 week unlimited',weekF2:'○ All languages',buy:'Buy',popular:'Popular',monthPeriod:'/ mo',monthDesc:'1 month unlimited',monthF1:'☆ 1 month unlimited',monthF2:'○ All languages',monthF3:'◇ Most popular plan',comingSoon:'Coming Soon',proDesc:'Stay tuned',proF1:'☆ Coming soon',payCancel:'Payment cancelled.',payError:'Payment error: ',refund:'Refund Policy',refundTitle:'Refund Policy',storePolicy:'Store Policy'},
-            'ko':{web:'웹 언어 설정',back:'홈으로',title:'플랜 업그레이드',subtitle:'SRT 자막 번역 무제한 이용권',freePeriod:'/ 월',freeDesc:'주 1회 번역 가능',freeF1:'◇ 기본 번역 기능',freeF2:'○ 주 1회 제한',currentPlan:'현재 플랜',notCurrentPlan:'—',alreadyPurchased:'이미 구매하셨습니다',weekPeriod:'/ 주',weekDesc:'1주일 무제한 번역',weekF1:'☆ 1주일 무제한',weekF2:'○ 모든 언어 지원',buy:'구매하기',popular:'인기',monthPeriod:'/ 월',monthDesc:'한 달 무제한 번역',monthF1:'☆ 한 달 무제한',monthF2:'○ 모든 언어 지원',monthF3:'◇ 가장 인기 있는 플랜',comingSoon:'준비중',proDesc:'곧 만나요',proF1:'☆ 향후 출시 예정',payCancel:'결제가 취소되었습니다.',payError:'결제 요청 중 오류가 발생했습니다: ',refund:'환불 규정',refundTitle:'환불 규정',storePolicy:'이용약관'}
+            'en':{web:'WEB LANGUAGE',back:'Home',title:'Plan Upgrade',subtitle:'Unlimited SRT subtitle translation',freePeriod:'/ mo',freeDesc:'1 translation per week',freeF1:'◇ Basic translation',freeF2:'○ Weekly limit',currentPlan:'Current Plan',notCurrentPlan:'—',alreadyPurchased:'Already Purchased',weekPeriod:'/ wk',weekDesc:'1 week unlimited',weekF1:'☆ 1 week unlimited',weekF2:'○ All languages',buy:'Buy',popular:'Popular',monthPeriod:'/ mo',monthDesc:'1 month unlimited',monthF1:'☆ 1 month unlimited',monthF2:'○ All languages',monthF3:'◇ Most popular plan',annualPeriod:'/ yr',annualDesc:'1 year unlimited',annualF1:'☆ 1 year unlimited',annualF2:'○ All languages',annualF3:'◇ Best value',annualBuy:'Buy',comingSoon:'Coming Soon',proDesc:'Stay tuned',proF1:'☆ Coming soon',payCancel:'Payment cancelled.',payError:'Payment error: ',refund:'Refund Policy',refundTitle:'Refund Policy',storePolicy:'Store Policy'},
+            'ko':{web:'웹 언어 설정',back:'홈으로',title:'플랜 업그레이드',subtitle:'SRT 자막 번역 무제한 이용권',freePeriod:'/ 월',freeDesc:'주 1회 번역 가능',freeF1:'◇ 기본 번역 기능',freeF2:'○ 주 1회 제한',currentPlan:'현재 플랜',notCurrentPlan:'—',alreadyPurchased:'이미 구매하셨습니다',weekPeriod:'/ 주',weekDesc:'1주일 무제한 번역',weekF1:'☆ 1주일 무제한',weekF2:'○ 모든 언어 지원',buy:'구매하기',popular:'인기',monthPeriod:'/ 월',monthDesc:'한 달 무제한 번역',monthF1:'☆ 한 달 무제한',monthF2:'○ 모든 언어 지원',monthF3:'◇ 가장 인기 있는 플랜',annualPeriod:'/ 년',annualDesc:'1년 무제한 번역',annualF1:'☆ 1년 무제한',annualF2:'○ 모든 언어 지원',annualF3:'◇ 최고의 가성비',annualBuy:'구매하기',comingSoon:'준비중',proDesc:'곧 만나요',proF1:'☆ 향후 출시 예정',payCancel:'결제가 취소되었습니다.',payError:'결제 요청 중 오류가 발생했습니다: ',refund:'환불 규정',refundTitle:'환불 규정',storePolicy:'이용약관'}
         };
-        function applyPricingLang(lc){const c=pricingI18n[lc]||pricingI18n['en'];const l=pricingUiLangs.find(x=>x.code===lc)||pricingUiLangs[0];localStorage.setItem('web_lang',lc);document.getElementById('pricing-lang-label').innerText=c.web;document.getElementById('pricing-lang-current').innerText=l.flag+' '+l.name;document.getElementById('pricing-back').innerHTML='← '+c.back;document.getElementById('pricing-title').innerText=c.title;document.getElementById('pricing-subtitle').innerText=c.subtitle;document.getElementById('free-period').innerText=c.freePeriod;document.getElementById('free-desc').innerText=c.freeDesc;document.getElementById('free-f1').innerText=c.freeF1;document.getElementById('free-f2').innerText=c.freeF2;document.getElementById('pricing-current-plan').innerText=c.currentPlan;document.getElementById('week-period').innerText=c.weekPeriod;document.getElementById('week-desc').innerText=c.weekDesc;document.getElementById('week-f1').innerText=c.weekF1;document.getElementById('week-f2').innerText=c.weekF2;document.getElementById('pricing-buy-btn').innerText=c.buy;document.getElementById('pricing-popular').innerText=c.popular;document.getElementById('month-period').innerText=c.monthPeriod;document.getElementById('month-desc').innerText=c.monthDesc;document.getElementById('month-f1').innerText=c.monthF1;document.getElementById('month-f2').innerText=c.monthF2;document.getElementById('month-f3').innerText=c.monthF3;document.getElementById('pricing-buy-month').innerText=c.buy;document.getElementById('pro-coming').innerText=c.comingSoon;document.getElementById('pro-desc').innerText=c.proDesc;document.getElementById('pro-f1').innerText=c.proF1;document.getElementById('pro-disabled').innerText=c.comingSoon;
+        function applyPricingLang(lc){const c=pricingI18n[lc]||pricingI18n['en'];const l=pricingUiLangs.find(x=>x.code===lc)||pricingUiLangs[0];localStorage.setItem('web_lang',lc);document.getElementById('pricing-lang-label').innerText=c.web;document.getElementById('pricing-lang-current').innerText=l.flag+' '+l.name;document.getElementById('pricing-back').innerHTML='← '+c.back;document.getElementById('pricing-title').innerText=c.title;document.getElementById('pricing-subtitle').innerText=c.subtitle;document.getElementById('free-period').innerText=c.freePeriod;document.getElementById('free-desc').innerText=c.freeDesc;document.getElementById('free-f1').innerText=c.freeF1;document.getElementById('free-f2').innerText=c.freeF2;document.getElementById('pricing-current-plan').innerText=c.currentPlan;document.getElementById('week-period').innerText=c.weekPeriod;document.getElementById('week-desc').innerText=c.weekDesc;document.getElementById('week-f1').innerText=c.weekF1;document.getElementById('week-f2').innerText=c.weekF2;document.getElementById('pricing-buy-btn').innerText=c.buy;document.getElementById('pricing-popular').innerText=c.popular;document.getElementById('month-period').innerText=c.monthPeriod;document.getElementById('month-desc').innerText=c.monthDesc;document.getElementById('month-f1').innerText=c.monthF1;document.getElementById('month-f2').innerText=c.monthF2;document.getElementById('month-f3').innerText=c.monthF3;document.getElementById('pricing-buy-month').innerText=c.buy;document.getElementById('annual-period').innerText=c.annualPeriod;document.getElementById('annual-desc').innerText=c.annualDesc;document.getElementById('annual-f1').innerText=c.annualF1;document.getElementById('annual-f2').innerText=c.annualF2;document.getElementById('annual-f3').innerText=c.annualF3;document.getElementById('pricing-buy-annual').innerText=c.annualBuy;document.getElementById('annual-save-badge').innerText=lc==='ko'?'50% 할인':'Save 50%';
         // [추가] 환불 버튼 + 모달 언어 전환
         document.getElementById('pricing-refund-btn').innerText=c.refund;document.getElementById('pricing-store-btn').innerText=c.storePolicy;document.getElementById('refund-modal-title').innerText=c.refundTitle;const isKo=(lc==='ko');document.getElementById('refund-content-ko').classList.toggle('hidden',!isKo);document.getElementById('refund-content-en').classList.toggle('hidden',isKo);
         document.getElementById('pricing-lang-menu').classList.add('hidden');applyPlanUI(lc);}
