@@ -44,7 +44,8 @@ def pricing():
             view="pricing",
             PORTONE_STORE_ID=os.getenv("PORTONE_STORE_ID"),
             PORTONE_CHANNEL_KEY_KAKAO=os.getenv("PORTONE_CHANNEL_KEY_KAKAO"),
-            PORTONE_CHANNEL_KEY_PAYPAL=os.getenv("PORTONE_CHANNEL_KEY_PAYPAL")
+            PORTONE_CHANNEL_KEY_PAYPAL=os.getenv("PORTONE_CHANNEL_KEY_PAYPAL"),
+            PORTONE_CHANNEL_KEY_INICIS=os.getenv("PORTONE_CHANNEL_KEY_INICIS")
         )
     )
 

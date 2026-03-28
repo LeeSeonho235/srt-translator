@@ -111,7 +111,7 @@
     <div class="w-full max-w-lg mt-4">
         <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-5 text-center">
             <p class="text-xs text-slate-400 mb-1">문의 / Contact</p>
-            <a href="mailto:support@srt-translator.com" class="text-sm font-bold text-indigo-600 hover:underline">support@srt-translator.com</a>
+            <a href="/cdn-cgi/l/email-protection#fe8d8b8e8e918c8abe8d8c8ad38a8c9f908d929f8a918cd09d9193" class="text-sm font-bold text-indigo-600 hover:underline"><span class="__cf_email__" data-cfemail="6d1e181d1d021f192d1e1f1940191f0c031e010c19021f430e0200">[email&#160;protected]</span></a>
         </div>
     </div>
 
@@ -336,6 +336,10 @@
             <h2 class="text-lg font-extrabold text-slate-900 mb-2 text-center">결제 수단 선택</h2>
             <p class="text-slate-400 text-xs text-center mb-6">원하시는 결제 방법을 선택해주세요</p>
             <div class="space-y-3">
+                <button onclick="proceedPayment('card')" class="w-full flex items-center gap-4 bg-slate-900 hover:bg-slate-700 rounded-2xl px-5 py-4 transition-all">
+                    <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                    <span class="text-white font-bold text-sm">신용/체크카드로 결제</span>
+                </button>
                 <button onclick="proceedPayment('kakao')" class="w-full flex items-center gap-4 bg-[#FEE500] hover:bg-[#f0d800] rounded-2xl px-5 py-4 transition-all">
                     <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" class="w-7 h-7 rounded-lg">
                     <span class="text-[#3A1D1D] font-bold text-sm">카카오페이로 결제</span>
@@ -348,7 +352,7 @@
         </div>
     </div>
 {% elif view == 'success' %}
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>localStorage.removeItem('last_translate_date');</script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>localStorage.removeItem('last_translate_date');</script>
     <div class="bg-white rounded-3xl shadow-2xl p-10 max-w-md w-full text-center">
         <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
@@ -511,6 +515,7 @@
         const PORTONE_STORE_ID = "{{ PORTONE_STORE_ID }}";
         const PORTONE_CHANNEL_KEY_KAKAO = "{{ PORTONE_CHANNEL_KEY_KAKAO }}";
         const PORTONE_CHANNEL_KEY_PAYPAL = "{{ PORTONE_CHANNEL_KEY_PAYPAL }}";
+        const PORTONE_CHANNEL_KEY_INICIS = "{{ PORTONE_CHANNEL_KEY_INICIS }}";
         const _spClient = supabase.createClient('{{ SUPABASE_URL }}','{{ SUPABASE_ANON_KEY }}');
         window._userPlan = null;
         _spClient.auth.getUser().then(async({data})=>{
@@ -588,14 +593,24 @@ async function proceedPayment(method) {
     const c = pricingI18n[localStorage.getItem('web_lang')] || pricingI18n['en'];
 
     const isKakao = method === 'kakao';
-    const channelKey = isKakao ? PORTONE_CHANNEL_KEY_KAKAO : PORTONE_CHANNEL_KEY_PAYPAL;
-    const finalAmount = isKakao
-        ? (planType === 'week' ? 5000 : 10000)
-        : (planType === 'week' ? 4 : 8);
-
-    // 채널 키 디버깅 — 나중에 지워도 됨
-    console.log('channelKey:', channelKey);
-    console.log('storeId:', PORTONE_STORE_ID);
+    const isCard = method === 'card';
+    let channelKey, finalAmount, currency, payMethod;
+    if (isCard) {
+        channelKey = PORTONE_CHANNEL_KEY_INICIS;
+        finalAmount = planType === 'week' ? 5000 : planType === 'month' ? 10000 : 60000;
+        currency = 'KRW';
+        payMethod = 'CARD';
+    } else if (isKakao) {
+        channelKey = PORTONE_CHANNEL_KEY_KAKAO;
+        finalAmount = planType === 'week' ? 5000 : planType === 'month' ? 10000 : 60000;
+        currency = 'KRW';
+        payMethod = 'EASY_PAY';
+    } else {
+        channelKey = PORTONE_CHANNEL_KEY_PAYPAL;
+        finalAmount = planType === 'week' ? 4 : planType === 'month' ? 8 : 45;
+        currency = 'USD';
+        payMethod = 'PAYPAL';
+    }
 
     try {
     const response = await PortOne.requestPayment({
@@ -604,8 +619,8 @@ async function proceedPayment(method) {
         paymentId: orderId,
         orderName: orderName,
         totalAmount: finalAmount,
-        currency: isKakao ? "KRW" : "USD",
-        payMethod: isKakao ? "EASY_PAY" : "PAYPAL",
+        currency: currency,
+        payMethod: payMethod,
         ...(isKakao && { easyPay: { easyPayProvider: "KAKAOPAY" } }),
         redirectUrl: window.location.origin + '/success?plan=' + planType,
     });
