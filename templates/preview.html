@@ -103,10 +103,17 @@
     let videoEl = document.getElementById('video-player');
     let allItems = [];
 
-    // URL에서 SRT 파라미터 읽기
+    // localStorage에서 SRT 읽기 (번역 후 미리보기)
+    const savedSrt = localStorage.getItem('preview_srt');
+    if(savedSrt){
+        parseSRT(savedSrt);
+        localStorage.removeItem('preview_srt');
+    }
+
+    // URL에서 SRT 파라미터 읽기 (fallback)
     const urlParams = new URLSearchParams(window.location.search);
     const srtParam = urlParams.get('srt');
-    if(srtParam){
+    if(srtParam && !savedSrt){
         const decoded = decodeURIComponent(srtParam);
         parseSRT(decoded);
     }

@@ -56,6 +56,7 @@
                 <button onclick="signOut()" class="text-[11px] text-red-500 font-bold hover:underline">Logout</button>
             </div>
             <button id="buy-pass-user-btn" onclick="location.href='/pricing'" style="display:none;" class="flex items-center gap-2 bg-indigo-600 text-white px-4 py-1.5 rounded-full text-[11px] font-bold shadow-sm hover:bg-indigo-700 transition-all">✨ Buy Pass</button>
+            <a href="/preview" target="_blank" class="flex items-center gap-2 bg-white border border-slate-200 px-4 py-1.5 rounded-full text-[11px] font-bold text-slate-700 shadow-sm hover:bg-slate-50 transition-all">🎬 Preview</a>
         </div>
     </div>
 
@@ -412,8 +413,8 @@
         _supabase.auth.onAuthStateChange((e,s)=>{
             const lb=document.getElementById('google-login-btn');const p=document.getElementById('user-profile');
             const bgb=document.getElementById('buy-pass-guest-btn');const bub=document.getElementById('buy-pass-user-btn');
-            if(s){currentUser=s.user;lb.style.display='none';bgb.style.display='none';p.style.display='flex';bub.style.display='flex';document.getElementById('user-email').innerText=currentUser.email;closeLoginModal();updateUsageCounter();}
-            else{currentUser=null;lb.style.display='';bgb.style.display='none';p.style.display='none';bub.style.display='none';updateUsageCounter();}
+            if(s){currentUser=s.user;lb.style.display='none';bgb.style.display='none';p.style.display='flex';bub.style.display='flex';document.getElementById('user-email').innerText=currentUser.email;closeLoginModal();}
+            else{currentUser=null;lb.style.display='';bgb.style.display='none';p.style.display='none';bub.style.display='none';}
         });
         async function signInWithGoogle(){await _supabase.auth.signInWithOAuth({provider:'google',options:{redirectTo:window.location.origin}});}
         async function signOut(){await _supabase.auth.signOut();location.reload();}
@@ -422,28 +423,11 @@
         function closeLoginModal(){const m=document.getElementById('login-modal');m.style.display='none';m.style.pointerEvents='none';}
         document.getElementById('login-modal').addEventListener('click',function(e){if(e.target===this)closeLoginModal();});
         // 남은 횟수 표시
-        async function updateUsageCounter(){
+        function updateUsageCounter(){
             const lu=localStorage.getItem("last_translate_date");
             const counter=document.getElementById('usage-counter');
             if(!counter)return;
-            // 로그인 유저면 플랜 확인
-            if(currentUser){
-                try{
-                    const r=await fetch('/api/my-plan?email='+encodeURIComponent(currentUser.email));
-                    const d=await r.json();
-                    if(d.plan!==null){
-                        const exp=new Date(d.expires_at);
-                        const diffDays=Math.ceil((exp-new Date())/(1000*60*60*24));
-                        const planName=d.plan==='week'?'Weekly':'Monthly';
-                        if(d.plan==='annual') planName='Annual';
-                        counter.innerText='✅ '+planName+' Plan Active · Expires in '+diffDays+' days / '+planName+' 플랜 이용 중 · '+diffDays+'일 후 만료';
-                        counter.className='text-center text-xs text-indigo-500 font-bold mt-2';
-                        return;
-                    }
-                }catch(e){}
-            }
-            // 무료 유저
-            if(lu){const d=(new Date()-new Date(lu))/(1000*60*60*24);if(d<7){counter.innerText='⏳ Used this week · Resets in '+(7-Math.floor(d))+' days / 이번 주 사용됨 · '+(7-Math.floor(d))+'일 후 초기화';counter.className='text-center text-xs text-red-400 font-medium mt-2';return;}}
+            if(lu){const d=(new Date()-new Date(lu))/(1000*60*60*24);if(d<7){counter.innerText='This week\'s translation used. Resets in '+(7-Math.floor(d))+' days. / 이번 주 번역 사용됨. '+(7-Math.floor(d))+'일 후 초기화.';counter.className='text-center text-xs text-red-400 font-medium mt-2';return;}}
             counter.innerText='Free: 1 translation per week / 무료: 주 1회 번역 가능';counter.className='text-center text-xs text-slate-400 font-medium mt-2';
         }
         updateUsageCounter();
@@ -455,8 +439,8 @@
 
         function openPreview(){
             if(!_translatedText)return;
-            const encoded=encodeURIComponent(_translatedText);
-            window.open('/preview?srt='+encoded,'_blank');
+            localStorage.setItem('preview_srt', _translatedText);
+            window.open('/preview','_blank');
         }
 
         function startAdTimer(){
