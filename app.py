@@ -206,6 +206,21 @@ def translate_srt():
         if os.path.exists(temp_path): os.remove(temp_path)
         return f"Error: {str(e)}", 500
 
+@app.route("/sitemap.xml")
+def sitemap():
+    return Response("""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+    <url>
+        <loc>https://srt-translator.com/</loc>
+        <changefreq>weekly</changefreq>
+        <priority>1.0</priority>
+    </url>
+    <url>
+        <loc>https://srt-translator.com/pricing</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.8</priority>
+    </url>
+</urlset>""", mimetype="application/xml")
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 5000))
