@@ -34,6 +34,12 @@ def get_common_vars(**kwargs):
 def index():
     return render_template("index.html", **get_common_vars(view="main"))
 
+@app.route("/robots.txt")
+def robots():
+    return Response("""User-agent: *
+Allow: /
+Allow: /pricing
+Sitemap: https://srt-translator.com/sitemap.xml""", mimetype="text/plain")
 
 # app.py /pricing 라우트
 @app.route("/pricing")
