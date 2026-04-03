@@ -91,7 +91,7 @@
     </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4002075177790525" crossorigin="anonymous"></script>
 </head>
-<body class="{% if view == 'pricing' %}bg-slate-900 min-h-screen text-white{% else %}bg-slate-50 min-h-screen flex flex-col items-center justify-center p-4{% endif %}">
+<body class="{% if view == 'pricing' %}bg-slate-900 min-h-screen text-white{% elif view == 'privacy' %}bg-slate-50 min-h-screen p-4{% else %}bg-slate-50 min-h-screen flex flex-col items-center justify-center p-4{% endif %}">
 
 {% if view == 'main' %}
     <div class="fixed top-8 right-8 flex flex-col items-end gap-3 z-50">
