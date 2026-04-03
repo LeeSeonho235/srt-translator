@@ -34,6 +34,10 @@ def get_common_vars(**kwargs):
 def index():
     return render_template("index.html", **get_common_vars(view="main"))
 
+@app.route("/privacy")
+def privacy():
+    return render_template("index.html", **get_common_vars(view="privacy"))
+
 @app.route("/robots.txt")
 def robots():
     return Response("""User-agent: *
