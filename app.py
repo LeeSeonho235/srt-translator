@@ -230,6 +230,11 @@ def sitemap():
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
     </url>
+    <url>
+        <loc>https://srt-translator.com/privacy</loc>
+        <changefreq>yearly</changefreq>
+        <priority>0.5</priority>
+    </url>
 </urlset>""", mimetype="application/xml")
 
 if __name__ == "__main__":

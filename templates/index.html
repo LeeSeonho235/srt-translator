@@ -17,7 +17,61 @@
     <meta name="twitter:title" content="SRT Translator - Free Subtitle Translation">
     
     <meta name="twitter:description" content="Translate SRT subtitle files instantly to 10+ languages. Free and easy to use.">
-    <title>{% if view == 'main' %}SRT Translator{% elif view == 'pricing' %}플랜 업그레이드{% elif view == 'success' %}결제 완료{% elif view == 'fail' %}결제 실패{% endif %} - SRT Translator</title>
+    <title>{% if view == 'main' %}SRT Translator{% elif view == 'pricing' %}플랜 업그레이드{% elif view == 'success' %}결제 완료{% elif view == 'privacy' %}
+    <!-- ========== 개인정보처리방침 ========== -->
+    <div class="bg-white rounded-3xl shadow-2xl p-10 max-w-2xl w-full my-8">
+        <a href="/" class="inline-block text-indigo-600 hover:underline text-sm font-bold mb-6">← Back / 홈으로</a>
+        <h1 class="text-2xl font-extrabold text-slate-900 mb-2">Privacy Policy / 개인정보처리방침</h1>
+        <p class="text-slate-400 text-xs mb-8">Last updated: March 2026 / 최종 업데이트: 2026년 3월</p>
+
+        <div class="space-y-6 text-slate-700 text-sm leading-relaxed">
+            <div>
+                <h2 class="font-extrabold text-base text-slate-900 mb-2">1. Business Information / 사업자 정보</h2>
+                <p>상호: 에스알티 트랜스레이(srt-translator) · 대표자: 이선호<br>
+                사업자등록번호: 298-14-02844<br>
+                주소: 서울 영등포구 당산로18길 5-3, 301호<br>
+                연락처: 010-3596-0246 · dltjsgh0246@naver.com<br><br>
+                Business: SRT Translator · CEO: Lee Seonho<br>
+                Registration No: 298-14-02844<br>
+                Address: 5-3, Dangsan-ro 18-gil, Yeongdeungpo-gu, Seoul, Korea</p>
+            </div>
+            <div>
+                <h2 class="font-extrabold text-base text-slate-900 mb-2">2. Information We Collect / 수집하는 정보</h2>
+                <p>We collect the following information when you use our service:<br>
+                • Email address (when signing in with Google / Google 로그인 시)<br>
+                • Uploaded subtitle file content (deleted immediately after translation / 번역 후 즉시 삭제)<br>
+                • Payment information processed via PortOne (we do not store card details / 카드 정보 저장 안 함)</p>
+            </div>
+            <div>
+                <h2 class="font-extrabold text-base text-slate-900 mb-2">3. Purpose of Collection / 수집 목적</h2>
+                <p>Collected information is used solely for providing translation services and managing subscription plans.<br>
+                수집된 정보는 번역 서비스 제공 및 구독 플랜 관리 목적으로만 사용됩니다.</p>
+            </div>
+            <div>
+                <h2 class="font-extrabold text-base text-slate-900 mb-2">4. Data Retention / 데이터 보관</h2>
+                <p>Email and subscription data are retained for the duration of service use and deleted upon account termination.<br>
+                이메일 및 구독 정보는 서비스 이용 기간 동안 보관되며, 탈퇴 시 삭제됩니다.</p>
+            </div>
+            <div>
+                <h2 class="font-extrabold text-base text-slate-900 mb-2">5. Third Party Sharing / 제3자 제공</h2>
+                <p>We do not sell or share your personal information with third parties.<br>
+                개인정보를 제3자에게 판매하거나 공유하지 않습니다.</p>
+            </div>
+            <div>
+                <h2 class="font-extrabold text-base text-slate-900 mb-2">6. Advertising / 광고</h2>
+                <p>This service may display ads through Google AdSense. Google uses cookies to show relevant ads.<br>
+                본 서비스는 Google AdSense를 통한 광고를 게재할 수 있습니다.<br>
+                <a href="https://www.google.com/settings/ads" target="_blank" class="text-indigo-600 underline">Google Ad Settings / Google 광고 설정</a></p>
+            </div>
+            <div>
+                <h2 class="font-extrabold text-base text-slate-900 mb-2">7. Contact / 문의</h2>
+                <p>For privacy-related inquiries: dltjsgh0246@naver.com<br>
+                개인정보 관련 문의: dltjsgh0246@naver.com</p>
+            </div>
+        </div>
+    </div>
+
+{% elif view == 'fail' %}결제 실패{% endif %} - SRT Translator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
     <script src="https://cdn.portone.io/v2/browser-sdk.js"></script>
@@ -112,14 +166,14 @@
     <div class="w-full max-w-lg mt-4">
         <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-5 text-center">
             <p class="text-xs text-slate-400 mb-1">문의 / Contact</p>
-            dltjsgh0246@naver.com
+            <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="690d051d031a0e01595b5d5f2907081f0c1b470a0604">[email&#160;protected]</a>
         </div>
     </div>
     <div class="w-full max-w-lg mt-2 mb-6">
         <div class="bg-white rounded-3xl shadow-sm border border-slate-100 p-5">
             <p class="text-[10px] text-slate-400 text-center leading-relaxed">
                 상호: 에스알티 트랜스레이(srt-translator) · 대표자: 이선호 · 사업자등록번호: 298-14-02844<br>
-                주소: 서울 영등포구 당산로18길 5-3, 301호 · 연락처: 010-3596-0246 · dltjsgh0246@naver.com<br>
+                주소: 서울 영등포구 당산로18길 5-3, 301호 · 연락처: 010-3596-0246 · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="6a0e061e00190d025a585e5c2a040b1c0f1844090507">[email&#160;protected]</a><br>
                 Business: SRT Translator · CEO: Lee Seonho · Registration No: 298-14-02844<br>
                 Address: 5-3, Dangsan-ro 18-gil, Yeongdeungpo-gu, Seoul, Korea
             </p>
@@ -305,7 +359,7 @@
                 <div id="store-content-ko" class="hidden space-y-4">
                     <h3 class="font-extrabold text-base text-slate-900">서비스 이용약관 및 개인정보 처리방침</h3>
                     <h4 class="font-bold text-slate-800">1. 사업자 정보</h4>
-                    <p>상호: 에스알티 트랜스레이(srt-translator) · 대표자: 이선호<br>사업자등록번호: 298-14-02844<br>주소: 서울 영등포구 당산로18길 5-3, 301호<br>연락처: 010-3596-0246 · dltjsgh0246@naver.com</p>
+                    <p>상호: 에스알티 트랜스레이(srt-translator) · 대표자: 이선호<br>사업자등록번호: 298-14-02844<br>주소: 서울 영등포구 당산로18길 5-3, 301호<br>연락처: 010-3596-0246 · <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="4f2b233b253c28277f7d7b790f212e392a3d612c2022">[email&#160;protected]</a></p>
                     <h4 class="font-bold text-slate-800">2. 서비스 소개</h4>
                     <p>SRT Translator는 SRT 자막 파일을 다양한 언어로 번역해 주는 온라인 서비스입니다.</p>
                     <h4 class="font-bold text-slate-800">3. 개인정보 수집 및 이용</h4>
@@ -319,7 +373,7 @@
                 <div id="store-content-en" class="space-y-4">
                     <h3 class="font-extrabold text-base text-slate-900">Terms of Service & Privacy Policy</h3>
                     <h4 class="font-bold text-slate-800">1. Business Information</h4>
-                    <p>Business: SRT Translator · CEO: Lee Seonho<br>Registration No: 298-14-02844<br>Address: 5-3, Dangsan-ro 18-gil, Yeongdeungpo-gu, Seoul, Korea<br>Contact: dltjsgh0246@naver.com</p>
+                    <p>Business: SRT Translator · CEO: Lee Seonho<br>Registration No: 298-14-02844<br>Address: 5-3, Dangsan-ro 18-gil, Yeongdeungpo-gu, Seoul, Korea<br>Contact: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="23474f574950444b13111715634d425546510d404c4e">[email&#160;protected]</a></p>
                     <h4 class="font-bold text-slate-800">2. About the Service</h4>
                     <p>SRT Translator is an online service that translates SRT subtitle files into various languages.</p>
                     <h4 class="font-bold text-slate-800">3. Information We Collect</h4>
@@ -356,7 +410,7 @@
     </div>
 
 {% elif view == 'success' %}
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>localStorage.removeItem('last_translate_date');</script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>localStorage.removeItem('last_translate_date');</script>
     <div class="bg-white rounded-3xl shadow-2xl p-10 max-w-md w-full text-center">
         <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
