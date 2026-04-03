@@ -3,12 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Free SRT subtitle translator. Translate subtitles to Korean, English, Japanese, Spanish and 10+ languages instantly. 무료 SRT 자막 번역기.">
+    <meta name="description" content="Free SRT subtitle translator. Translate subtitles to Korean, English, Japanese, Spanish and 10+ languages instantly. Fast, free, and easy to use.">
+    <link rel="canonical" href="https://srt-translator.com">
     <meta name="keywords" content="SRT translator, subtitle translator, 자막 번역기, SRT 번역, free subtitle translation">
     <meta property="og:title" content="SRT Translator - Free Subtitle Translation">
     <meta property="og:description" content="Translate SRT subtitle files instantly to 10+ languages. Free and easy to use.">
     <meta name="google-site-verification" content="OtaD5raWvVK_eUaJFvdJd7Kehetu-KiQTEvozQbiVns" />
     <meta property="og:type" content="website">
+    <meta name="robots" content="index, follow">
+    <meta property="og:url" content="https://srt-translator.com">
+    <meta property="og:image" content="https://srt-translator.com/static/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="SRT Translator - Free Subtitle Translation">
+    
+    <meta name="twitter:description" content="Translate SRT subtitle files instantly to 10+ languages. Free and easy to use.">
     <title>{% if view == 'main' %}SRT Translator{% elif view == 'pricing' %}플랜 업그레이드{% elif view == 'success' %}결제 완료{% elif view == 'fail' %}결제 실패{% endif %} - SRT Translator</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
@@ -20,17 +28,14 @@
         .drop-zone.active { border-color: #6366f1; background-color: #f8fafc; scale: 1.02; }
         select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%2394a3b8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 1rem center; background-size: 1.25rem; }
     </style>
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-13YYNMB0GY"></script>
     <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
     gtag('config', 'G-13YYNMB0GY');
     </script>
-    <link rel="canonical" href="https://srt-translator.com/">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4002075177790525"
-     crossorigin="anonymous"></script>
-     crossorigin="anonymous"></script>
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4002075177790525" crossorigin="anonymous"></script>
 </head>
 <body class="{% if view == 'pricing' %}bg-slate-900 min-h-screen text-white{% else %}bg-slate-50 min-h-screen flex flex-col items-center justify-center p-4{% endif %}">
 
@@ -153,8 +158,8 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
             <div class="text-center mb-8">
-                <h2 class="text-2xl font-extrabold text-slate-900 mb-2">로그인 또는 회원 가입</h2>
-                <p class="text-slate-500 text-sm">무제한 번역 이용권을 구매하거나<br>이용 현황을 확인하세요.</p>
+                <h2 class="text-2xl font-extrabold text-slate-900 mb-2">Login or Sign Up</h2>
+                <p class="text-slate-500 text-sm">Purchase unlimited translation pass<br>or check your usage.</p>
             </div>
             <button onclick="signInWithGoogle()" class="w-full flex items-center gap-4 border border-slate-200 rounded-2xl px-5 py-4 hover:bg-slate-50 transition-all group">
                 <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" class="w-5 h-5">
