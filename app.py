@@ -34,6 +34,10 @@ def get_common_vars(**kwargs):
 def index():
     return render_template("index.html", **get_common_vars(view="main"))
 
+@app.route("/ads.txt")
+def ads_txt():
+    return Response("google.com, pub-4002075177790525, DIRECT, f08c47fec0942fa0", mimetype="text/plain")
+
 @app.route("/privacy")
 def privacy():
     return render_template("index.html", **get_common_vars(view="privacy"))
