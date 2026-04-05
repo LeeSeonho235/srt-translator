@@ -3,8 +3,43 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SRT Preview - Subtitle Viewer</title>
+    <title>Free SRT Viewer & Subtitle Preview - SRT Translator</title>
+    <meta name="description" content="Free online SRT subtitle viewer. Preview and review your SRT subtitle files with video sync. Upload any SRT file to view subtitles, search, and sync with video playback.">
+    <meta name="keywords" content="SRT viewer, SRT preview, subtitle viewer, SRT file viewer, online SRT viewer, view SRT subtitles, subtitle preview, free SRT viewer">
+    <link rel="canonical" href="https://srt-translator.com/preview">
+    <meta name="robots" content="index, follow">
+    <meta property="og:title" content="Free SRT Viewer & Subtitle Preview - SRT Translator">
+    <meta property="og:description" content="Preview SRT subtitle files online for free. Video sync, subtitle search, and instant playback. No install required.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://srt-translator.com/preview">
+    <meta property="og:image" content="https://srt-translator.com/static/og-image.png">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Free SRT Viewer & Subtitle Preview - SRT Translator">
+    <meta name="twitter:description" content="Preview SRT subtitle files online for free. Video sync, subtitle search, and instant playback.">
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "SRT Subtitle Viewer",
+      "url": "https://srt-translator.com/preview",
+      "description": "Free online SRT subtitle viewer and preview tool. Load SRT files and sync with video playback.",
+      "applicationCategory": "UtilitiesApplication",
+      "operatingSystem": "Any",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD"
+      }
+    }
+    </script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-13YYNMB0GY"></script>
+    <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-13YYNMB0GY');
+    </script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap');
         body { font-family: 'Inter', sans-serif; background: #0f172a; color: white; }
@@ -31,7 +66,7 @@
         <div class="flex items-center gap-3">
             <a href="/" class="text-slate-400 hover:text-white transition-colors text-sm font-bold">← Back</a>
             <span class="text-slate-600">|</span>
-            <h1 class="text-sm font-extrabold text-white">SRT Subtitle Preview</h1>
+            <h1 class="text-sm font-extrabold text-white">Free SRT Subtitle Viewer</h1>
         </div>
         <div class="flex items-center gap-3">
             <span id="subtitle-count" class="text-xs text-slate-400 font-medium"></span>
@@ -60,7 +95,7 @@
                 </div>
             </div>
             <div id="subtitle-list" class="flex-1 overflow-y-auto p-2 space-y-1">
-                <!-- 자막 아이템들이 여기 들어감 -->
+                <!-- 자막 없을 때 안내 -->
                 <div class="flex items-center justify-center h-full text-slate-500 text-xs text-center px-8 py-12">
                     <div>
                         <div class="w-12 h-12 bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-3">
@@ -82,6 +117,7 @@
                 </div>
                 <p class="text-slate-400 font-bold mb-1">Drop video here</p>
                 <p class="text-slate-600 text-sm">or click "Load Video" above</p>
+                <p class="text-slate-700 text-xs mt-4 max-w-xs mx-auto leading-relaxed">Free SRT viewer — load any .srt subtitle file and sync with your video. Supports all languages.</p>
             </div>
             <!-- 비디오 -->
             <video id="video-player" class="hidden w-full h-full object-contain" controls></video>
@@ -95,6 +131,7 @@
         <span id="current-time-display" class="text-xs font-mono text-slate-400">00:00:00</span>
         <span class="text-slate-600 text-xs">|</span>
         <span id="current-subtitle-display" class="text-xs text-slate-300 truncate flex-1 font-medium"></span>
+        <a href="/" class="text-xs text-indigo-400 font-bold hover:text-indigo-300 transition-colors flex-shrink-0">Translate SRT →</a>
     </div>
 
 <script>
@@ -192,7 +229,6 @@
     videoEl.addEventListener('timeupdate', () => {
         const t = videoEl.currentTime;
         document.getElementById('current-time-display').innerText = secToTime(t);
-        // 현재 자막 찾기
         const idx = subtitles.findIndex(s => t >= s.start && t <= s.end);
         const overlay = document.getElementById('subtitle-overlay');
         if(idx >= 0){
