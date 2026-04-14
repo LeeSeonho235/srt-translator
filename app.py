@@ -49,6 +49,7 @@ Allow: /
 Allow: /pricing
 Allow: /preview
 Disallow: /api/
+Disallow: /translate
 Sitemap: https://srt-translator.com/sitemap.xml""", mimetype="text/plain")
 
 @app.route("/pricing")

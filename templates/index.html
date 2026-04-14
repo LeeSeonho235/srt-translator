@@ -4,7 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Free SRT subtitle translator online. Translate SRT subtitle files to Korean, English, Japanese, Spanish, Chinese and 10+ languages instantly using AI. Fast, accurate, and easy to use.">
+    {% if view == 'pricing' %}
+    <link rel="canonical" href="https://srt-translator.com/pricing">
+    {% elif view == 'privacy' %}
+    <link rel="canonical" href="https://srt-translator.com/privacy">
+    {% else %}
     <link rel="canonical" href="https://srt-translator.com">
+    {% endif %}
     <meta name="keywords" content="SRT translator, SRT subtitle translator, translate SRT file, subtitle translator online, free subtitle translation, SRT to Korean, SRT to English, SRT to Japanese, 자막 번역기, SRT 번역, free SRT translator">
     <meta property="og:title" content="SRT Translator - Free Online Subtitle Translation">
     <meta property="og:description" content="Translate SRT subtitle files instantly to 10+ languages for free. Supports Korean, English, Japanese, Spanish, Chinese and more.">
