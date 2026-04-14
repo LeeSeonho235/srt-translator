@@ -47,9 +47,10 @@ def robots():
     return Response("""User-agent: *
 Allow: /
 Allow: /pricing
+Allow: /preview
+Disallow: /api/
 Sitemap: https://srt-translator.com/sitemap.xml""", mimetype="text/plain")
 
-# app.py /pricing 라우트
 @app.route("/pricing")
 def pricing():
     return render_template(
@@ -62,17 +63,13 @@ def pricing():
         )
     )
 
-
-# ── 환불 규정 페이지 ──────────────────────────────────────────────────────────
 @app.route("/preview")
 def preview():
     return render_template("preview.html")
 
-
 @app.route("/refund")
 def refund():
     return redirect(url_for('pricing'))
-
 
 @app.route('/success')
 def success():
@@ -110,10 +107,10 @@ def success():
         }, on_conflict='email').execute()
 
     return render_template('index.html', **get_common_vars(view='success', plan=plan, message='Payment completed successfully.'))
+
 @app.route("/fail")
 def payment_fail():
     return render_template("index.html", **get_common_vars(view='fail'))
-
 
 @app.route('/api/my-plan')
 def my_plan():
@@ -125,13 +122,11 @@ def my_plan():
     if result.data:
         plan = result.data[0]
         expires_str = plan['plan_expires_at']
-        # timezone-aware 비교
         expires_at = datetime.fromisoformat(expires_str.replace('Z', '+00:00'))
         now = datetime.now(expires_at.tzinfo)
         if expires_at > now:
             return {'plan': plan['plan_type'], 'expires_at': expires_str}
     return {'plan': None}
-
 
 @app.route("/translate", methods=["POST"])
 def translate_srt():
@@ -163,7 +158,6 @@ def translate_srt():
 
         def is_skip_text(t):
             t = t.strip()
-            # 숫자만 or 특수문자만인 경우만 스킵
             if _re.match(r'^[\d\s\.\,\!\?\-]+$', t): return True
             return False
 
@@ -233,6 +227,11 @@ def sitemap():
         <loc>https://srt-translator.com/pricing</loc>
         <changefreq>monthly</changefreq>
         <priority>0.8</priority>
+    </url>
+    <url>
+        <loc>https://srt-translator.com/preview</loc>
+        <changefreq>monthly</changefreq>
+        <priority>0.7</priority>
     </url>
     <url>
         <loc>https://srt-translator.com/privacy</loc>
