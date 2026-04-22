@@ -390,14 +390,14 @@
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
             </button>
             <h2 id="pay-modal-title" class="text-lg font-extrabold text-slate-900 mb-2 text-center">결제 수단 선택</h2>
-            <p id="pay-modal-subtitle" class="text-slate-400 text-xs text-center mb-3">원하시는 결제 방법을 선택해주세요</p>
-            <div class="bg-amber-50 border border-amber-200 rounded-2xl px-4 py-3 mb-4 text-center">
-                <p class="text-amber-700 text-xs font-bold">🔧 Payment system is being set up. Available very soon!<br>결제 시스템 준비 중입니다. 곧 이용 가능합니다.</p>
-            </div>
+            <p id="pay-modal-subtitle" class="text-slate-400 text-xs text-center mb-4">원하시는 결제 방법을 선택해주세요</p>
             <div class="space-y-3">
-                <button onclick="proceedPayment('kakao')" class="w-full flex items-center gap-4 bg-[#FEE500] hover:bg-[#f0d800] rounded-2xl px-5 py-4 transition-all">
-                    <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" class="w-7 h-7 rounded-lg">
-                    <span id="pay-btn-kakao" class="text-[#3A1D1D] font-bold text-sm">카카오페이로 결제</span>
+                <button disabled class="w-full flex items-center gap-4 bg-slate-100 rounded-2xl px-5 py-4 cursor-not-allowed opacity-60">
+                    <img src="https://developers.kakao.com/assets/img/about/logos/kakaolink/kakaolink_btn_medium.png" class="w-7 h-7 rounded-lg grayscale">
+                    <div class="text-left">
+                        <span id="pay-btn-kakao" class="text-slate-400 font-bold text-sm block">카카오페이로 결제</span>
+                        <span class="text-slate-400 text-xs">준비 중입니다</span>
+                    </div>
                 </button>
                 <button onclick="proceedPayment('paypal')" class="w-full flex items-center gap-4 bg-[#003087] hover:bg-[#002070] rounded-2xl px-5 py-4 transition-all">
                     <img src="https://www.paypalobjects.com/webstatic/icon/pp258.png" class="w-7 h-7 rounded-lg">
