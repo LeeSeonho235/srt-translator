@@ -547,6 +547,7 @@
         dropArea.addEventListener('drop',(e)=>{e.preventDefault();dropArea.classList.remove('active');const files=e.dataTransfer.files;if(files.length>0){const input=document.getElementById('file-input');const dt=new DataTransfer();dt.items.add(files[0]);input.files=dt.files;document.getElementById('file-text').classList.add('hidden');const fd=document.getElementById('file-name-display');fd.classList.remove('hidden');fd.innerText='📄 '+files[0].name;checkLangMismatch(files[0]);gtag_event('file_upload',{method:'drag_drop'});}});
         const savedLang=localStorage.getItem('web_lang')||'en';applyLanguage(savedLang);
 {% elif view == 'pricing' %}
+        function gtag_event(name,params){if(typeof gtag==='function')gtag('event',name,params||{});}
         const PORTONE_STORE_ID = "{{ PORTONE_STORE_ID }}";
         const PORTONE_CHANNEL_KEY_KAKAO = "{{ PORTONE_CHANNEL_KEY_KAKAO }}";
         const PORTONE_CHANNEL_KEY_PAYPAL = "{{ PORTONE_CHANNEL_KEY_PAYPAL }}";
