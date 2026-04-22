@@ -506,7 +506,7 @@
             const lb=document.getElementById('google-login-btn');const p=document.getElementById('user-profile');
             const bgb=document.getElementById('buy-pass-guest-btn');const bub=document.getElementById('buy-pass-user-btn');
             if(s){currentUser=s.user;lb.style.display='none';bgb.style.display='none';p.style.display='flex';bub.style.display='flex';document.getElementById('user-email').innerText=currentUser.email;closeLoginModal();updateUsageCounter();}
-            else{currentUser=null;lb.style.display='';bgb.style.display='none';p.style.display='none';bub.style.display='none';updateUsageCounter();}
+            else{currentUser=null;lb.style.display='';bgb.style.display='flex';p.style.display='none';bub.style.display='none';updateUsageCounter();}
         });
         async function signInWithGoogle(){
             const redirectTo = document.getElementById('login-modal').dataset.redirectPricing ? window.location.origin+'/pricing' : window.location.origin;
