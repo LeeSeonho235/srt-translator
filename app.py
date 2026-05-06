@@ -30,6 +30,32 @@ def get_common_vars(**kwargs):
     return kwargs
 
 
+@app.after_request
+def add_security_headers(response):
+    """
+    Add CSP and Permissions Policy headers for PayPal compatibility
+    Fixes: 'unsafe-eval' CSP error and Permissions Policy violation
+    """
+    response.headers['Content-Security-Policy'] = (
+        "default-src 'self' 'unsafe-inline' 'unsafe-eval' https:; "
+        "script-src 'self' 'unsafe-inline' 'unsafe-eval' "
+        "https://cdn.tailwindcss.com "
+        "https://cdn.jsdelivr.net "
+        "https://cdn.portone.io "
+        "https://*.paypal.com "
+        "https://*.paypalobjects.com "
+        "https://www.paypalobjects.com "
+        "https://www.googletagmanager.com "
+        "https://pagead2.googlesyndication.com; "
+        "img-src 'self' data: https:; "
+        "style-src 'self' 'unsafe-inline' https:; "
+        "font-src 'self' data: https:; "
+        "connect-src 'self' https:;"
+    )
+    response.headers['Permissions-Policy'] = 'unload=*'
+    return response
+
+
 @app.route("/")
 def index():
     return render_template("index.html", **get_common_vars(view="main"))
