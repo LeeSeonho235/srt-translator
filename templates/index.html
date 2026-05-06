@@ -679,7 +679,9 @@
                     payMethod: payMethod,
                     customer: { email: userEmail },
                     ...(isKakao && { easyPay: { easyPayProvider: "KAKAOPAY" } }),
-                    redirectUrl: window.location.origin + '/success?plan=' + planType + '&email=' + encodeURIComponent(userEmail),
+                    redirectUrl: window.location.origin + '/success?plan=' + planType + 
+                                '&paymentId=' + orderId +  // ← 이거 추가!
+                                '&email=' + encodeURIComponent(userEmail),
                 });
                 if (response && response.paymentId) {
                     gtag_event('payment_success',{method:method,plan:planType});
