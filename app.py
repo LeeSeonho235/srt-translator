@@ -4,7 +4,7 @@ import requests
 import pysrt
 import deepl
 from datetime import datetime, timedelta
-from flask import Flask, render_template, request, Response, redirect, url_for
+from flask import Flask, render_template, request, Response, redirect, url_for, jsonify
 from dotenv import load_dotenv
 from supabase import create_client, Client
 
@@ -128,6 +128,29 @@ def my_plan():
         if expires_at > now:
             return {'plan': plan['plan_type'], 'expires_at': expires_str}
     return {'plan': None}
+
+@app.route('/api/paypal-webhook', methods=['POST'])
+def paypal_webhook():
+    """
+    PayPal Webhook endpoint
+    PayPal sends notifications about payment events here
+    """
+    try:
+        webhook_data = request.json
+        print("=== PAYPAL WEBHOOK RECEIVED ===")
+        print(webhook_data)
+        
+        # Log webhook for debugging
+        event_type = webhook_data.get('event_type')
+        print(f"Event Type: {event_type}")
+        
+        # You can add specific event handling here
+        # For example: PAYMENT.CAPTURE.COMPLETED, CHECKOUT.ORDER.APPROVED, etc.
+        
+        return jsonify({'status': 'success'}), 200
+    except Exception as e:
+        print(f"Webhook error: {str(e)}")
+        return jsonify({'status': 'error', 'message': str(e)}), 400
 
 @app.route("/translate", methods=["POST"])
 def translate_srt():

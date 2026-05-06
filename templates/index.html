@@ -1,7 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-<!DOCTYPE html>
-<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -685,8 +683,10 @@
                 });
                 if (response && response.paymentId) {
                     gtag_event('payment_success',{method:method,plan:planType});
-                    window.location.href = '/success?plan=' + planType + '&paymentId=' + response.paymentId + '&email=' + encodeURIComponent(userEmail);
-                }
+                     window.location.href = '/success?plan=' + planType + 
+                           '&paymentId=' + response.paymentId +  // ← 추가!
+                           '&email=' + encodeURIComponent(userEmail);
+}
             } catch (err) {
                 if (err.code === 'USER_CANCEL') { gtag_event('payment_cancel',{method:method,plan:planType}); alert(c.payCancel); }
                 else alert(c.payError + (err.message || ''));
