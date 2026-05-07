@@ -684,8 +684,10 @@
                                 additional_data: [
                                     { key: 'sender_account_id', value: userEmail.split('@')[0] },
                                     { key: 'sender_email', value: userEmail },
+                                    { key: 'sender_first_name', value: userEmail.split('@')[0] },
                                     { key: 'sender_country_code', value: 'US' },
-                                    { key: 'sender_create_date', value: new Date().toISOString() }
+                                    { key: 'sender_create_date', value: new Date().toISOString() },
+                                    { key: 'sender_popularity_score', value: 'low' }
                                 ]
                             }
                         }
