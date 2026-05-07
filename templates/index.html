@@ -677,6 +677,19 @@
                     payMethod: payMethod,
                     customer: { email: userEmail },
                     ...(isKakao && { easyPay: { easyPayProvider: "KAKAOPAY" } }),
+                    // PayPal STC (Seller Transaction Context) for compliance
+                    ...(!isKakao && {
+                        bypass: {
+                            paypal_v2: {
+                                additional_data: [
+                                    { key: 'sender_account_id', value: userEmail.split('@')[0] },
+                                    { key: 'sender_email', value: userEmail },
+                                    { key: 'sender_country_code', value: 'US' },
+                                    { key: 'sender_create_date', value: new Date().toISOString() }
+                                ]
+                            }
+                        }
+                    }),
                     redirectUrl: window.location.origin + '/success?plan=' + planType + 
                                 '&paymentId=' + orderId +  // ← 이거 추가!
                                 '&email=' + encodeURIComponent(userEmail),
