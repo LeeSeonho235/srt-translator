@@ -80,7 +80,9 @@ User Input (Name, Gender, Vibe, Style, Language)
 
 ## Screenshots
 
-> *Add screenshots here after uploading to the repository*
+<img width="226" height="321" alt="스크린샷 2026-07-04 17 06 24" src="https://github.com/user-attachments/assets/420bdd24-b37d-4868-9d7d-09ca9eecac2b" />
+<img width="217" height="319" alt="스크린샷 2026-07-04 17 06 32" src="https://github.com/user-attachments/assets/825fd771-a6f8-47a7-9323-e67944198d26" />
+
 
 ## Getting Started
 
