@@ -1,138 +1,86 @@
-# K-Name Generator
+# SRT Translator
 
-> **AI-powered Korean name generator for foreigners** — Get a meaningful Korean name with Hanja characters and a custom AI-generated portrait card.
+Online SRT subtitle translator powered by DeepL. Upload an SRT file, pick the target language, and download the translated version. Also includes a free SRT subtitle viewer with video sync.
 
-![Status](https://img.shields.io/badge/status-archived-yellow)
-![Commits](https://img.shields.io/badge/commits-104+-blue)
-![Python](https://img.shields.io/badge/python-FastAPI-green)
-![AI](https://img.shields.io/badge/AI-Gemini%20%2B%20DALL--E-purple)
+> Previously live at **srt-translator.com** (now archived)
 
-<img width="501" height="556" alt="스크린샷 2026-07-04 17 00 09" src="https://github.com/user-attachments/assets/627a0e5c-2fb5-499b-ae9e-cd073c73305d" />
-<img width="504" height="557" alt="스크린샷 2026-07-04 17 00 00" src="https://github.com/user-attachments/assets/a5b77c34-f000-4e0b-9c99-f9c30a477b74" />
+<img width="1435" height="723" alt="스크린샷 2026-07-05 17 26 26" src="https://github.com/user-attachments/assets/02cc9caa-cc59-4537-b5ed-b8b74b297cb4" />
+<img width="608" height="701" alt="스크린샷 2026-07-05 17 24 13" src="https://github.com/user-attachments/assets/8248088b-8f65-406f-8eca-a6727f64f0ac" />
 
 ## What It Does
 
-K-Name Generator creates personalized Korean names for foreigners based on their English name, gender, and personality. Users receive:
+**Translator** — Upload any `.srt` subtitle file and translate it into 20+ languages using DeepL. The translation uses a context window (surrounding subtitles) so each line is translated with awareness of what comes before and after, which avoids the common issue of subtitles being translated in isolation.
 
-- A **Korean name** (한글) with **Hanja** (漢字) characters or pure Korean (순우리말) names
-- The **meaning** of each character explained in their language
-- An **AI-generated portrait card** in traditional Korean hanbok style
-- A **flippable card UI** — front shows the portrait, back shows the Hanja breakdown
+**SRT Viewer** — A free built-in subtitle previewer. Load an `.srt` file alongside a video to see subtitles synced with playback. Includes search and click-to-seek.
 
-## Supported Languages
+<img width="1440" height="814" alt="스크린샷 2026-07-05 17 28 14" src="https://github.com/user-attachments/assets/2219cfdc-139f-4d9c-9677-c4840f7747e2" />
 
-English · Spanish · Chinese · Japanese · Korean
 
-## Name Generation Styles
+## How the Context Translation Works
 
-| Style | Description |
-|-------|-------------|
-| **Sound** | Korean name that sounds phonetically similar to your English name |
-| **Meaning** | Korean name with Hanja characters matching your personality |
-| **K-Drama** | Korean name inspired by K-Drama character naming conventions |
+Most subtitle translators send each line separately to the API, which produces awkward results. This app wraps each subtitle with its 2 neighboring lines as context, marked with `[[[target]]]`, then extracts only the translated target:
+
+```
+Line before              ← context
+[[[Line to translate]]]  ← actual target
+Line after               ← context
+```
+
+This gives DeepL enough context to handle pronouns, tone, and continuity across lines.
 
 ## Tech Stack
 
-| Category | Technology |
-|----------|------------|
-| **Backend** | Python, FastAPI |
-| **AI — Name Generation** | Google Gemini 2.0 Flash |
-| **AI — Portrait Generation** | OpenAI DALL-E 3 |
-| **Authentication** | Supabase (Google OAuth) |
-| **Payment** | PortOne (PayPal) |
-| **Analytics** | Google Analytics, Google AdSense |
-| **Deployment** | Railway |
-| **Frontend** | HTML, CSS, JavaScript (Vanilla) |
+- **Backend:** Python, Flask
+- **Translation:** DeepL API (context-aware batching)
+- **SRT Parsing:** pysrt
+- **Auth:** Supabase (Google OAuth)
+- **Payment:** PortOne (PayPal)
+- **Analytics:** Google Analytics, AdSense
+- **Deployment:** Railway (Gunicorn)
+- **Frontend:** HTML, Tailwind CSS, vanilla JS
 
-## Architecture
+## Pages
 
-```
-User Input (Name, Gender, Vibe, Style, Language)
-        │
-        ▼
-   FastAPI Server
-        │
-        ├──▶ Gemini 2.0 Flash ──▶ Generate Korean Name + Hanja + Meaning
-        │
-        ├──▶ DALL-E 3 ──▶ Generate Hanbok Portrait Card
-        │         │
-        │         └──▶ Image Proxy ──▶ Serve to Frontend (CORS-safe)
-        │
-        ├──▶ Supabase ──▶ Google OAuth + Subscription Management
-        │
-        └──▶ PortOne ──▶ PayPal Payment (Weekly / Monthly / Annual Plans)
-        │
-        ▼
-   Flippable Name Card
-   Front: AI Hanbok Portrait + Korean Name
-   Back: Hanja Breakdown + Character Meanings
-```
+- `/` — Main translator page (upload, translate, download)
+- `/preview` — Free SRT viewer with video sync
+- `/pricing` — Subscription plans (weekly / monthly / annual)
+- `/privacy` — Privacy policy
 
-## Key Features
-
-- ulti-language UI: Supports 5 languages (EN, ES, ZH, JA, KO)
-- ual Name Types: Hanja-based names (漢字) and pure Korean names (순우리말)
-- AI Portrait Generation** — DALL-E 3 creates a unique Korean-style watercolor portrait for each name
-- Flippable Card UI:Interactive card revealing name details on tap/click
-- Subscription Plans: Weekly, monthly, and annual plans via PortOne + PayPal
-- Image Proxy: Server-side proxy for DALL-E images to handle CORS
-- SEO Optimized: Sitemap, robots.txt, and Google AdSense integration
-
-## Screenshots
-
-<img width="226" height="321" alt="스크린샷 2026-07-04 17 06 24" src="https://github.com/user-attachments/assets/420bdd24-b37d-4868-9d7d-09ca9eecac2b" />
-<img width="217" height="319" alt="스크린샷 2026-07-04 17 06 32" src="https://github.com/user-attachments/assets/825fd771-a6f8-47a7-9323-e67944198d26" />
-
-
-## Getting Started
-
-### Prerequisites
-- Python 3.9+
-- Google Gemini API Key
-- OpenAI API Key (DALL-E 3)
-- Supabase Project (URL + Service Role Key + Anon Key)
-- PortOne Account (Store ID + Channel Keys)
-
-### Installation
+## Setup
 
 ```bash
-# Clone the repository
-git clone https://github.com/LeeSeonho235/k-identity.git
-cd k-identity
-
-# Install dependencies
+git clone https://github.com/LeeSeonho235/srt-translator.git
+cd srt-translator
 pip install -r requirements.txt
-
-# Create .env file
-cat > .env << EOF
-GEMINI_API_KEY=your_key
-OPENAI_API_KEY=your_key
-SUPABASE_URL=your_url
-SUPABASE_SERVICE_ROLE_KEY=your_key
-SUPABASE_ANON_KEY=your_key
-PORTONE_API_SECRET=your_secret
-PORTONE_STORE_ID=your_store_id
-PORTONE_CHANNEL_KEY_KAKAO=your_key
-PORTONE_CHANNEL_KEY_PAYPAL=your_key
-EOF
-
-# Run the server
-uvicorn main:app --reload
 ```
 
-## What I Learned
+Create a `.env` file:
 
-- Integrating multiple AI APIs (Gemini 2.0 Flash + DALL-E 3) into a single generation pipeline
-- Building a server-side image proxy to handle third-party API CORS restrictions
-- Implementing subscription-based payment with PortOne (PayPal integration)
-- Designing regex-based post-processing for structured AI output (Hanja parsing)
-- Managing user authentication and subscription state with Supabase
-- SEO optimization for a consumer-facing web service (sitemap, robots.txt, AdSense)
+```
+DEEPL_API_KEY=your_key
+SUPABASE_URL=your_url
+SUPABASE_ANON_KEY=your_key
+SUPABASE_SERVICE_ROLE_KEY=your_key
+PORTONE_API_SECRET=your_secret
+PORTONE_STORE_ID=your_store_id
+PORTONE_CHANNEL_KEY_PAYPAL=your_key
+```
 
-## Note
+Run:
 
-This service was previously live at **knamegenerator.com** but has been archived. The source code remains available for reference.
+```bash
+python app.py
+```
+
+## Things I Learned Building This
+
+- Context-aware translation by batching subtitles with surrounding lines for better coherence
+- SRT file parsing and reconstruction while preserving timestamps and formatting
+- Building a subtitle viewer with video sync using the `timeupdate` event
+- Handling CSP headers for third-party payment iframe compatibility (PayPal via PortOne)
+- Content Security Policy tuning for multiple external scripts (Tailwind CDN, PayPal, Google Analytics)
+- SEO for a tool-based site: structured data (JSON-LD), canonical URLs, sitemap
 
 ## License
 
-MIT License
+MIT
